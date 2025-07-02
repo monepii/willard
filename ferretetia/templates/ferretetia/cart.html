@@ -1,0 +1,293 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito - WILLARD</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'ferretetia/CSS/styles.css' %}">
+    <script src="{% static 'ferretetia/script.js' %}" defer></script>
+</head>
+<body>
+    <!-- Header con información de contacto -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="contact-info">
+                <span>📞 +3(800) 2345-6789</span>
+                <span>7 Days a week from 9:00 am to 7:00 pm</span>
+            </div>
+            <div class="currency-selector">
+                <span>USD, $</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header principal -->
+    <header>
+        <nav class="navbar">
+            <div class="navbar-left">
+                <div class="logo-container">
+                    <a href="{% url 'ferretetia:index' %}">
+                        <div class="logo-bg">WILLARD</div>
+                    </a>
+                </div>
+            </div>
+            <div class="navbar-center">
+                <div class="search-container">
+                    <input type="text" placeholder="Search Products..." class="search-input">
+                    <button class="search-btn">SEARCH</button>
+                </div>
+            </div>
+            <div class="navbar-right">
+                <a href="{% url 'ferretetia:wishlist' %}" class="nav-item">
+                    <span class="icon">♡</span>
+                    <span>WISHLIST</span>
+                </a>
+                <a href="{% url 'ferretetia:compare' %}" class="nav-item">
+                    <span class="icon">⚖</span>
+                    <span>COMPARE</span>
+                </a>
+                <a href="{% url 'ferretetia:account' %}" class="nav-item">
+                    <span class="icon">👤</span>
+                    <span>MY ACCOUNT</span>
+                </a>
+                <a href="{% url 'ferretetia:checkout' %}" class="nav-item">
+                    <span class="icon">📋</span>
+                    <span>CHECKOUT</span>
+                </a>
+                <a href="{% url 'ferretetia:cart' %}" class="nav-item cart active">
+                    <span class="icon">🛒</span>
+                    <span>CART</span>
+                    <span class="cart-count" id="cart-count">0</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Menú de navegación inferior -->
+    <nav class="bottom-nav">
+        <div class="container">
+            <div class="nav-menu">
+                <a href="{% url 'ferretetia:power_tools' %}" class="nav-link">POWER TOOLS</a>
+                <a href="{% url 'ferretetia:blog' %}" class="nav-link">BLOG</a>
+                <a href="{% url 'ferretetia:shop' %}" class="nav-link">SHOP</a>
+                <a href="{% url 'ferretetia:pages' %}" class="nav-link">PAGES</a>
+                <a href="{% url 'ferretetia:elements' %}" class="nav-link">ELEMENTS</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <div class="container">
+            <h1>{{ page_title }}</h1>
+            
+            <div class="cart-container">
+                <div id="cart-items" class="cart-items">
+                    <p class="empty-cart">Tu carrito está vacío. <a href="{% url 'ferretetia:index' %}">Continuar comprando</a></p>
+                </div>
+                
+                <div class="cart-summary" id="cart-summary" style="display: none;">
+                    <h3>Resumen del pedido</h3>
+                    <div class="summary-line">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">$0.00</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Envío:</span>
+                        <span>$10.00</span>
+                    </div>
+                    <div class="summary-line total">
+                        <span>Total:</span>
+                        <span id="total">$10.00</span>
+                    </div>
+                    <button class="checkout-btn" onclick="window.location.href='{% url 'ferretetia:checkout' %}'">
+                        Proceder al Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mostrar contenido del carrito
+        function displayCart() {
+            const cartItemsDiv = document.getElementById('cart-items');
+            const cartSummaryDiv = document.getElementById('cart-summary');
+            const savedCart = localStorage.getItem('willard_cart');
+            
+            if (!savedCart || JSON.parse(savedCart).length === 0) {
+                cartItemsDiv.innerHTML = '<p class="empty-cart">Tu carrito está vacío. <a href="{% url 'ferretetia:index' %}">Continuar comprando</a></p>';
+                cartSummaryDiv.style.display = 'none';
+                return;
+            }
+            
+            const cart = JSON.parse(savedCart);
+            let html = '';
+            let subtotal = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                html += `
+                    <div class="cart-item">
+                        <div class="item-info">
+                            <h4>${item.name}</h4>
+                            <p class="item-price">$${item.price}</p>
+                        </div>
+                        <div class="item-controls">
+                            <button onclick="updateQuantity(${item.id}, ${item.quantity - 1})">-</button>
+                            <span class="quantity">${item.quantity}</span>
+                            <button onclick="updateQuantity(${item.id}, ${item.quantity + 1})">+</button>
+                            <button onclick="removeItem(${item.id})" class="remove-btn">Eliminar</button>
+                        </div>
+                        <div class="item-total">$${itemTotal.toFixed(2)}</div>
+                    </div>
+                `;
+            });
+            
+            cartItemsDiv.innerHTML = html;
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('total').textContent = `$${(subtotal + 10).toFixed(2)}`;
+            cartSummaryDiv.style.display = 'block';
+        }
+        
+        function updateQuantity(productId, newQuantity) {
+            const savedCart = localStorage.getItem('willard_cart');
+            if (!savedCart) return;
+            
+            let cart = JSON.parse(savedCart);
+            
+            if (newQuantity <= 0) {
+                cart = cart.filter(item => item.id !== productId);
+            } else {
+                const item = cart.find(item => item.id === productId);
+                if (item) {
+                    item.quantity = newQuantity;
+                }
+            }
+            
+            localStorage.setItem('willard_cart', JSON.stringify(cart));
+            const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cart-count').textContent = cartCount;
+            displayCart();
+        }
+        
+        function removeItem(productId) {
+            const savedCart = localStorage.getItem('willard_cart');
+            if (!savedCart) return;
+            
+            let cart = JSON.parse(savedCart);
+            cart = cart.filter(item => item.id !== productId);
+            
+            localStorage.setItem('willard_cart', JSON.stringify(cart));
+            const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cart-count').textContent = cartCount;
+            displayCart();
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            displayCart();
+            loadCart(); // Del script principal
+        });
+    </script>
+
+    <style>
+        .cart-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .cart-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+        
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .item-controls button {
+            background: #333;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .remove-btn {
+            background: #dc3545 !important;
+            padding: 5px 10px !important;
+            width: auto !important;
+        }
+        
+        .cart-summary {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            height: fit-content;
+        }
+        
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .summary-line.total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 0.5rem;
+        }
+        
+        .checkout-btn {
+            width: 100%;
+            background: #FDD835;
+            color: #000;
+            border: none;
+            padding: 1rem;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+        
+        .nav-item.active {
+            background-color: #f8f9fa;
+            color: var(--color-primary);
+        }
+        
+        @media (max-width: 768px) {
+            .cart-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .cart-item {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+    </style>
+</body>
+</html>
