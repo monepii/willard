@@ -4,10 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Power Tools - WILLARD</title>
+    <title>{{ page_title }} - Willard Ferretería</title>
     <link rel="stylesheet" type="text/css" href="{% static 'ferretetia/CSS/styles.css' %}">
+    <script src="{% static 'ferretetia/script.js' %}" defer></script>
 </head>
 <body>
+    <!-- Header con información de contacto -->
     <div class="top-bar">
         <div class="container">
             <div class="contact-info">
@@ -20,6 +22,7 @@
         </div>
     </div>
 
+    <!-- Header principal -->
     <header>
         <nav class="navbar">
             <div class="navbar-left">
@@ -61,36 +64,93 @@
         </nav>
     </header>
 
+    <!-- Menú de navegación inferior -->
+    
+    <!-- Menú de navegación inferior -->
     <nav class="bottom-nav">
         <div class="container">
             <div class="nav-menu">
-                <a href="{% url 'ferretetia:power_tools' %}" class="nav-link active">POWER TOOLS</a>
-                <a href="{% url 'ferretetia:blog' %}" class="nav-link">BLOG</a>
-                <a href="{% url 'ferretetia:shop' %}" class="nav-link">SHOP</a>
-                <a href="{% url 'ferretetia:pages' %}" class="nav-link">PAGES</a>
-                <a href="{% url 'ferretetia:elements' %}" class="nav-link">ELEMENTS</a>
+                <div class="dropdown-menu">
+                    <a href="#" class="nav-link dropdown-toggle">POWER TOOLS</a>
+                    <div class="dropdown-content">
+                        <a href="{% url 'ferretetia:power_tools' %}?category=drill">Taladros</a>
+                        <a href="{% url 'ferretetia:power_tools' %}?category=saw">Sierras</a>
+                        <a href="{% url 'ferretetia:power_tools' %}?category=sander">Lijadoras</a>
+                        <a href="{% url 'ferretetia:power_tools' %}?category=grinder">Amoladoras</a>
+                        <a href="{% url 'ferretetia:power_tools' %}?category=router">Fresadoras</a>
+                        <a href="{% url 'ferretetia:power_tools' %}?category=hammer">Martillos</a>
+                        <a href="{% url 'ferretetia:power_tools' %}">Ver Todos</a>
+                    </div>
+                </div>
+                
+                <div class="dropdown-menu">
+                    <a href="#" class="nav-link dropdown-toggle">BLOG</a>
+                    <div class="dropdown-content">
+                        <a href="{% url 'ferretetia:blog' %}?category=tips">Consejos y Trucos</a>
+                        <a href="{% url 'ferretetia:blog' %}?category=reviews">Reseñas de Productos</a>
+                        <a href="{% url 'ferretetia:blog' %}?category=tutorials">Tutoriales</a>
+                        <a href="{% url 'ferretetia:blog' %}?category=maintenance">Mantenimiento</a>
+                        <a href="{% url 'ferretetia:blog' %}?category=safety">Seguridad</a>
+                        <a href="{% url 'ferretetia:blog' %}">Ver Todos los Posts</a>
+                    </div>
+                </div>
+                
+                <div class="dropdown-menu">
+                    <a href="#" class="nav-link dropdown-toggle active">SHOP</a>
+                    <div class="dropdown-content">
+                        <a href="{% url 'ferretetia:shop' %}?category=tools">Herramientas</a>
+                        <a href="{% url 'ferretetia:shop' %}?category=materials">Materiales</a>
+                        <a href="{% url 'ferretetia:shop' %}?category=paints">Pinturas</a>
+                        <a href="{% url 'ferretetia:shop' %}?category=electrical">Electricidad</a>
+                        <a href="{% url 'ferretetia:shop' %}?category=plumbing">Plomería</a>
+                        <a href="{% url 'ferretetia:shop' %}?category=hardware">Ferretería</a>
+                        <a href="{% url 'ferretetia:shop' %}">Ver Toda la Tienda</a>
+                    </div>
+                </div>
+                
+                <div class="dropdown-menu">
+                    <a href="#" class="nav-link dropdown-toggle">PAGES</a>
+                    <div class="dropdown-content">
+                        <a href="{% url 'ferretetia:pages' %}?page=about">Acerca de Nosotros</a>
+                        <a href="{% url 'ferretetia:pages' %}?page=contact">Contacto</a>
+                        <a href="{% url 'ferretetia:pages' %}?page=services">Servicios</a>
+                        <a href="{% url 'ferretetia:pages' %}?page=delivery">Entregas</a>
+                        <a href="{% url 'ferretetia:pages' %}?page=warranty">Garantías</a>
+                        <a href="{% url 'ferretetia:pages' %}?page=faq">Preguntas Frecuentes</a>
+                        <a href="{% url 'ferretetia:pages' %}">Ver Todas las Páginas</a>
+                    </div>
+                </div>
+                
+                <div class="dropdown-menu">
+                    <a href="#" class="nav-link dropdown-toggle">ELEMENTS</a>
+                    <div class="dropdown-content">
+                        <a href="{% url 'ferretetia:elements' %}?type=buttons">Botones</a>
+                        <a href="{% url 'ferretetia:elements' %}?type=forms">Formularios</a>
+                        <a href="{% url 'ferretetia:elements' %}?type=cards">Tarjetas</a>
+                        <a href="{% url 'ferretetia:elements' %}?type=tables">Tablas</a>
+                        <a href="{% url 'ferretetia:elements' %}?type=modals">Modales</a>
+                        <a href="{% url 'ferretetia:elements' %}?type=alerts">Alertas</a>
+                        <a href="{% url 'ferretetia:elements' %}">Ver Todos los Elementos</a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
 
+
+    <!-- Contenido principal -->
     <main class="main-content">
         <div class="container">
-            <h1>{{ page_title }}</h1>
-            <div class="product-grid">
-                {% for product in products %}
-                <div class="product-card">
-                    <h3>{{ product.name }}</h3>
-                    <p class="price">${{ product.price }}</p>
-                    <button class="add-to-cart" data-product-id="{{ forloop.counter }}">Agregar al Carrito</button>
-                </div>
-                {% endfor %}
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <a href="{% url 'ferretetia:index' %}">Inicio</a> > <span>{{ page_title }}</span>
             </div>
-        </div>
-    </main>
 
-    <style>
-        .nav-link.active { background-color: rgba(255, 255, 255, 0.2); color: var(--color-primary); }
-    </style>
-    <script src="{% static 'ferretetia/script.js' %}"></script>
+            <div class="page-header">
+                <h1>{{ page_title }}</h1>
+                <p>Encuentra las mejores herramientas eléctricas para tus proyectos</p>
+            </div>
+
+    </main>
 </body>
 </html>

@@ -66,15 +66,18 @@
 
     <!-- Menú de navegación inferior -->
     <nav class="bottom-nav">
-        <div class="container">
-            <div class="nav-menu">
-                <a href="{% url 'ferretetia:power_tools' %}" class="nav-link">POWER TOOLS</a>
-                <a href="{% url 'ferretetia:blog' %}" class="nav-link">BLOG</a>
-                <a href="{% url 'ferretetia:shop' %}" class="nav-link">SHOP</a>
-                <a href="{% url 'ferretetia:pages' %}" class="nav-link">PAGES</a>
-                <a href="{% url 'ferretetia:elements' %}" class="nav-link">ELEMENTS</a>
+    <div class="container">
+        <div class="dropdown">
+            <button class="dropdown-toggle">Menú</button>
+            <div class="dropdown-menu">
+                <a href="{% url 'ferretetia:power_tools' %}">POWER TOOLS</a>
+                <a href="{% url 'ferretetia:blog' %}">BLOG</a>
+                <a href="{% url 'ferretetia:shop' %}">SHOP</a>
+                <a href="{% url 'ferretetia:pages' %}">PAGES</a>
+                <a href="{% url 'ferretetia:elements' %}">ELEMENTS</a>
             </div>
         </div>
+    </div>
     </nav>
 
     <!-- Contenido principal -->
