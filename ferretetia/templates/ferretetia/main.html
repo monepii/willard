@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Willard - Ferretetía   </title>
-    <link rel="stylesheet" type="text/css" href="{% static 'ferretetia/CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
     <script src="{% static 'ferretetia/script.js' %}" defer></script>
 </head>
 <body>
@@ -39,23 +39,23 @@
                 </div>
             </div>
             <div class="navbar-right">
-                <a href="{% url 'ferretetia:wishlist' %}" class="nav-item">
+                <a href="{% url 'wishlist:wishlist' %}" class="nav-item">
                     <span class="icon">♡</span>
                     <span>WISHLIST</span>
                 </a>
-                <a href="{% url 'ferretetia:compare' %}" class="nav-item">
+                <a href="{% url 'compare:compare' %}" class="nav-item">
                     <span class="icon">⚖</span>
                     <span>COMPARE</span>
                 </a>
-                <a href="{% url 'ferretetia:account' %}" class="nav-item">
+                <a href="{% url 'account:account' %}" class="nav-item">
                     <span class="icon">👤</span>
                     <span>MY ACCOUNT</span>
                 </a>
-                <a href="{% url 'ferretetia:checkout' %}" class="nav-item">
+                <a href="{% url 'checkout:checkout' %}" class="nav-item">
                     <span class="icon">📋</span>
                     <span>CHECKOUT</span>
                 </a>
-                <a href="{% url 'ferretetia:cart' %}" class="nav-item cart">
+                <a href="{% url 'cart:cart' %}" class="nav-item cart">
                     <span class="icon">🛒</span>
                     <span>CART</span>
                     <span class="cart-count" id="cart-count">0</span>
@@ -71,25 +71,25 @@
                 <div class="dropdown-menu">
                     <a href="#" class="nav-link dropdown-toggle">POWER TOOLS</a>
                     <div class="dropdown-content">
-                        <a href="{% url 'ferretetia:power_tools' %}?category=drill">Taladros</a>
-                        <a href="{% url 'ferretetia:power_tools' %}?category=saw">Sierras</a>
-                        <a href="{% url 'ferretetia:power_tools' %}?category=sander">Lijadoras</a>
-                        <a href="{% url 'ferretetia:power_tools' %}?category=grinder">Amoladoras</a>
-                        <a href="{% url 'ferretetia:power_tools' %}?category=router">Fresadoras</a>
-                        <a href="{% url 'ferretetia:power_tools' %}?category=hammer">Martillos</a>
-                        <a href="{% url 'ferretetia:power_tools' %}">Ver Todos</a>
+                        <a href="{% url 'power_tools:category' 'drill' %}">Taladros</a>
+                        <a href="{% url 'power_tools:category' 'saw' %}">Sierras</a>
+                        <a href="{% url 'power_tools:category' 'sander' %}">Lijadoras</a>
+                        <a href="{% url 'power_tools:category' 'grinder' %}">Amoladoras</a>
+                        <a href="{% url 'power_tools:category' 'router' %}">Fresadoras</a>
+                        <a href="{% url 'power_tools:category' 'hammer' %}">Martillos</a>
+                        <a href="{% url 'power_tools:power_tools' %}">Ver Todos</a>
                     </div>
                 </div>
                 
                 <div class="dropdown-menu">
                     <a href="#" class="nav-link dropdown-toggle">BLOG</a>
                     <div class="dropdown-content">
-                        <a href="{% url 'ferretetia:blog' %}?category=tips">Consejos y Trucos</a>
-                        <a href="{% url 'ferretetia:blog' %}?category=reviews">Reseñas de Productos</a>
-                        <a href="{% url 'ferretetia:blog' %}?category=tutorials">Tutoriales</a>
-                        <a href="{% url 'ferretetia:blog' %}?category=maintenance">Mantenimiento</a>
-                        <a href="{% url 'ferretetia:blog' %}?category=safety">Seguridad</a>
-                        <a href="{% url 'ferretetia:blog' %}">Ver Todos los Posts</a>
+                        <a href="{% url 'blog:category' 'tips' %}">Consejos y Trucos</a>
+                        <a href="{% url 'blog:category' 'reviews' %}">Reseñas de Productos</a>
+                        <a href="{% url 'blog:category' 'tutorials' %}">Tutoriales</a>
+                        <a href="{% url 'blog:category' 'maintenance' %}">Mantenimiento</a>
+                        <a href="{% url 'blog:category' 'safety' %}">Seguridad</a>
+                        <a href="{% url 'blog:blog' %}">Ver Todos los Posts</a>
                     </div>
                 </div>
                 
@@ -109,13 +109,13 @@
                 <div class="dropdown-menu">
                     <a href="#" class="nav-link dropdown-toggle">PAGES</a>
                     <div class="dropdown-content">
-                        <a href="{% url 'ferretetia:pages' %}?page=about">Acerca de Nosotros</a>
-                        <a href="{% url 'ferretetia:pages' %}?page=contact">Contacto</a>
-                        <a href="{% url 'ferretetia:pages' %}?page=services">Servicios</a>
-                        <a href="{% url 'ferretetia:pages' %}?page=delivery">Entregas</a>
-                        <a href="{% url 'ferretetia:pages' %}?page=warranty">Garantías</a>
-                        <a href="{% url 'ferretetia:pages' %}?page=faq">Preguntas Frecuentes</a>
-                        <a href="{% url 'ferretetia:pages' %}">Ver Todas las Páginas</a>
+                        <a href="{% url 'pages:page_detail' 'about' %}">Acerca de Nosotros</a>
+                        <a href="{% url 'pages:page_detail' 'contact' %}">Contacto</a>
+                        <a href="{% url 'pages:page_detail' 'services' %}">Servicios</a>
+                        <a href="{% url 'pages:page_detail' 'delivery' %}">Entregas</a>
+                        <a href="{% url 'pages:page_detail' 'warranty' %}">Garantías</a>
+                        <a href="{% url 'pages:page_detail' 'faq' %}">Preguntas Frecuentes</a>
+                        <a href="{% url 'pages:pages' %}">Ver Todas las Páginas</a>
                     </div>
                 </div>
                 
@@ -147,21 +147,16 @@
             <section class="featured-products">
                 <h2>Productos Destacados</h2>
                 <div class="product-grid">
+                    {% for producto in productos %}
                     <div class="product-card">
-                        <h3>Taladro Inalámbrico</h3>
-                        <p class="price">$89.99</p>
-                        <button class="add-to-cart" data-product-id="1">Agregar al Carrito</button>
+                        <h3>{{ producto.nombre }}</h3>
+                        <p class="price">${{ producto.precio }}</p>
+                        <p style="font-size:13px;color:#666;">{{ producto.descripcion|truncatechars:60 }}</p>
+                        <button class="add-to-cart" data-product-id="{{ producto.id }}">Agregar al Carrito</button>
                     </div>
-                    <div class="product-card">
-                        <h3>Sierra Circular</h3>
-                        <p class="price">$129.99</p>
-                        <button class="add-to-cart" data-product-id="2">Agregar al Carrito</button>
-                    </div>
-                    <div class="product-card">
-                        <h3>Lijadora Orbital</h3>
-                        <p class="price">$65.99</p>
-                        <button class="add-to-cart" data-product-id="3">Agregar al Carrito</button>
-                    </div>
+                    {% empty %}
+                    <p>No hay productos disponibles.</p>
+                    {% endfor %}
                 </div>
             </section>
         </div>

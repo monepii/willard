@@ -1,0 +1,28 @@
+.nav-item.active { 
+    background-color: #f8f9fa; 
+    color: var(--color-primary);
+ }
+.checkout-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    margin-top: 2rem;
+    max-width: 500px; 
+}
+.checkout-form input { 
+    width: 100%; 
+    padding: 10px;
+    margin-bottom: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px; 
+}
+.btn-primary { background: #FDD835;
+    color: #000;
+    border: none;
+    padding: 12px 24px; 
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer; 
+    width: 100%;
+}

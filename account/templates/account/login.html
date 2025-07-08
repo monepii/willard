@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - WILLARD</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'account/CSS/styles.css' %}">
+</head>
+<body>
+    <div class="account-form-container">
+        <h2 class="account-form-title">Iniciar Sesión</h2>
+        <form method="post" class="account-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="add-to-cart">Ingresar</button>
+        </form>
+        <p class="account-form-link">¿No tienes cuenta? <a href="{% url 'account:register' %}">Regístrate</a></p>
+    </div>
+</body>
+</html>

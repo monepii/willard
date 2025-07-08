@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Cuenta - WILLARD</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'account/CSS/styles.css' %}">
+</head>
+<body>
+    <!-- Barra superior -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="contact-info">
+                <span>📞 +3(800) 2345-6789</span>
+                <span>7 días a la semana de 9:00 am a 7:00 pm</span>
+            </div>
+            <div class="currency-selector">
+                <span>USD, $</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Encabezado -->
+    <header>
+        <nav class="navbar">
+            <div class="navbar-left">
+                <div class="logo-container">
+                    <a href="{% url 'ferretetia:index' %}">
+                        <div class="logo-bg">WILLARD</div>
+                    </a>
+                </div>
+            </div>
+            <div class="navbar-center">
+                <div class="search-container">
+                    <input type="text" placeholder="Buscar productos..." class="search-input">
+                    <button class="search-btn">BUSCAR</button>
+                </div>
+            </div>
+            <div class="navbar-right">
+                <a href="{% url 'wishlist:wishlist' %}" class="nav-item">
+                    <span class="icon">♡</span>
+                    <span>WISHLIST</span>
+                </a>
+                <a href="{% url 'compare:compare' %}" class="nav-item">
+                    <span class="icon">⚖</span>
+                    <span>COMPARE</span>
+                </a>
+                <a href="{% url 'account:account' %}" class="nav-item active">
+                    <span class="icon">👤</span>
+                    <span>MI CUENTA</span>
+                </a>
+                <a href="{% url 'checkout:checkout' %}" class="nav-item">
+                    <span class="icon">📋</span>
+                    <span>CHECKOUT</span>
+                </a>
+                <a href="{% url 'cart:cart' %}" class="nav-item cart">
+                    <span class="icon">🛒</span>
+                    <span>CARRITO</span>
+                    <span class="cart-count" id="cart-count">0</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Menú inferior opcional -->
+    <nav class="bottom-nav">
+        <div class="container">
+            <div class="nav-menu">
+                <!-- menú adicional si aplica -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <div class="container">
+            <h1>{{ page_title }}</h1>
+            <p>Gestiona tu cuenta, pedidos y preferencias.</p>
+
+            <div class="account-sections">
+                <div class="account-section">
+                    <h3>Información Personal</h3>
+                    <p>Actualiza tu información de contacto</p>
+                </div>
+                <div class="account-section">
+                    <h3>Historial de Pedidos</h3>
+                    <p>Ve tus compras anteriores</p>
+                </div>
+                <div class="account-section">
+                    <h3>Direcciones</h3>
+                    <p>Gestiona tus direcciones de envío</p>
+                </div>
+            </div>
+        </div>
+        {% if user.is_authenticated %}
+                    <form action="{% url 'account:logout' %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-item" style="background:none;border:none;padding:0;cursor:pointer;">
+                            <span class="icon">🔓</span>
+                            <span>CERRAR SESIÓN</span>
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-item">
+                        <span class="icon">🔐</span>
+                        <span>INICIAR SESIÓN</span>
+                    </a>
+                    <a href="{% url 'register' %}" class="nav-item">
+                        <span class="icon">📝</span>
+                        <span>REGISTRARSE</span>
+                    </a>
+                {% endif %}
+    </main>
+</body>
+</html>

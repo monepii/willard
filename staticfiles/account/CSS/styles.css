@@ -1,0 +1,14 @@
+
+.nav-item.active { 
+    background-color: #f8f9fa;
+     color: var(--color-primary); }
+.account-sections {
+     display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+      gap: 2rem;
+       margin-top: 2rem; }
+.account-section { 
+    background: white;
+     padding: 1.5rem; 
+     border-radius: 8px; 
+     border: 1px solid #e0e0e0; }

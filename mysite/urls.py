@@ -18,10 +18,25 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
+from django.urls import path
+from django.contrib.auth import views as auth_views
+from account.views import register_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('ferretetia.urls')),
+    path('', include('ferretetia.urls')),   
+    path('account/', include('account.urls')),
+    path('blog/', include('blog.urls')),
+    path('cart/', include('cart.urls')),
+    path('checkout/', include('checkout.urls')),
+    path('compare/', include('compare.urls')),
+    path('wishlist/', include('wishlist.urls')),
+    path('pages/', include('pages.urls')),
+    path('power-tools/', include('power_tools.urls')),
+    path('login/', auth_views.LoginView.as_view(template_name='account/login.html'), name='login'),
+    path('register/', register_view, name='register'),
+    path('', register_view, name='account'),  
 ]
 
 # Serve static files during development

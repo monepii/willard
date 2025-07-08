@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Deseos - WILLARD</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'CSS/styles.css' %}">
+</head>
+<body>
+    <!-- Header con información de contacto -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="contact-info">
+                <span>📞 +3(800) 2345-6789</span>
+                <span>7 Days a week from 9:00 am to 7:00 pm</span>
+            </div>
+            <div class="currency-selector">
+                <span>USD, $</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header principal -->
+    <header>
+        <nav class="navbar">
+            <div class="navbar-left">
+                <div class="logo-container">
+                    <a href="{% url 'ferretetia:index' %}">
+                        <div class="logo-bg">WILLARD</div>
+                    </a>
+                </div>
+            </div>
+            <div class="navbar-center">
+                <div class="search-container">
+                    <input type="text" placeholder="Search Products..." class="search-input">
+                    <button class="search-btn">SEARCH</button>
+                </div>
+            </div>
+            <div class="navbar-right">
+                <a href="{% url 'wishlist:wishlist' %}" class="nav-item active">
+                    <span class="icon">♡</span>
+                    <span>WISHLIST</span>
+                </a>
+                <a href="{% url 'compare:compare' %}" class="nav-item">
+                    <span class="icon">⚖</span>
+                    <span>COMPARE</span>
+                </a>
+                <a href="{% url 'account:account' %}" class="nav-item">
+                    <span class="icon">👤</span>
+                    <span>MY ACCOUNT</span>
+                </a>
+                <a href="{% url 'checkout:checkout' %}" class="nav-item">
+                    <span class="icon">📋</span>
+                    <span>CHECKOUT</span>
+                </a>
+                <a href="{% url 'cart:cart' %}" class="nav-item cart">
+                    <span class="icon">🛒</span>
+                    <span>CART</span>
+                    <span class="cart-count" id="cart-count">0</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <div class="container">
+            <h1>{{ page_title }}</h1>
+            <p>Tu lista de productos favoritos aparecerá aquí.</p>
+            <a href="{% url 'ferretetia:index' %}" class="btn">Explorar Productos</a>
+        </div>
+    </main>
+</body>
+</html>
