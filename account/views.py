@@ -6,9 +6,17 @@ from django.contrib.auth.forms import UserCreationForm
 
 def account_view(request):
     """Vista principal de la cuenta"""
+    perfil = None
+    if request.user.is_authenticated:
+        try:
+            from .models import PerfilUsuario
+            perfil = PerfilUsuario.objects.get(user=request.user)
+        except PerfilUsuario.DoesNotExist:
+            perfil = None
     context = {
         'page_title': 'Mi Cuenta',
-        'user': request.user if request.user.is_authenticated else None
+        'user': request.user if request.user.is_authenticated else None,
+        'perfil': perfil
     }
     return render(request, 'account/account.html', context)
 

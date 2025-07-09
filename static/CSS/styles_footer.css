@@ -1,0 +1,142 @@
+/* ===== FOOTER ===== */
+.footer {
+    background: #222;
+    color: #fff;
+    font-size: 15px;
+    margin-top: 3rem;
+    padding-top: 0;
+}
+.newsletter {
+    background: #ffd600;
+    color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2rem;
+    flex-wrap: wrap;
+}
+.newsletter-title {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin-right: 1rem;
+    letter-spacing: 1px;
+}
+.newsletter-desc {
+    flex: 1;
+    margin-right: 2rem;
+    font-size: 1em;
+}
+.newsletter-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.newsletter-input {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 2px;
+    font-size: 1em;
+    min-width: 200px;
+}
+.newsletter-btn {
+    background: #222;
+    color: #ffd600;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 2px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.newsletter-btn:hover {
+    background: #444;
+}
+.footer-main {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 2rem 2rem 1rem 2rem;
+    background: #222;
+}
+.footer-section {
+    flex: 1 1 200px;
+    margin: 0 1.5rem 1.5rem 0;
+    min-width: 200px;
+}
+.footer-section h3 {
+    color: #ffd600;
+    font-size: 1.1em;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+}
+.footer-section p, .footer-section .tag-list {
+    color: #ccc;
+    font-size: 0.97em;
+}
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.tag {
+    background: #333;
+    color: #ffd600;
+    padding: 4px 12px;
+    border-radius: 2px;
+    font-size: 0.95em;
+    margin-bottom: 0.3rem;
+    display: inline-block;
+}
+.footer-bottom {
+    background: #181818;
+    color: #bbb;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    font-size: 0.95em;
+    border-top: 1px solid #333;
+}
+.footer-logo {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #ffd600;
+    margin-right: 1.5rem;
+}
+.footer-copy {
+    flex: 1;
+    margin-right: 1.5rem;
+}
+.footer-social, .footer-payments {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+.icon-social, .icon-pay {
+    background: #333;
+    color: #ffd600;
+    padding: 4px 10px;
+    border-radius: 2px;
+    font-size: 1em;
+    margin-right: 0.2rem;
+}
+.icon-social:last-child, .icon-pay:last-child {
+    margin-right: 0;
+}
+@media (max-width: 900px) {
+    .footer-main {
+        flex-direction: column;
+        padding: 2rem 1rem 1rem 1rem;
+    }
+    .footer-section {
+        margin-right: 0;
+        margin-bottom: 2rem;
+    }
+    .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.7rem;
+        padding: 1rem 1rem;
+    }
+}

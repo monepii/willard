@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comparar Productos - WILLARD</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
+    <link rel="stylesheet" href="{% static 'compare/styles.css' %}">
 </head>
 <body>
     <div class="top-bar">
@@ -69,9 +71,38 @@
         </div>
     </main>
 
-    <style>
-        .nav-item.active { background-color: #f8f9fa; color: var(--color-primary); }
-        .btn { display: inline-block; background: #333; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; margin-top: 20px; }
-    </style>
+
+<!-- Footer-->
+<footer class="footer">
+        <div class="newsletter">
+            <span class="newsletter-title">NEWSLETTER</span>
+            <span class="newsletter-desc">OUR DIY TIPS AND SPECIAL PROMO OFFERS ARE A BARGAIN!</span>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Enter your email" class="newsletter-input">
+                <button type="submit" class="newsletter-btn">SUBSCRIBE!</button>
+            </form>
+        </div>
+        <div class="footer-main">
+            <div class="footer-section about">
+                <h3>ABOUT</h3>
+                <p>Millions of American households are poised up for renovation works at some point, not even mentioning the routine repairs and integrity maintenance. This is why knowing of a great hardware store where you can get a bargain on all tools is so important!</p>
+            </div>
+            <div class="footer-section recent-comments">
+                <h3>RECENT COMMENTS</h3>
+                </div>
+            <div class="footer-section tags">
+                <h3>TAGS</h3>
+                <div class="tag-list">
+
+                </div>
+            </div>
+            <div class="footer-section contacts">
+                <h3>CONTACTS</h3>
+                <p>📞 +3(800) 2345-6789, +3(800) 2345-6790</p>
+                <p>🕒 7 DAYS A WEEK FROM 9:00 AM TO 7:00 PM</p>
+                <p>✉️ info@demolink.org</p>
+            </div>
+        </div>  
+    </footer>
 </body>
 </html>

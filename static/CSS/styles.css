@@ -1,3 +1,4 @@
+
 :root {
     --container-max-width: 1200px;
     --spacing-sm: 8px;
@@ -405,12 +406,6 @@ header {
     color: var(--color-text);
 }
 
-.product-card .price {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #007bff;
-    margin-bottom: var(--spacing-md);
-}
 
 .add-to-cart {
     background-color: var(--color-primary);
