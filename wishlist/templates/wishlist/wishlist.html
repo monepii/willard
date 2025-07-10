@@ -20,6 +20,7 @@
             <div class="currency-selector">
                 <span>USD, $</span>
             </div>
+            {% include "ferretetia/auth.html" %}
         </div>
     </div>
 
@@ -35,31 +36,25 @@
             </div>
             <div class="navbar-center">
                 <div class="search-container">
-                    <input type="text" placeholder="Search Products..." class="search-input">
-                    <button class="search-btn">SEARCH</button>
+                    <input type="text" placeholder="Buscar Productos..." class="search-input">
+                    <button class="search-btn">BUSCAR</button>
                 </div>
             </div>
             <div class="navbar-right">
                 <a href="{% url 'wishlist:wishlist' %}" class="nav-item active">
-                    <span class="icon">♡</span>
-                    <span>WISHLIST</span>
+                    <span class="icon">♡ WISHLIST</span>
                 </a>
-                <a href="{% url 'compare:compare' %}" class="nav-item ">
-                    <span class="icon">⚖</span>
-                    <span>COMPARE</span>
+                <a href="{% url 'compare:compare' %}" class="nav-item">
+                    <span class="icon">⚖ COMPARAR</span>
                 </a>
                 <a href="{% url 'account:account' %}" class="nav-item">
-                    <span class="icon">👤</span>
-                    <span>MY ACCOUNT</span>
+                    <span class="icon">👤 MI CUENTA</span>
                 </a>
                 <a href="{% url 'checkout:checkout' %}" class="nav-item">
-                    <span class="icon">📋</span>
-                    <span>CHECKOUT</span>
+                    <span class="icon">📋 CHECKOUT</span>
                 </a>
                 <a href="{% url 'cart:cart' %}" class="nav-item cart">
-                    <span class="icon">🛒</span>
-                    <span>CART</span>
-                    <span class="cart-count" id="cart-count">0</span>
+                    <span class="icon">🛒 CARRITO </span>
                 </a>
             </div>
         </nav>

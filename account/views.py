@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 def account_view(request):
     """Vista principal de la cuenta"""
@@ -22,17 +22,18 @@ def account_view(request):
 
 def login_view(request):
     """Vista de login"""
+    form = AuthenticationForm(request, data=request.POST or None)
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
+        if form.is_valid():
+            user = form.get_user()
             login(request, user)
             return redirect('account:account')
         else:
             messages.error(request, 'Credenciales incorrectas')
-    
-    context = {'page_title': 'Iniciar Sesión'}
+    context = {
+        'page_title': 'Iniciar Sesión',
+        'form': form
+    }
     return render(request, 'account/login.html', context)
 
 def register_view(request):
