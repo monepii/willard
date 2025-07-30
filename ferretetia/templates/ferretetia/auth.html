@@ -1,5 +1,15 @@
 {% load static %}
-<div class="auth-buttons">
+    <!-- Header con información de contacto -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="contact-info">
+                <span>📞 +3(800) 2345-6789</span>
+                <span>7 Days a week from 9:00 am to 7:00 pm</span>
+            </div>
+            <div class="currency-selector">
+                <span>USD, $</span>
+            </div>
+            <div class="auth-buttons">
     {% if user.is_authenticated %}
         <form action="{% url 'account:logout' %}" method="post" style="display:inline;">
             {% csrf_token %}
@@ -17,3 +27,5 @@
         </a>
     {% endif %}
 </div>
+        </div>
+    </div>

@@ -41,7 +41,7 @@ def search_products(request):
 
 def shop(request):
     """Vista de la tienda"""
-    context = {
+    context = { 
         'page_title': 'Tienda',
         'categories': ['Herramientas', 'Materiales', 'Pinturas', 'Electricidad']
     }

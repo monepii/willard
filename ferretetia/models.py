@@ -12,7 +12,8 @@ class Producto(models.Model):
     actualizado = models.DateTimeField(auto_now=True)
     descuento = models.BooleanField(default=False)
     precioDescuento = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    imagen = models.ImageField(upload_to='images/',default='images/default.jpg',blank=False)
 
     def __str__(self):
-        return self.nombre
+        return self.nombre  
     

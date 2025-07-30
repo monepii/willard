@@ -10,19 +10,7 @@
     <link rel="stylesheet" href="{% static 'wishlist/styles.css' %}">
 </head>
 <body>
-    <!-- Header con información de contacto -->
-    <div class="top-bar">
-        <div class="container">
-            <div class="contact-info">
-                <span>📞 +3(800) 2345-6789</span>
-                <span>7 Days a week from 9:00 am to 7:00 pm</span>
-            </div>
-            <div class="currency-selector">
-                <span>USD, $</span>
-            </div>
-            {% include "ferretetia/auth.html" %}
-        </div>
-    </div>
+    {% include "ferretetia/auth.html" %}
 
     <!-- Header principal -->
     <header>

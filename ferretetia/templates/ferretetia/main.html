@@ -6,25 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Willard - Ferretetía   </title>
     <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
-    <link rel="stylesheet" href="{% static 'ferretetia/CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/styles2.css' %}">
     <script src="{% static 'ferretetia/script.js' %}" defer></script>
     <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/styles_img.css' %}">
 </head>
 <body>
-    <!-- Header con información de contacto -->
-    <div class="top-bar">
-        <div class="container">
-            <div class="contact-info">
-                <span>📞 +3(800) 2345-6789</span>
-                <span>7 Days a week from 9:00 am to 7:00 pm</span>
-            </div>
-            <div class="currency-selector">
-                <span>USD, $</span>
-            </div>
-            {% include "ferretetia/auth.html" %}
-        </div>
-    </div>
-
+    
+    {% include "ferretetia/auth.html" %}
+    
     <!-- Header principal -->
     <header>
         <nav class="navbar">
@@ -125,8 +115,36 @@
                 <h1>Bienvenido a WILLARD</h1>
                 <p>Tu ferretería de confianza para todas tus necesidades de herramientas y materiales.</p>
             </div>
+            <section class="product-promotions">
+            <div class="promotion-left">
+                <h2>OFERTAS CALIENTES ESTA SEMANA</h2>
+                <p>Por otro lado, denunciamos con justa indignación y aversión a los hombres que están tan engañados y desmoralizados</p>
+                <div class="promotion-timer">
+                    <div><span>06</span><br>DÍAS</div>
+                    <div><span>15</span><br>HORAS</div>
+                    <div><span>29</span><br>MINS</div>
+                    <div><span>58</span><br>SECS</div>
+                </div>
+                <button class="shop-now-btn">COMPRAR AHORA &rsaquo;</button>
+                <img src="ASSETS/sofa2.png" alt="Sofá Crema" class="promotion-sofa-img">
+            </div>
+            <div class="promotion-right">
+                <h1 class="sale-title">¡OFERTA HASTA 50%!</h1>
+                <img src="ASSETS/sofa.png" alt="Sofá Crema" class="promotion-sofa-img">
+                <h3>SOFÁ AZUL FRITZ HANSEN</h3>
+                <p>Sofá Clásico</p>
+                <span class="promotion-price">£520.00</span>
+                <span class="promotion-old-price">£750.00</span>
+                <div class="promotion-variants">
+                    <img src="ASSETS/sillon2-1.png" alt="Variante 1">
+                    <img src="ASSETS/sillon2-2.png" alt="Variante 2">
+                    <img src="ASSETS/sillon2-3.png" alt="Variante 3">
+                    <img src="ASSETS/sillon2-4.png" alt="Variante 4">
+                </div>
+            </div>
+        </section>
             
-            <!-- Sección de productos destacados -->
+            <!-- Destacados -->
             <section class="featured-products">
                 <h2>Productos En Descuento</h2>
                 <div class="product-grid">
@@ -134,6 +152,7 @@
                     {% if producto.descuento == True %}
                     <div class="product-card">
                         <h3>{{ producto.nombre }}</h3>
+                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" />
                         <p class="price discounted" >${{ producto.precio }}</p>
                         <p class="price" >${{producto.precioDescuento}} </p>
                         <p style="font-size:13px;color:#666;">{{ producto.descripcion|truncatechars:60 }}</p>
@@ -153,7 +172,7 @@
                 </div>
             </section>
 
-            <!-- Sección de productos OFERTAS -->
+            <!-- OFERTAS -->
             <section class="featured-products">
                 <h2>Productos En Descuento</h2>
                 <div class="product-grid">
@@ -161,6 +180,7 @@
                     {% if producto.descuento == True %}
                     <div class="product-card">
                         <h3>{{ producto.nombre }}</h3>
+                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" />
                         <p class="price discounted" >${{ producto.precio }}</p>
                         <p class="price" >${{producto.precioDescuento}} </p>
                         <p style="font-size:13px;color:#666;">{{ producto.descripcion|truncatechars:60 }}</p>
