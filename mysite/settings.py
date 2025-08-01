@@ -70,7 +70,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'account.perfil.perfil_usuario'
+                'account.perfil.perfil_usuario',
+                'ferretetia.views.global_categories'
             ],
         },
     },
@@ -133,10 +134,14 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
+# Media files (uploaded content)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'account:account'
-LOGOUT_REDIRECT_URL = 'login'
+LOGIN_REDIRECT_URL = '/account/'
+LOGOUT_REDIRECT_URL = '/'

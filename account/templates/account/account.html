@@ -48,21 +48,11 @@
         </nav>
     </header>
 
-    <!-- Menú inferior opcional -->
-    <nav class="bottom-nav">
-        <div class="container">
-            <div class="nav-menu">
-                <!-- menú adicional si aplica -->
-            </div>
-        </div>
-    </nav>
-
     <!-- Contenido principal -->
     <main class="main-content">
         <div class="container">
-            <h1>{{ page_title }}</h1>
-            {% if perfil %}
-                <p>Bienvenido, {{ perfil.nombre }}.</p>
+            {% if perfil %} 
+                <h1>Bienvenido, {{ perfil.nombre }}.</h1>
                 <div class="account-sections">
                 <div class="account-section">
                     <h3>Información Personal</h3>

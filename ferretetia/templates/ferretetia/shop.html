@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda - WILLARD</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'ferretetia/CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/styles2.css' %}">
+   <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
+</head>
+<body>
+    {% include "ferretetia/auth.html" %}
+    
+    <header>
+        <nav class="navbar">
+            <div class="navbar-left">
+                <div class="logo-container">
+                    <a href="{% url 'ferretetia:index' %}">
+                        <div class="logo-bg">WILLARD</div>
+                    </a>
+                </div>
+            </div>
+            <div class="navbar-center">
+                <div class="search-container">
+                    <input type="text" placeholder="Buscar Productos..." class="search-input">
+                    <button class="search-btn">BUSCAR</button>
+                </div>
+            </div>
+            <div class="navbar-right">
+                <a href="{% url 'ferretetia:wishlist' %}" class="nav-item">
+                    <span class="icon">♡ WISHLIST</span>
+                </a>
+                <a href="{% url 'ferretetia:compare' %}" class="nav-item">
+                    <span class="icon">⚖ COMPARAR</span>
+                </a>
+                <a href="{% url 'ferretetia:account' %}" class="nav-item">
+                    <span class="icon">👤 MI CUENTA</span>
+                </a>
+                <a href="{% url 'ferretetia:checkout' %}" class="nav-item">
+                    <span class="icon">📋 CHECKOUT</span>
+                </a>
+                <a href="{% url 'ferretetia:cart' %}" class="nav-item cart">
+                    <span class="icon">🛒 CARRITO</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            
+            <section class="categories-section">
+                <h2>Categorías Disponibles</h2>
+                <div class="categories-grid">
+                    {% for categoria in categorias %}
+                    <div class="category-card">
+                        <h3>{{ categoria.nombre }}</h3>
+                        <p>{{ categoria.descripcion|default:"Explora nuestra selección de productos" }}</p>
+                        <a href="?categoria={{ categoria.nombre|urlencode }}" class="add-to-cart">
+                         Productos 
+                        </a>
+                    </div>
+                    {% empty %}
+                    {% endfor %}
+                    
+                    <div class="category-card">
+                        <h3>Todos los Productos</h3>
+                        <p>Ver todos los productos disponibles</p>
+                        <a href="{% url 'ferretetia:shop' %}" class="add-to-cart">Ver Todos</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="products-section">
+                <h2>Productos Destacados</h2>
+                <div class="products-grid">
+                    {% for producto in productos %}
+                    <div class="product-card">
+                        <div class="product-image">
+                            {% if producto.imagen %}
+                            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                            {% else %}
+                            <div class="product-image-placeholder">
+                                <span>{{ producto.nombre|slice:":1"|upper }}</span>
+                            </div>
+                            {% endif %}
+                            {% if producto.descuento %}
+                            <span class="sale-badge">SALE</span>
+                            {% endif %}
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">{{ producto.nombre }}</h3>
+                            <div class="product-pricing">
+                                {% if producto.descuento and producto.precioDescuento %}
+                                <span class="price-original">${{ producto.precio }}</span>
+                                <span class="price-sale">${{ producto.precioDescuento }}</span>
+                                {% else %}
+                                <span class="price-current">${{ producto.precio }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="product-actions">
+                                <button class="wishlist-btn" title="Agregar a favoritos" data-product-id="{{ producto.id }}">♡</button>
+                                <button class="compare-btn" title="Comparar" data-product-id="{{ producto.id }}">⚖</button>
+                                <button class="view-btn" title="Vista rápida" data-product-id="{{ producto.id }}">👁</button>
+                            </div>
+                            <button class="add-to-cart-btn" data-product-id="{{ producto.id }}">Agregar al Carrito</button>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="no-products">
+                        <h3>No hay productos disponibles</h3>
+                        <p>Pronto tendremos productos para ti</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        {% include "ferretetia/footer.html" %}
+    </footer>
+
+    <script src="{% static 'ferretetia/script.js' %}"></script>
+</body>
+</html>

@@ -1,3 +1,25 @@
+/* Estilos para login y registro */
+.account-form-container {
+    max-width: 400px;
+    margin: 60px auto;
+}
+.account-form-title {
+    text-align: center;
+}
+.account-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+.account-form .add-to-cart {
+    width: 100%;
+    margin-top: 1rem;
+}
+.account-form-link {
+    text-align: center;
+    margin-top: 1rem;
+}
 
 .nav-item.active { 
     background-color: #f8f9fa;

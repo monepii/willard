@@ -32,19 +32,19 @@
                 </div>
             </div>
             <div class="navbar-right">
-                <a href="{% url 'wishlist:wishlist' %}" class="nav-item">
+                <a href="{% url 'ferretetia:wishlist' %}" class="nav-item">
                     <span class="icon">♡ WISHLIST</span>
                 </a>
-                <a href="{% url 'compare:compare' %}" class="nav-item">
+                <a href="{% url 'ferretetia:compare' %}" class="nav-item">
                     <span class="icon">⚖ COMPARAR</span>
                 </a>
-                <a href="{% url 'account:account' %}" class="nav-item">
+                <a href="{% url 'ferretetia:account' %}" class="nav-item">
                     <span class="icon">👤 MI CUENTA</span>
                 </a>
-                <a href="{% url 'checkout:checkout' %}" class="nav-item">
+                <a href="{% url 'ferretetia:checkout' %}" class="nav-item">
                     <span class="icon">📋 CHECKOUT</span>
                 </a>
-                <a href="{% url 'cart:cart' %}" class="nav-item cart">
+                <a href="{% url 'ferretetia:cart' %}" class="nav-item cart">
                     <span class="icon">🛒 CARRITO </span>
                 </a>
             </div>
@@ -58,40 +58,37 @@
                 <div class="dropdown-menu">
                     <a href="#" class="nav-link dropdown-toggle">POWER TOOLS</a>
                     <div class="dropdown-content">
-                        <a href="{% url 'power_tools:category' 'drill' %}">Taladros</a>
-                        <a href="{% url 'power_tools:category' 'saw' %}">Sierras</a>
-                        <a href="{% url 'power_tools:power_tools' %}">Ver Todos</a>
+                        <a href="#">Taladros</a>
+                        <a href="#">Sierras</a>
+                        <a href="#">Ver Todos</a>
                     </div>
                 </div>
                 
                 <div class="dropdown-menu">
                     <a href="#" class="nav-link dropdown-toggle">BLOG</a>
                     <div class="dropdown-content">
-                        <a href="{% url 'blog:category' 'tips' %}">Consejos y Trucos</a>
-                        <a href="{% url 'blog:blog' %}">Ver Todos los Posts</a>
+                        <a href="#">Consejos y Trucos</a>
+                        <a href="#">Ver Todos los Posts</a>
                     </div>
                 </div>
                 
                 <div class="dropdown-menu">
                     <a href="#" class="nav-link dropdown-toggle">SHOP</a>
                     <div class="dropdown-content">
-                        <a href="{% url 'ferretetia:shop' %}?category=tools">Herramientas</a>
-                        <a href="{% url 'ferretetia:shop' %}?category=materials">Materiales</a>
-                        <a href="{% url 'ferretetia:shop' %}?category=paints">Pinturas</a>
-                        <a href="{% url 'ferretetia:shop' %}?category=electrical">Electricidad</a>
-                        <a href="{% url 'ferretetia:shop' %}?category=plumbing">Plomería</a>
-                        <a href="{% url 'ferretetia:shop' %}?category=hardware">Ferretería</a>
+                        {% for categoria in categorias %}
+                        <a href="{% url 'ferretetia:shop' %}?categoria={{ categoria.nombre|urlencode }}">{{ categoria.nombre }}</a>    
+                        {% endfor %}
                         <a href="{% url 'ferretetia:shop' %}">Ver Toda la Tienda</a>
                     </div>
                 </div>
-                
+
                 <div class="dropdown-menu">
                     <a href="#" class="nav-link dropdown-toggle">PAGES</a>
                     <div class="dropdown-content">
-                        <a href="{% url 'pages:page_detail' 'about' %}">Acerca de Nosotros</a>
-                        <a href="{% url 'pages:page_detail' 'contact' %}">Contacto</a>
-                        <a href="{% url 'pages:page_detail' 'services' %}">Servicios</a>
-                        <a href="{% url 'pages:pages' %}">Ver Todas las Páginas</a>
+                        <a href="#">Acerca de Nosotros</a>
+                        <a href="#">Contacto</a>
+                        <a href="#">Servicios</a>
+                        <a href="#">Ver Todas las Páginas</a>
                     </div>
                 </div>
 
@@ -107,14 +104,54 @@
             </div>
         </div>
     </nav>
-
-    <!-- Contenido principal -->
     <main class="main-content">
         <div class="container">
-            <div class="welcome-section">
-                <h1>Bienvenido a WILLARD</h1>
-                <p>Tu ferretería de confianza para todas tus necesidades de herramientas y materiales.</p>
-            </div>
+            <section class="tool-categories">
+                <div class="categories-grid">
+                    <a href="{% url 'ferretetia:shop' %}?categoria=Power%20Tools" class="category-button">
+                        <div class="category-icon">
+                            <img src="/media/images/taladro-de-mano.png" alt="Herramienta Eléctrica" width="40" height="40">
+                        </div>
+                        <span class="category-text">Eléctrica</span>
+                    </a>
+                    
+                    <a href="{% url 'ferretetia:shop' %}?categoria=Hand%20Tools" class="category-button">
+                        <div class="category-icon">
+                            <img src="/media/images/mano-de-obra.png" alt="Herramienta Manual" width="40" height="40">
+                        </div>
+                        <span class="category-text">Manuales</span>
+                    </a>
+                    
+                    <a href="{% url 'ferretetia:shop' %}?categoria=Plumbing%20Tools" class="category-button">
+                        <div class="category-icon">
+                            <img src="/media/images/plomeria.png" alt="Herramienta de plomeria" width="40" height="40">
+                        </div>
+                        <span class="category-text">Plomeria</span>
+                    </a>
+                    
+                    <a href="{% url 'ferretetia:shop' %}?categoria=Carpenter%20Tools" class="category-button">
+                        <div class="category-icon">
+                            <img src="/media/images/herramientas.png" alt="Herramienta de carpinteria" width="40" height="40">
+                        </div>
+                        <span class="category-text">Carpintería</span>
+                    </a>
+                    
+                    <a href="{% url 'ferretetia:shop' %}?categoria=Paint%20Tools" class="category-button">
+                        <div class="category-icon">
+                            <img src="/media/images/pintura.png" alt="Herramienta de pintura" width="40" height="40">
+                        </div>
+                        <span class="category-text">Pintura</span>
+                    </a>
+                    
+                    <a href="{% url 'ferretetia:shop' %}?categoria=Measuring%20Tools" class="category-button">
+                        <div class="category-icon">
+                            <img src="/media/images/medicion.png" alt="Herramienta de medición" width="40" height="40">
+                        </div>
+                        <span class="category-text">Medición</span>
+                    </a>
+                </div>
+            </section>
+
             <section class="product-promotions">
             <div class="promotion-left">
                 <h2>OFERTAS CALIENTES ESTA SEMANA</h2>
@@ -126,71 +163,86 @@
                     <div><span>58</span><br>SECS</div>
                 </div>
                 <button class="shop-now-btn">COMPRAR AHORA &rsaquo;</button>
-                <img src="ASSETS/sofa2.png" alt="Sofá Crema" class="promotion-sofa-img">
             </div>
             <div class="promotion-right">
                 <h1 class="sale-title">¡OFERTA HASTA 50%!</h1>
-                <img src="ASSETS/sofa.png" alt="Sofá Crema" class="promotion-sofa-img">
-                <h3>SOFÁ AZUL FRITZ HANSEN</h3>
-                <p>Sofá Clásico</p>
-                <span class="promotion-price">£520.00</span>
-                <span class="promotion-old-price">£750.00</span>
+                <h3>HERRAMIENTAS DE CALIDAD</h3>
+                <p>Productos de Ferretería</p>
+                <span class="promotion-price">$520.00</span>
+                <span class="promotion-old-price">$750.00</span>
                 <div class="promotion-variants">
-                    <img src="ASSETS/sillon2-1.png" alt="Variante 1">
-                    <img src="ASSETS/sillon2-2.png" alt="Variante 2">
-                    <img src="ASSETS/sillon2-3.png" alt="Variante 3">
-                    <img src="ASSETS/sillon2-4.png" alt="Variante 4">
+                    <img src="{% static 'images/martillo.png' %}" alt="Martillo" style="width: 50px; height: 50px;">
+                    <img src="{% static 'images/engrapadora.png' %}" alt="Engrapadora" style="width: 50px; height: 50px;">
                 </div>
             </div>
         </section>
+        
             
             <!-- Destacados -->
-            <section class="featured-products">
-                <h2>Productos En Descuento</h2>
-                <div class="product-grid">
+            <section class="products-section">
+                <h2>Productos Destacados</h2>
+                <div class="products-grid">
                     {% for producto in productos %}
-                    {% if producto.descuento == True %}
                     <div class="product-card">
-                        <h3>{{ producto.nombre }}</h3>
-                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" />
-                        <p class="price discounted" >${{ producto.precio }}</p>
-                        <p class="price" >${{producto.precioDescuento}} </p>
-                        <p style="font-size:13px;color:#666;">{{ producto.descripcion|truncatechars:60 }}</p>
-                        <button class="add-to-cart" data-product-id="{{ producto.id }}">Agregar al Carrito</button>
+                        <div class="product-image">
+                            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                            {% if producto.descuento %}
+                            <span class="sale-badge">SALE</span>
+                            {% endif %}
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">{{ producto.nombre }}</h3>
+                            <div class="product-pricing">
+                                {% if producto.descuento and producto.precioDescuento %}
+                                <span class="price-original">${{ producto.precio }}</span>
+                                <span class="price-sale">${{ producto.precioDescuento }}</span>
+                                {% else %}
+                                <span class="price-current">${{ producto.precio }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="product-actions">
+                                <button class="wishlist-btn" title="Agregar a favoritos">♡</button>
+                                <button class="compare-btn" title="Comparar">⚖</button>
+                                <button class="view-btn" title="Vista rápida">👁</button>
+                            </div>
+                            <button class="add-to-cart-btn" data-product-id="{{ producto.id }}">Agregar al Carrito</button>
+                        </div>
                     </div>
-                    {% else %}
-                    <div class="product-card">
-                        <h3>{{ producto.nombre }}</h3>
-                        <p class="price " >${{ producto.precio }}</p>
-                        <button class="add-to-cart" data-product-id="{{ producto.id }}">Agregar al Carrito</button>
-                    </div>
-                    {% endif %}
                     {% empty %}
                     <p>No hay productos disponibles.</p>
                     {% endfor %}
-                    
                 </div>
             </section>
 
             <!-- OFERTAS -->
-            <section class="featured-products">
+            <section class="products-section">
                 <h2>Productos En Descuento</h2>
-                <div class="product-grid">
+                <div class="products-grid">
                     {% for producto in productos %}
                     {% if producto.descuento == True %}
                     <div class="product-card">
-                        <h3>{{ producto.nombre }}</h3>
-                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" />
-                        <p class="price discounted" >${{ producto.precio }}</p>
-                        <p class="price" >${{producto.precioDescuento}} </p>
-                        <p style="font-size:13px;color:#666;">{{ producto.descripcion|truncatechars:60 }}</p>
-                        <button class="add-to-cart" data-product-id="{{ producto.id }}">Agregar al Carrito</button>
+                        <div class="product-image">
+                            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                            <span class="sale-badge">SALE</span>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">{{ producto.nombre }}</h3>
+                            <div class="product-pricing">
+                                <span class="price-original">${{ producto.precio }}</span>
+                                <span class="price-sale">${{ producto.precioDescuento }}</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="wishlist-btn" title="Agregar a favoritos">♡</button>
+                                <button class="compare-btn" title="Comparar">⚖</button>
+                                <button class="view-btn" title="Vista rápida">👁</button>
+                            </div>
+                            <button class="add-to-cart-btn" data-product-id="{{ producto.id }}">Agregar al Carrito</button>
+                        </div>
                     </div>
                     {% endif %}
                     {% empty %}
                     <p>No hay productos disponibles.</p>
                     {% endfor %}
-                    
                 </div>
             </section>
 
