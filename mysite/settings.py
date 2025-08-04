@@ -71,7 +71,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'account.perfil.perfil_usuario',
-                'ferretetia.views.global_categories'
+                'ferretetia.views.global_categories',
+                'cart.context_processors.cart_context'
             ],
         },
     },

@@ -17,7 +17,7 @@ urlpatterns = [
     path('wishlist/', views.wishlist, name='wishlist'),
     path('compare/', views.compare, name='compare'),
     path('checkout/', views.checkout, name='checkout'),
-    path('cart/', views.cart, name='cart')
+
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

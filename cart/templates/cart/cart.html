@@ -41,49 +41,147 @@
                     <span class="icon">📋 CHECKOUT</span>
                 </a>
                 <a href="{% url 'cart:cart' %}" class="nav-item cart active">
-                    <span class="icon">🛒 CARRITO </span>
+                    <span class="icon">🛒 CARRITO {% if cart_count > 0 %}({{ cart_count }}){% endif %}</span>
                 </a>
             </div>
         </nav>
     </header>
 
-
     <main class="main-content">
         <div class="container">
-            <h1>Carrito</h1>
-            {% if perfil%}
-            <div class="cart-container">    
-                <div id="cart-items" class="cart-items">
-                    <p class="empty-cart">Tu carrito está vacío. <a href="{% url 'ferretetia:index' %}">Continuar comprando</a></p>
+
+            
+            <h1>Carrito de Compras</h1>
+            
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
                 </div>
-                
-                <div class="cart-summary" id="cart-summary" style="display: none;">
-                    <h3>Resumen del pedido</h3>
-                    <div class="summary-line">
-                        <span>Subtotal:</span>
-                        <span id="subtotal">$0.00</span>
-                    </div>
-                    <div class="summary-line">
-                        <span>Envío:</span>
-                        <span>$10.00</span>
-                    </div>
-                    <div class="summary-line total">
-                        <span>Total:</span>
-                        <span id="total">$10.00</span>
-                    </div>
-                    <button class="checkout-btn" onclick="window.location.href='{% url 'checkout:checkout' %}'">
-                        Proceder al Checkout
-                    </button>
-                </div>
-                {% else %}
-                <p>Para visualizar tu carrito deberás <a style="color: blue " href="{% url 'account:login' %}">iniciar sesión</a> o <a style="color:blue" href="{%url 'account:register' %}">registrarte</a></p>
-                {%endif%}
+                {% endfor %}
             </div>
+            {% endif %}
+
+            {% if not items %}
+                <div class="empty-cart">
+                    <h3>Tu carrito está vacío</h3>
+                    <p>No tienes productos en tu carrito de compras.</p>
+                    <a href="{% url 'ferretetia:shop' %}" class="btn-continue-shopping">Continuar Comprando</a>
+                </div>
+            {% else %}
+                <div class="cart-container">
+                    <div class="cart-items">
+                        <h2>Productos en tu carrito ({{ total_items }} items)</h2>
+                        
+                        {% for item in items %}
+                        <div class="cart-item" data-item-id="{{ item.id }}">
+                            <div class="item-image">
+                                {% if item.producto.imagen %}
+                                <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}">
+                                {% else %}
+                                <div class="product-image-placeholder">
+                                    <span>{{ item.producto.nombre|slice:":1"|upper }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="item-details">
+                                <h3 class="item-name">{{ item.producto.nombre }}</h3>
+                                <p class="item-sku">SKU: {{ item.producto.sku }}</p>
+                                {% if item.producto.categoria %}
+                                <p class="item-category">{{ item.producto.categoria.nombre }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="item-price">
+                                {% if item.producto.descuento and item.producto.precioDescuento %}
+                                <span class="price-original">${{ item.producto.precio|floatformat:2 }}</span>
+                                <span class="price-current">${{ item.precio_unitario|floatformat:2 }}</span>
+                                {% else %}
+                                <span class="price-current">${{ item.precio_unitario|floatformat:2 }}</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="item-quantity">
+                                <form method="POST" action="{% url 'cart:update_cart' item.id %}" class="quantity-form">
+                                    {% csrf_token %}
+                                    <label for="cantidad-{{ item.id }}">Cantidad:</label>
+                                    <input type="number" 
+                                           id="cantidad-{{ item.id }}" 
+                                           name="cantidad" 
+                                           value="{{ item.cantidad }}" 
+                                           min="1" 
+                                           max="{{ item.producto.stock }}"
+                                           class="quantity-input">
+                                    <button type="submit" class="btn-update">Actualizar</button>
+                                </form>
+                                <p class="stock-info">Stock disponible: {{ item.producto.stock }}</p>
+                            </div>
+                            
+                            <div class="item-total">
+                                <span class="total-price">${{ item.precio_total|floatformat:2 }}</span>
+                            </div>
+                            
+                            <div class="item-actions">
+                                <a href="{% url 'cart:remove_from_cart' item.id %}" 
+                                   class="btn-remove"
+                                   onclick="return confirm('¿Estás seguro de que quieres eliminar este producto?')">
+                                    Eliminar
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="cart-actions">
+                            <a href="{% url 'cart:clear_cart' %}" 
+                               class="btn-clear-cart"
+                               onclick="return confirm('¿Estás seguro de que quieres vaciar el carrito?')">
+                                Vaciar Carrito
+                            </a>
+                            <a href="{% url 'ferretetia:shop' %}" class="btn-continue-shopping">
+                                Continuar Comprando
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="cart-summary">
+                        <h3>Resumen del Pedido</h3>
+                        <div class="summary-line">
+                            <span>Subtotal ({{ total_items }} items):</span>
+                            <span>${{ total_precio|floatformat:2 }}</span>
+                        </div>
+                        <div class="summary-line">
+                            <span>Envío:</span>
+                            <span>$10.00</span>
+                        </div>
+                        <div class="summary-line total">
+                            <span>Total:</span>
+                            <span>${{ total_precio|add:10|floatformat:2 }}</span>
+                        </div>
+                        
+                        <div class="checkout-actions">
+                            <a href="{% url 'checkout:checkout' %}" class="btn-checkout">
+                                Proceder al Checkout
+                            </a>
+                        </div>
+                        
+                        <div class="cart-info">
+                            <p><strong>Información importante:</strong></p>
+                            <ul>
+                                <li>Los precios incluyen IVA</li>
+                                <li>Envío gratuito en compras superiores a $100</li>
+                                <li>Devoluciones gratuitas hasta 30 días</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
         </div>
-    </main>  
-</body>
- <!-- Footer -->
+    </main>
+
+    <!-- Footer -->
     <footer class="footer">
-    {% include "ferretetia/footer.html" %}  
+        {% include "ferretetia/footer.html" %}
     </footer>
 </html>

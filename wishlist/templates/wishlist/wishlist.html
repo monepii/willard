@@ -48,20 +48,105 @@
         </nav>
     </header>
 
-
-
     <!-- Contenido principal -->
     <main class="main-content">
         <div class="container">
-            <h1>{{ page_title }}</h1>
-            <p>Tu lista de productos favoritos aparecerá aquí.</p>
-            <a href="{% url 'ferretetia:index' %}" class="btn">Explorar Productos</a>
+                <h1>{{ page_title }}</h1>
+                <p>Tu lista de productos favoritos</p>
+
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Debug info -->
+            <div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px;">
+                <strong>Debug Info:</strong><br>
+                Usuario: {{ debug_user }}<br>
+                Elementos encontrados: {{ debug_count }}<br>
+                Elementos en template: {{ wishlist_items|length }}<br>
+                Total elementos en DB: {{ debug_all_count }}<br>
+                <br>
+                <strong>Elementos en wishlist:</strong><br>
+                {% for item in wishlist_items %}
+                    - {{ item.producto.nombre }} (ID: {{ item.producto.id }})<br>
+                {% empty %}
+                    No hay elementos en el wishlist<br>
+                {% endfor %}
+            </div>
+            
+            {% if wishlist_items %}
+            <div class="wishlist-content">
+                <div class="wishlist-stats">
+                    <span class="item-count">{{ wishlist_items.count }} producto{{ wishlist_items.count|pluralize }}</span>
+                </div>
+                
+                <div class="wishlist-grid">
+                    {% for item in wishlist_items %}
+                    <div class="wishlist-item" data-product-id="{{ item.producto.id }}">
+                        <div class="item-image">
+                            <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}">
+                            {% if item.producto.descuento %}
+                            <span class="sale-badge">SALE</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="item-info">
+                            <h3 class="item-title">{{ item.producto.nombre }}</h3>
+                            <p class="item-description">{{ item.producto.descripcion|truncatewords:20 }}</p>
+                            
+                            <div class="item-pricing">
+                                {% if item.producto.descuento and item.producto.precioDescuento %}
+                                <span class="price-original">${{ item.producto.precio }}</span>
+                                <span class="price-sale">${{ item.producto.precioDescuento }}</span>
+                                {% else %}
+                                <span class="price-current">${{ item.producto.precio }}</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="item-actions">
+                                <button class="add-to-cart-btn" data-product-id="{{ item.producto.id }}">
+                                    Agregar al Carrito
+                                </button>
+                                <button class="remove-from-wishlist-btn" data-product-id="{{ item.producto.id }}">
+                                    ❌ Eliminar
+                                </button>
+                            </div>
+                            
+                            <div class="item-meta">
+                                <span class="added-date">Agregado: {{ item.fecha_agregado|date:"d/m/Y" }}</span>
+                                {% if item.producto.categoria %}
+                                <span class="category">{{ item.producto.categoria.nombre }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="wishlist-actions">
+                    <button class="clear-wishlist-btn">Limpiar Lista</button>
+                    <a href="{% url 'ferretetia:shop' %}" class="continue-shopping-btn">Continuar Comprando</a>
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-wishlist">
+                <div class="empty-icon">♡</div>
+                <h2>Tu lista de deseos está vacía</h2>
+                <p>No tienes productos guardados en tu lista de deseos.</p>
+                <a href="{% url 'ferretetia:shop' %}" class="btn-primary">Explorar Productos</a>
+            </div>
+            {% endif %}
         </div>
     </main>
-</body>
 
-<!-- Footer-->
-<footer class="footer">
+    <!-- Footer-->
+    <footer class="footer">
         <div class="newsletter">
             <span class="newsletter-title">NEWSLETTER</span>
             <span class="newsletter-desc">OUR DIY TIPS AND SPECIAL PROMO OFFERS ARE A BARGAIN!</span>
@@ -77,11 +162,10 @@
             </div>
             <div class="footer-section recent-comments">
                 <h3>RECENT COMMENTS</h3>
-                </div>
+            </div>
             <div class="footer-section tags">
                 <h3>TAGS</h3>
                 <div class="tag-list">
-
                 </div>
             </div>
             <div class="footer-section contacts">
@@ -92,4 +176,160 @@
             </div>
         </div>  
     </footer>
+
+    <script>
+        // Funcionalidad JavaScript para el wishlist
+        document.addEventListener('DOMContentLoaded', function() {
+            // Eliminar de wishlist
+            document.querySelectorAll('.remove-from-wishlist-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.dataset.productId;
+                    const wishlistItem = this.closest('.wishlist-item');
+                    
+                    fetch(`/wishlist/remove/${productId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            wishlistItem.remove();
+                            updateWishlistCount();
+                            
+                            // Mostrar mensaje
+                            showMessage(data.message, 'success');
+                        } else {
+                            showMessage('Error al eliminar el producto', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showMessage('Error al eliminar el producto', 'error');
+                    });
+                });
+            });
+
+            // Agregar al carrito
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.dataset.productId;
+                    
+                    fetch(`/cart/add/${productId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showMessage('Producto agregado al carrito', 'success');
+                        } else {
+                            showMessage('Error al agregar al carrito', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showMessage('Error al agregar al carrito', 'error');
+                    });
+                });
+            });
+
+            // Limpiar wishlist
+            const clearWishlistBtn = document.querySelector('.clear-wishlist-btn');
+            if (clearWishlistBtn) {
+                clearWishlistBtn.addEventListener('click', function() {
+                    if (confirm('¿Estás seguro de que quieres limpiar toda tu lista de deseos?')) {
+                        fetch('/wishlist/clear/', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': getCookie('csrftoken'),
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Limpiar la interfaz
+                                const wishlistContent = document.querySelector('.wishlist-content');
+                                if (wishlistContent) {
+                                    wishlistContent.innerHTML = `
+                                        <div class="empty-wishlist">
+                                            <div class="empty-icon">♡</div>
+                                            <h2>Tu lista de deseos está vacía</h2>
+                                            <p>No tienes productos guardados en tu lista de deseos.</p>
+                                            <a href="/shop/" class="btn-primary">Explorar Productos</a>
+                                        </div>
+                                    `;
+                                }
+                                showMessage(data.message, 'success');
+                            } else {
+                                showMessage('Error al limpiar la lista de deseos', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showMessage('Error al limpiar la lista de deseos', 'error');
+                        });
+                    }
+                });
+            }
+
+            function updateWishlistCount() {
+                const items = document.querySelectorAll('.wishlist-item');
+                const countElement = document.querySelector('.item-count');
+                if (countElement) {
+                    countElement.textContent = `${items.length} producto${items.length !== 1 ? 's' : ''}`;
+                }
+                
+                // Si no hay items, mostrar mensaje de lista vacía
+                if (items.length === 0) {
+                    const wishlistContent = document.querySelector('.wishlist-content');
+                    if (wishlistContent) {
+                        wishlistContent.innerHTML = `
+                            <div class="empty-wishlist">
+                                <div class="empty-icon">♡</div>
+                                <h2>Tu lista de deseos está vacía</h2>
+                                <p>No tienes productos guardados en tu lista de deseos.</p>
+                                <a href="/shop/" class="btn-primary">Explorar Productos</a>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            function showMessage(message, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}`;
+                messageDiv.textContent = message;
+                
+                const container = document.querySelector('.container');
+                container.insertBefore(messageDiv, container.firstChild);
+                
+                setTimeout(() => {
+                    messageDiv.remove();
+                }, 3000);
+            }
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        });
+    </script>
+</body>
 </html>

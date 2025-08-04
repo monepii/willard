@@ -29,20 +29,20 @@
                 </div>
             </div>
             <div class="navbar-right">
-                <a href="{% url 'ferretetia:wishlist' %}" class="nav-item">
+                <a href="{% url 'wishlist:wishlist' %}" class="nav-item">
                     <span class="icon">♡ WISHLIST</span>
                 </a>
-                <a href="{% url 'ferretetia:compare' %}" class="nav-item">
+                <a href="{% url 'compare:compare' %}" class="nav-item">
                     <span class="icon">⚖ COMPARAR</span>
                 </a>
-                <a href="{% url 'ferretetia:account' %}" class="nav-item">
+                <a href="{% url 'account:account' %}" class="nav-item">
                     <span class="icon">👤 MI CUENTA</span>
                 </a>
-                <a href="{% url 'ferretetia:checkout' %}" class="nav-item">
+                <a href="{% url 'checkout:checkout' %}" class="nav-item">
                     <span class="icon">📋 CHECKOUT</span>
                 </a>
-                <a href="{% url 'ferretetia:cart' %}" class="nav-item cart">
-                    <span class="icon">🛒 CARRITO</span>
+                <a href="{% url 'cart:cart' %}" class="nav-item cart">
+                    <span class="icon">🛒 CARRITO {% if cart_count > 0 %}({{ cart_count }}){% endif %}</span>
                 </a>
             </div>
         </nav>
@@ -101,11 +101,13 @@
                                 {% endif %}
                             </div>
                             <div class="product-actions">
-                                <button class="wishlist-btn" title="Agregar a favoritos" data-product-id="{{ producto.id }}">♡</button>
+                                <button class="wishlist-btn" title="Agregar a favoritos" data-product-id="{{ producto.id }}">
+                                    <span class="wishlist-icon">♡</span>
+                                </button>
                                 <button class="compare-btn" title="Comparar" data-product-id="{{ producto.id }}">⚖</button>
                                 <button class="view-btn" title="Vista rápida" data-product-id="{{ producto.id }}">👁</button>
                             </div>
-                            <button class="add-to-cart-btn" data-product-id="{{ producto.id }}">Agregar al Carrito</button>
+                            <a href="{% url 'cart:add_to_cart' producto.id %}" class="add-to-cart-btn">Agregar al Carrito</a>
                         </div>
                     </div>
                     {% empty %}
@@ -124,5 +126,104 @@
     </footer>
 
     <script src="{% static 'ferretetia/script.js' %}"></script>
+    <script>
+        // Funcionalidad para botones de wishlist
+        document.addEventListener('DOMContentLoaded', function() {
+            // Manejar botones de wishlist
+            document.querySelectorAll('.wishlist-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.dataset.productId;
+                    const wishlistIcon = this.querySelector('.wishlist-icon');
+                    
+                    fetch(`/wishlist/add/${productId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Cambiar el ícono para mostrar que está en el wishlist
+                            wishlistIcon.textContent = '❤️';
+                            this.title = 'Eliminar de favoritos';
+                            
+                            // Mostrar mensaje de éxito
+                            showMessage(data.message, 'success');
+                        } else {
+                            showMessage('Error al agregar al wishlist', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showMessage('Error al agregar al wishlist', 'error');
+                    });
+                });
+            });
+
+            // Función para obtener cookies
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            // Función para mostrar mensajes
+            function showMessage(message, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}`;
+                messageDiv.textContent = message;
+                messageDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 1rem;
+                    border-radius: 5px;
+                    color: white;
+                    font-weight: 600;
+                    z-index: 1000;
+                    animation: slideIn 0.3s ease;
+                `;
+                
+                if (type === 'success') {
+                    messageDiv.style.backgroundColor = '#28a745';
+                } else if (type === 'error') {
+                    messageDiv.style.backgroundColor = '#dc3545';
+                }
+                
+                document.body.appendChild(messageDiv);
+                
+                setTimeout(() => {
+                    messageDiv.remove();
+                }, 3000);
+            }
+
+            // Agregar estilos CSS para la animación
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
 </body>
 </html>

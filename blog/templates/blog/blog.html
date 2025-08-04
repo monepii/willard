@@ -39,23 +39,23 @@
                 </div>
             </div>
             <div class="navbar-right">
-                <a href="{% url 'mysite:wishlist' %}" class="nav-item">
+                <a href="{% url 'wishlist:wishlist' %}" class="nav-item">
                     <span class="icon">♡</span>
                     <span>WISHLIST</span>
                 </a>
-                <a href="{% url 'ferretetia:compare' %}" class="nav-item">
+                <a href="{% url 'compare:compare' %}" class="nav-item">
                     <span class="icon">⚖</span>
                     <span>COMPARE</span>
                 </a>
-                <a href="{% url 'ferretetia:account' %}" class="nav-item">
+                <a href="{% url 'account:account' %}" class="nav-item">
                     <span class="icon">👤</span>
                     <span>MY ACCOUNT</span>
                 </a>
-                <a href="{% url 'ferretetia:checkout' %}" class="nav-item">
+                <a href="{% url 'checkout:checkout' %}" class="nav-item">
                     <span class="icon">📋</span>
                     <span>CHECKOUT</span>
                 </a>
-                <a href="{% url 'ferretetia:cart' %}" class="nav-item cart">
+                <a href="{% url 'cart:cart' %}" class="nav-item cart">
                     <span class="icon">🛒</span>
                     <span>CART</span>
                     <span class="cart-count" id="cart-count">0</span>
@@ -72,25 +72,25 @@
                 <div class="dropdown-menu">
                     <a href="#" class="nav-link dropdown-toggle ">POWER TOOLS</a>
                     <div class="dropdown-content">
-                        <a href="{% url 'ferretetia:power_tools' %}?category=drill">Taladros</a>
-                        <a href="{% url 'ferretetia:power_tools' %}?category=saw">Sierras</a>
-                        <a href="{% url 'ferretetia:power_tools' %}?category=sander">Lijadoras</a>
-                        <a href="{% url 'ferretetia:power_tools' %}?category=grinder">Amoladoras</a>
-                        <a href="{% url 'ferretetia:power_tools' %}?category=router">Fresadoras</a>
-                        <a href="{% url 'ferretetia:power_tools' %}?category=hammer">Martillos</a>
-                        <a href="{% url 'ferretetia:power_tools' %}">Ver Todos</a>
+                        <a href="{% url 'power_tools:power_tools' %}?category=drill">Taladros</a>
+                        <a href="{% url 'power_tools:power_tools' %}?category=saw">Sierras</a>
+                        <a href="{% url 'power_tools:power_tools' %}?category=sander">Lijadoras</a>
+                        <a href="{% url 'power_tools:power_tools' %}?category=grinder">Amoladoras</a>
+                        <a href="{% url 'power_tools:power_tools' %}?category=router">Fresadoras</a>
+                        <a href="{% url 'power_tools:power_tools' %}?category=hammer">Martillos</a>
+                        <a href="{% url 'power_tools:power_tools' %}">Ver Todos</a>
                     </div>
                 </div>
                 
                 <div class="dropdown-menu">
                     <a href="#" class="nav-link dropdown-toggle active">BLOG</a>
                     <div class="dropdown-content">
-                        <a href="{% url 'ferretetia:blog' %}?category=tips">Consejos y Trucos</a>
-                        <a href="{% url 'ferretetia:blog' %}?category=reviews">Reseñas de Productos</a>
-                        <a href="{% url 'ferretetia:blog' %}?category=tutorials">Tutoriales</a>
-                        <a href="{% url 'ferretetia:blog' %}?category=maintenance">Mantenimiento</a>
-                        <a href="{% url 'ferretetia:blog' %}?category=safety">Seguridad</a>
-                        <a href="{% url 'ferretetia:blog' %}">Ver Todos los Posts</a>
+                        <a href="{% url 'blog:blog' %}?category=tips">Consejos y Trucos</a>
+                        <a href="{% url 'blog:blog' %}?category=reviews">Reseñas de Productos</a>
+                        <a href="{% url 'blog:blog' %}?category=tutorials">Tutoriales</a>
+                        <a href="{% url 'blog:blog' %}?category=maintenance">Mantenimiento</a>
+                        <a href="{% url 'blog:blog' %}?category=safety">Seguridad</a>
+                        <a href="{% url 'blog:blog' %}">Ver Todos los Posts</a>
                     </div>
                 </div>
                 
@@ -110,13 +110,13 @@
                 <div class="dropdown-menu">
                     <a href="#" class="nav-link dropdown-toggle">PAGES</a>
                     <div class="dropdown-content">
-                        <a href="{% url 'ferretetia:pages' %}?page=about">Acerca de Nosotros</a>
-                        <a href="{% url 'ferretetia:pages' %}?page=contact">Contacto</a>
-                        <a href="{% url 'ferretetia:pages' %}?page=services">Servicios</a>
-                        <a href="{% url 'ferretetia:pages' %}?page=delivery">Entregas</a>
-                        <a href="{% url 'ferretetia:pages' %}?page=warranty">Garantías</a>
-                        <a href="{% url 'ferretetia:pages' %}?page=faq">Preguntas Frecuentes</a>
-                        <a href="{% url 'ferretetia:pages' %}">Ver Todas las Páginas</a>
+                        <a href="{% url 'pages:pages' %}?page=about">Acerca de Nosotros</a>
+                        <a href="{% url 'pages:pages' %}?page=contact">Contacto</a>
+                        <a href="{% url 'pages:pages' %}?page=services">Servicios</a>
+                        <a href="{% url 'pages:pages' %}?page=delivery">Entregas</a>
+                        <a href="{% url 'pages:pages' %}?page=warranty">Garantías</a>
+                        <a href="{% url 'pages:pages' %}?page=faq">Preguntas Frecuentes</a>
+                        <a href="{% url 'pages:pages' %}">Ver Todas las Páginas</a>
                     </div>
                 </div>
                 

@@ -119,12 +119,7 @@ def checkout(request):
     }
     return render(request, 'checkout/checkout.html', context)
 
-def cart(request):
-    """Vista de carrito"""
-    context = {
-        'page_title': 'Cart'
-    }
-    return render(request, 'cart/cart.html', context)
+
 
 
 

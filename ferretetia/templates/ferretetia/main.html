@@ -8,6 +8,105 @@
     <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
     <link rel="stylesheet" href="{% static 'CSS/styles2.css' %}">
     <script src="{% static 'ferretetia/script.js' %}" defer></script>
+    <script>
+        // Funcionalidad para botones de wishlist
+        document.addEventListener('DOMContentLoaded', function() {
+            // Manejar botones de wishlist
+            document.querySelectorAll('.wishlist-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.dataset.productId;
+                    const wishlistIcon = this.querySelector('.wishlist-icon');
+                    
+                    fetch(`/wishlist/add/${productId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Cambiar el ícono para mostrar que está en el wishlist
+                            wishlistIcon.textContent = '❤️';
+                            this.title = 'Eliminar de favoritos';
+                            
+                            // Mostrar mensaje de éxito
+                            showMessage(data.message, 'success');
+                        } else {
+                            showMessage('Error al agregar al wishlist', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showMessage('Error al agregar al wishlist', 'error');
+                    });
+                });
+            });
+
+            // Función para obtener cookies
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            // Función para mostrar mensajes
+            function showMessage(message, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}`;
+                messageDiv.textContent = message;
+                messageDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 1rem;
+                    border-radius: 5px;
+                    color: white;
+                    font-weight: 600;
+                    z-index: 1000;
+                    animation: slideIn 0.3s ease;
+                `;
+                
+                if (type === 'success') {
+                    messageDiv.style.backgroundColor = '#28a745';
+                } else if (type === 'error') {
+                    messageDiv.style.backgroundColor = '#dc3545';
+                }
+                
+                document.body.appendChild(messageDiv);
+                
+                setTimeout(() => {
+                    messageDiv.remove();
+                }, 3000);
+            }
+
+            // Agregar estilos CSS para la animación
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
     <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
     <link rel="stylesheet" href="{% static 'CSS/styles_img.css' %}">
 </head>
@@ -32,19 +131,19 @@
                 </div>
             </div>
             <div class="navbar-right">
-                <a href="{% url 'ferretetia:wishlist' %}" class="nav-item">
+                <a href="{% url 'wishlist:wishlist' %}" class="nav-item">
                     <span class="icon">♡ WISHLIST</span>
                 </a>
-                <a href="{% url 'ferretetia:compare' %}" class="nav-item">
+                <a href="{% url 'compare:compare' %}" class="nav-item">
                     <span class="icon">⚖ COMPARAR</span>
                 </a>
-                <a href="{% url 'ferretetia:account' %}" class="nav-item">
+                <a href="{% url 'account:account' %}" class="nav-item">
                     <span class="icon">👤 MI CUENTA</span>
                 </a>
-                <a href="{% url 'ferretetia:checkout' %}" class="nav-item">
+                <a href="{% url 'checkout:checkout' %}" class="nav-item">
                     <span class="icon">📋 CHECKOUT</span>
                 </a>
-                <a href="{% url 'ferretetia:cart' %}" class="nav-item cart">
+                <a href="{% url 'cart:cart' %}" class="nav-item cart">
                     <span class="icon">🛒 CARRITO </span>
                 </a>
             </div>
@@ -108,47 +207,15 @@
         <div class="container">
             <section class="tool-categories">
                 <div class="categories-grid">
-                    <a href="{% url 'ferretetia:shop' %}?categoria=Power%20Tools" class="category-button">
+                    {% for categoria in categorias %}
+                    <a href="{% url 'ferretetia:shop' %}?categoria={{ categoria.nombre|urlencode }}" class="category-button">
                         <div class="category-icon">
-                            <img src="/media/images/taladro-de-mano.png" alt="Herramienta Eléctrica" width="40" height="40">
+                            <img src="{{ categoria.imagen.url }}" alt="{{categoria.nombre}}" width="40" height="40">
                         </div>
-                        <span class="category-text">Eléctrica</span>
+                        <span class="category-text">{{categoria.nombre}}</span>
                     </a>
-                    
-                    <a href="{% url 'ferretetia:shop' %}?categoria=Hand%20Tools" class="category-button">
-                        <div class="category-icon">
-                            <img src="/media/images/mano-de-obra.png" alt="Herramienta Manual" width="40" height="40">
-                        </div>
-                        <span class="category-text">Manuales</span>
-                    </a>
-                    
-                    <a href="{% url 'ferretetia:shop' %}?categoria=Plumbing%20Tools" class="category-button">
-                        <div class="category-icon">
-                            <img src="/media/images/plomeria.png" alt="Herramienta de plomeria" width="40" height="40">
-                        </div>
-                        <span class="category-text">Plomeria</span>
-                    </a>
-                    
-                    <a href="{% url 'ferretetia:shop' %}?categoria=Carpenter%20Tools" class="category-button">
-                        <div class="category-icon">
-                            <img src="/media/images/herramientas.png" alt="Herramienta de carpinteria" width="40" height="40">
-                        </div>
-                        <span class="category-text">Carpintería</span>
-                    </a>
-                    
-                    <a href="{% url 'ferretetia:shop' %}?categoria=Paint%20Tools" class="category-button">
-                        <div class="category-icon">
-                            <img src="/media/images/pintura.png" alt="Herramienta de pintura" width="40" height="40">
-                        </div>
-                        <span class="category-text">Pintura</span>
-                    </a>
-                    
-                    <a href="{% url 'ferretetia:shop' %}?categoria=Measuring%20Tools" class="category-button">
-                        <div class="category-icon">
-                            <img src="/media/images/medicion.png" alt="Herramienta de medición" width="40" height="40">
-                        </div>
-                        <span class="category-text">Medición</span>
-                    </a>
+                     {% endfor %}    
+                       
                 </div>
             </section>
 
@@ -201,7 +268,9 @@
                                 {% endif %}
                             </div>
                             <div class="product-actions">
-                                <button class="wishlist-btn" title="Agregar a favoritos">♡</button>
+                                <button class="wishlist-btn" title="Agregar a favoritos" data-product-id="{{ producto.id }}">
+                                    <span class="wishlist-icon">♡</span>
+                                </button>
                                 <button class="compare-btn" title="Comparar">⚖</button>
                                 <button class="view-btn" title="Vista rápida">👁</button>
                             </div>
@@ -232,7 +301,9 @@
                                 <span class="price-sale">${{ producto.precioDescuento }}</span>
                             </div>
                             <div class="product-actions">
-                                <button class="wishlist-btn" title="Agregar a favoritos">♡</button>
+                                <button class="wishlist-btn" title="Agregar a favoritos" data-product-id="{{ producto.id }}">
+                                    <span class="wishlist-icon">♡</span>
+                                </button>
                                 <button class="compare-btn" title="Comparar">⚖</button>
                                 <button class="view-btn" title="Vista rápida">👁</button>
                             </div>
