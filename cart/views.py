@@ -2,13 +2,19 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from .models import Carrito, ItemCarrito
 from ferretetia.models import Producto
 
 
+@login_required
 def cart_view(request):
     """Vista del carrito de compras"""
     carrito = Carrito.obtener_o_crear_carrito(request)
+    if not carrito:
+        messages.error(request, "Debes estar logueado para ver tu carrito.")
+        return redirect('account:login')
+    
     items = carrito.items.all()
     
     # Calcular el total del carrito
@@ -26,13 +32,22 @@ def cart_view(request):
     return render(request, 'cart/cart.html', context)
 
 
+@login_required
+@require_POST
 def add_to_cart(request, product_id):
     """Agregar un producto al carrito"""
     try:
         producto = get_object_or_404(Producto, id=product_id, disponible=True)
         carrito = Carrito.obtener_o_crear_carrito(request)
         
-
+        if not carrito:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Debes estar logueado para agregar productos al carrito.'
+                })
+            messages.error(request, "Debes estar logueado para agregar productos al carrito.")
+            return redirect('account:login')
         
         # Verificar si el producto ya está en el carrito
         try:
@@ -68,20 +83,41 @@ def add_to_cart(request, product_id):
             else:
                 messages.error(request, "Producto sin stock disponible.")
         
-
+        # Si es una petición AJAX, devolver JSON
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': True,
+                'message': f'{producto.nombre} agregado al carrito',
+                'cart_count': carrito.total_items
+            })
         
     except Producto.DoesNotExist:
         messages.error(request, "Producto no encontrado o no disponible.")
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': False,
+                'message': 'Producto no encontrado o no disponible.'
+            })
     except Exception as e:
         messages.error(request, f"Error al agregar el producto: {str(e)}")
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': False,
+                'message': f'Error al agregar el producto: {str(e)}'
+            })
     
     return redirect('cart:cart')
 
 
+@login_required
 def remove_from_cart(request, item_id):
     """Eliminar un item del carrito"""
     try:
         carrito = Carrito.obtener_o_crear_carrito(request)
+        if not carrito:
+            messages.error(request, "Debes estar logueado para modificar tu carrito.")
+            return redirect('account:login')
+            
         item = get_object_or_404(ItemCarrito, id=item_id, carrito=carrito)
         producto_nombre = item.producto.nombre
         item.delete()
@@ -94,11 +130,16 @@ def remove_from_cart(request, item_id):
     return redirect('cart:cart')
 
 
+@login_required
 def update_cart(request, item_id):
     """Actualizar la cantidad de un item en el carrito"""
     if request.method == 'POST':
         try:
             carrito = Carrito.obtener_o_crear_carrito(request)
+            if not carrito:
+                messages.error(request, "Debes estar logueado para modificar tu carrito.")
+                return redirect('account:login')
+                
             item = get_object_or_404(ItemCarrito, id=item_id, carrito=carrito)
             nueva_cantidad = int(request.POST.get('cantidad', 1))
             
@@ -127,10 +168,15 @@ def update_cart(request, item_id):
     return redirect('cart:cart')
 
 
+@login_required
 def clear_cart(request):
     """Limpiar el carrito de compras"""
     try:
         carrito = Carrito.obtener_o_crear_carrito(request)
+        if not carrito:
+            messages.error(request, "Debes estar logueado para modificar tu carrito.")
+            return redirect('account:login')
+            
         carrito.limpiar()
         messages.success(request, "Carrito de compras vacío.")
     except Exception as e:
@@ -139,10 +185,16 @@ def clear_cart(request):
     return redirect('cart:cart')
 
 
+@login_required
 def cart_count(request):
     """API para obtener el número de items en el carrito (para AJAX)"""
     try:
         carrito = Carrito.obtener_o_crear_carrito(request)
+        if not carrito:
+            return JsonResponse({
+                'success': True,
+                'count': 0
+            })
         return JsonResponse({
             'success': True,
             'count': carrito.total_items
@@ -157,38 +209,6 @@ def cart_count(request):
 @login_required
 def merge_cart(request):
     """Fusionar carrito de sesión con carrito de usuario al hacer login"""
-    if request.user.is_authenticated and request.session.session_key:
-        try:
-            # Obtener carrito de sesión
-            session_cart = Carrito.objects.filter(
-                session_key=request.session.session_key,
-                activo=True
-            ).first()
-            
-            if session_cart:
-                # Obtener o crear carrito de usuario
-                user_cart, created = Carrito.objects.get_or_create(
-                    usuario=request.user,
-                    activo=True
-                )
-                
-                # Mover items de sesión a usuario
-                for item in session_cart.items.all():
-                    existing_item = user_cart.items.filter(producto=item.producto).first()
-                    if existing_item:
-                        existing_item.cantidad += item.cantidad
-                        existing_item.save()
-                    else:
-                        item.carrito = user_cart
-                        item.save()
-                
-                # Desactivar carrito de sesión
-                session_cart.activo = False
-                session_cart.save()
-                
-                messages.success(request, "Tu carrito ha sido actualizado.")
-                
-        except Exception as e:
-            messages.error(request, f"Error al fusionar carritos: {str(e)}")
-    
+    # Esta función ya no es necesaria ya que solo usuarios autenticados pueden usar el carrito
+    messages.info(request, "Tu carrito está listo para usar.")
     return redirect('cart:cart')

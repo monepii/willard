@@ -107,7 +107,7 @@
                                 <button class="compare-btn" title="Comparar" data-product-id="{{ producto.id }}">⚖</button>
                                 <button class="view-btn" title="Vista rápida" data-product-id="{{ producto.id }}">👁</button>
                             </div>
-                            <a href="{% url 'cart:add_to_cart' producto.id %}" class="add-to-cart-btn">Agregar al Carrito</a>
+                            <button class="add-to-cart-btn" data-product-id="{{ producto.id }}">Agregar al Carrito</button>
                         </div>
                     </div>
                     {% empty %}
@@ -142,8 +142,20 @@
                             'X-Requested-With': 'XMLHttpRequest'
                         }
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (response.status === 403) {
+                            // Usuario no autenticado
+                            showMessage('Debes iniciar sesión para agregar productos al wishlist', 'error');
+                            setTimeout(() => {
+                                window.location.href = '/account/login/';
+                            }, 2000);
+                            return null;
+                        }
+                        return response.json();
+                    })
                     .then(data => {
+                        if (data === null) return; // Ya se manejó el error de autenticación
+                        
                         if (data.success) {
                             // Cambiar el ícono para mostrar que está en el wishlist
                             wishlistIcon.textContent = '❤️';
@@ -152,12 +164,59 @@
                             // Mostrar mensaje de éxito
                             showMessage(data.message, 'success');
                         } else {
-                            showMessage('Error al agregar al wishlist', 'error');
+                            if (data.message && data.message.includes('logueado')) {
+                                showMessage('Debes iniciar sesión para agregar productos al wishlist', 'error');
+                                setTimeout(() => {
+                                    window.location.href = '/account/login/';
+                                }, 2000);
+                            } else {
+                                showMessage(data.message || 'Error al agregar al wishlist', 'error');
+                            }
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
                         showMessage('Error al agregar al wishlist', 'error');
+                    });
+                });
+            });
+
+            // Manejar botones de agregar al carrito
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.dataset.productId;
+                    
+                    fetch(`/cart/add/${productId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showMessage(data.message, 'success');
+                            // Actualizar contador del carrito si existe
+                            const cartCountElement = document.querySelector('.cart-count');
+                            if (cartCountElement && data.cart_count !== undefined) {
+                                cartCountElement.textContent = data.cart_count;
+                            }
+                        } else {
+                            if (data.message && data.message.includes('logueado')) {
+                                showMessage('Debes iniciar sesión para agregar productos al carrito', 'error');
+                                // Opcional: redirigir al login después de un breve delay
+                                setTimeout(() => {
+                                    window.location.href = '/account/login/';
+                                }, 2000);
+                            } else {
+                                showMessage(data.message || 'Error al agregar al carrito', 'error');
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showMessage('Error al agregar al carrito', 'error');
                     });
                 });
             });

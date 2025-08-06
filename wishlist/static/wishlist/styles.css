@@ -1,3 +1,37 @@
+/* Estilos para el mensaje de login */
+.login-message {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 2rem 0;
+}
+
+.login-message h1 {
+    color: #495057;
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+.login-message p {
+    color: #6c757d;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.login-message a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.login-message a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
 /* Estilos para la página de Wishlist */
 
 .wishlist-header {
@@ -20,15 +54,26 @@
     opacity: 0.9;
 }
 
-/* Mensajes */
+/* Estilos para el mensaje de usuario */
+.user-info {
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border-left: 4px solid #1976d2;
+    font-weight: 500;
+}
+
+/* Mejorar estilos de mensajes */
 .messages {
-    margin-bottom: 2rem;
+    margin-bottom: 20px;
 }
 
 .message {
-    padding: 1rem;
-    margin-bottom: 1rem;
+    padding: 12px 16px;
     border-radius: 5px;
+    margin-bottom: 10px;
     font-weight: 500;
 }
 

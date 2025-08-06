@@ -42,7 +42,7 @@
                     <span class="icon">📋 CHECKOUT</span>
                 </a>
                 <a href="{% url 'cart:cart' %}" class="nav-item cart">
-                    <span class="icon">🛒 CARRITO </span>
+                    <span class="icon">🛒 CARRITO {% if cart_count > 0 %}({{ cart_count }}){% endif %}</span>
                 </a>
             </div>
         </nav>

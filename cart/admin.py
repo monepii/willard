@@ -13,15 +13,15 @@ class ItemCarritoInline(admin.TabularInline):
 @admin.register(Carrito)
 class CarritoAdmin(admin.ModelAdmin):
     """Configuración del admin para el modelo Carrito"""
-    list_display = ['id', 'usuario', 'session_key', 'total_items', 'total_precio', 'activo', 'creado']
+    list_display = ['id', 'usuario', 'total_items', 'total_precio', 'activo', 'creado']
     list_filter = ['activo', 'creado', 'usuario']
-    search_fields = ['usuario__username', 'session_key']
+    search_fields = ['usuario__username']
     readonly_fields = ['total_items', 'total_precio', 'creado', 'actualizado']
     inlines = [ItemCarritoInline]
     
     fieldsets = (
         ('Información del Carrito', {
-            'fields': ('usuario', 'session_key', 'activo')
+            'fields': ('usuario', 'activo')
         }),
         ('Información de Tiempo', {
             'fields': ('creado', 'actualizado'),

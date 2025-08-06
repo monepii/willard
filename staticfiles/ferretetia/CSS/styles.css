@@ -1,6 +1,6 @@
 
 :root {
-    --color-primary: #5a8c2a;
+    --color-primary: #FDD835;
     --color-accent: #c9a13b;
     --color-text: #333;
     --color-text-light: #888;
@@ -204,7 +204,7 @@
 
 .categories-grid {
     display: grid;
-    grid-template-columns: repeat(6, 2fr);
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: var(--spacing-md);
     max-width: var(--container-max-width);
     margin: 0 auto;

@@ -10,26 +10,38 @@ def get_cart(request):
 def get_cart_items(request):
     """Función helper para obtener los items del carrito"""
     carrito = get_cart(request)
-    return carrito.items.all()
+    if carrito:
+        return carrito.items.all()
+    return []
 
 
 def get_cart_total(request):
     """Función helper para obtener el total del carrito"""
     carrito = get_cart(request)
-    return carrito.total_precio
+    if carrito:
+        return carrito.total_precio
+    return 0
 
 
 def get_cart_count(request):
     """Función helper para obtener el número de items en el carrito"""
     carrito = get_cart(request)
-    return carrito.total_items
+    if carrito:
+        return carrito.total_items
+    return 0
 
 
 def add_product_to_cart(request, product_id, quantity=1):
     """Función helper para agregar un producto al carrito"""
     try:
+        if not request.user.is_authenticated:
+            return False, "Debes estar logueado para agregar productos al carrito"
+            
         producto = Producto.objects.get(id=product_id, disponible=True)
         carrito = get_cart(request)
+        
+        if not carrito:
+            return False, "No se pudo crear el carrito"
         
         # Verificar stock
         if quantity > producto.stock:
@@ -61,7 +73,13 @@ def add_product_to_cart(request, product_id, quantity=1):
 def update_cart_item(request, item_id, quantity):
     """Función helper para actualizar la cantidad de un item"""
     try:
+        if not request.user.is_authenticated:
+            return False, "Debes estar logueado para modificar el carrito"
+            
         carrito = get_cart(request)
+        if not carrito:
+            return False, "No se pudo obtener el carrito"
+            
         item = ItemCarrito.objects.get(id=item_id, carrito=carrito)
         
         if quantity <= 0:
@@ -84,7 +102,13 @@ def update_cart_item(request, item_id, quantity):
 def remove_cart_item(request, item_id):
     """Función helper para eliminar un item del carrito"""
     try:
+        if not request.user.is_authenticated:
+            return False, "Debes estar logueado para modificar el carrito"
+            
         carrito = get_cart(request)
+        if not carrito:
+            return False, "No se pudo obtener el carrito"
+            
         item = ItemCarrito.objects.get(id=item_id, carrito=carrito)
         producto_nombre = item.producto.nombre
         item.delete()
@@ -99,7 +123,13 @@ def remove_cart_item(request, item_id):
 def clear_cart(request):
     """Función helper para limpiar el carrito"""
     try:
+        if not request.user.is_authenticated:
+            return False, "Debes estar logueado para modificar el carrito"
+            
         carrito = get_cart(request)
+        if not carrito:
+            return False, "No se pudo obtener el carrito"
+            
         carrito.limpiar()
         return True, "Carrito vacío"
     except Exception as e:
@@ -109,15 +139,25 @@ def clear_cart(request):
 def is_cart_empty(request):
     """Función helper para verificar si el carrito está vacío"""
     carrito = get_cart(request)
-    return carrito.total_items == 0
+    if carrito:
+        return carrito.total_items == 0
+    return True
 
 
 def get_cart_summary(request):
     """Función helper para obtener un resumen del carrito"""
     carrito = get_cart(request)
-    return {
-        'total_items': carrito.total_items,
-        'total_precio': carrito.total_precio,
-        'items': carrito.items.all(),
-        'is_empty': carrito.total_items == 0
-    } 
+    if carrito:
+        return {
+            'total_items': carrito.total_items,
+            'total_precio': carrito.total_precio,
+            'items': carrito.items.all(),
+            'is_empty': carrito.total_items == 0
+        }
+    else:
+        return {
+            'total_items': 0,
+            'total_precio': 0,
+            'items': [],
+            'is_empty': True
+        } 

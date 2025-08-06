@@ -5,8 +5,7 @@ from ferretetia.models import Producto
 
 class Carrito(models.Model):
     """Modelo para representar un carrito de compras"""
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    session_key = models.CharField(max_length=40, null=True, blank=True)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     creado = models.DateTimeField(auto_now_add=True)
     actualizado = models.DateTimeField(auto_now=True)
     activo = models.BooleanField(default=True)
@@ -17,9 +16,7 @@ class Carrito(models.Model):
         ordering = ['-creado']
 
     def __str__(self):
-        if self.usuario:
-            return f"Carrito de {self.usuario.username}"
-        return f"Carrito de sesión {self.session_key}"
+        return f"Carrito de {self.usuario.username}"
 
     @property
     def total_items(self):
@@ -46,15 +43,9 @@ class Carrito(models.Model):
                 usuario=request.user,
                 activo=True
             )
+            return carrito
         else:
-            if not request.session.session_key:
-                request.session.create()
-            
-            carrito, creado = Carrito.objects.get_or_create(
-                session_key=request.session.session_key,
-                activo=True
-            )
-        return carrito
+            return None
 
 
 class ItemCarrito(models.Model):
