@@ -2,15 +2,14 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from .filters import ProductoFilter, CategoriaFilter
+from django.db import models
 
 def global_categories(request):
-    """Context processor to make categories available globally"""
-    try:
-        from .models import Categoria
-        categorias = Categoria.objects.filter(activa=True).distinct()
-        return {'global_categorias': list(categorias)}
-    except Exception as e:
-        return {'global_categorias': []}
+    """Context processor para categorías globales"""
+    from .models import Categoria
+    categorias = Categoria.objects.filter(activa=True)
+    return {'global_categories': categorias}
 
 def index(request):
     """Vista principal de la ferretería"""
@@ -30,24 +29,48 @@ def index(request):
 
 @csrf_exempt
 def search_products(request):
-    """API para búsqueda de productos"""
+    """API para búsqueda de productos en tiempo real"""
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
             query = data.get('query', '')
             
-            # Simulamos resultados de búsqueda
-            results = [
-                {'id': 1, 'name': f'Martillo - {query}', 'price': 25.99},
-                {'id': 2, 'name': f'Destornillador - {query}', 'price': 15.50},
-                {'id': 3, 'name': f'Taladro - {query}', 'price': 89.99},
-            ] if query else []
-            
-            return JsonResponse({
-                'success': True,
-                'results': results,
-                'count': len(results)
-            })
+            if query:
+                # Buscar productos que coincidan con la consulta
+                from .models import Producto
+                productos = Producto.objects.filter(
+                    models.Q(nombre__icontains=query) |
+                    models.Q(descripcion__icontains=query) |
+                    models.Q(sku__icontains=query) |
+                    models.Q(categoria__nombre__icontains=query)
+                ).filter(disponible=True)[:10]  # Limitar a 10 resultados
+                
+                results = []
+                for producto in productos:
+                    results.append({
+                        'id': producto.id,
+                        'name': producto.nombre,
+                        'price': float(producto.precio),
+                        'sku': producto.sku,
+                        'image': producto.imagen.url if producto.imagen else None,
+                        'category': producto.categoria.nombre if producto.categoria else None,
+                        'url': f'/shop/?search={query}'  # Redirigir a la tienda con filtro
+                    })
+                
+                return JsonResponse({
+                    'success': True,
+                    'results': results,
+                    'count': len(results),
+                    'query': query
+                })
+            else:
+                return JsonResponse({
+                    'success': True,
+                    'results': [],
+                    'count': 0,
+                    'query': ''
+                })
+                
         except Exception as e:
             return JsonResponse({
                 'success': False,
@@ -58,28 +81,74 @@ def search_products(request):
 
 
 def shop(request):
-    """Vista de la tienda"""
+    """Vista de la tienda con filtros avanzados"""
     from .models import Producto, Categoria
+    from .filters import ProductoFilter
     
-    # Filtrar por categoría si se especifica
-    categoria_filtro = request.GET.get('categoria')
-    if categoria_filtro:
-        productos = Producto.objects.filter(
-            disponible=True, 
-            categoria__nombre__icontains=categoria_filtro
-        ).order_by('-creado')
+    # Verificar si hay un parámetro de búsqueda directo
+    search_query = request.GET.get('search')
+    if search_query:
+        # Si hay búsqueda directa, crear un GET modificado para el filtro
+        modified_get = request.GET.copy()
+        modified_get['search'] = search_query
+        producto_filter = ProductoFilter(modified_get, queryset=Producto.objects.filter(disponible=True))
     else:
-        productos = Producto.objects.filter(disponible=True).order_by('-creado')
+        # Aplicar filtros normales
+        producto_filter = ProductoFilter(request.GET, queryset=Producto.objects.filter(disponible=True))
     
-    # Obtener todas las categorías activas
+    productos = producto_filter.qs
+    
+    # Obtener todas las categorías activas para el sidebar
     categorias = Categoria.objects.filter(activa=True).distinct()
+    
+    # Contar productos filtrados
+    total_productos = productos.count()
+    
     context = { 
         'page_title': 'Tienda',
         'categorias': categorias,
         'productos': productos,
-        'categoria_actual': categoria_filtro
+        'filter': producto_filter,
+        'total_productos': total_productos,
+        'filtros_aplicados': any(request.GET.values()),
+        'search_query': search_query
     }
     return render(request, 'ferretetia/shop.html', context)
+
+
+def advanced_search(request):
+    """Vista avanzada de búsqueda con filtros"""
+    from .models import Producto, Categoria
+    from .filters import ProductoFilter, CategoriaFilter
+    
+    # Filtros de productos
+    producto_filter = ProductoFilter(request.GET, queryset=Producto.objects.all())
+    productos = producto_filter.qs
+    
+    # Filtros de categorías
+    categoria_filter = CategoriaFilter(request.GET, queryset=Categoria.objects.all())
+    categorias = categoria_filter.qs
+    
+    # Estadísticas
+    stats = {
+        'total_productos': Producto.objects.count(),
+        'productos_filtrados': productos.count(),
+        'total_categorias': Categoria.objects.count(),
+        'categorias_filtradas': categorias.count(),
+        'productos_disponibles': Producto.objects.filter(disponible=True).count(),
+        'productos_con_descuento': Producto.objects.filter(descuento=True).count(),
+    }
+    
+    context = {
+        'page_title': 'Búsqueda Avanzada',
+        'productos': productos,
+        'categorias': categorias,
+        'producto_filter': producto_filter,
+        'categoria_filter': categoria_filter,
+        'stats': stats,
+        'filtros_aplicados': any(request.GET.values())
+    }
+    return render(request, 'ferretetia/advanced_search.html', context)
 
 
 def elements(request):
@@ -120,9 +189,15 @@ def checkout(request):
     return render(request, 'checkout/checkout.html', context)
 
 
+def blog(request):
+    """Vista de blog"""
+    context = {
+        'page_title': 'blog'
+    }
+    return render(request, 'blog/blog.html', context)
 
 
-
-
-
+def test_search(request):
+    """Vista para probar la búsqueda"""
+    return render(request, 'ferretetia/test_search.html')
 

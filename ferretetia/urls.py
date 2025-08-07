@@ -12,11 +12,16 @@ urlpatterns = [
     
     # Shop y elementos que permanecen en ferretetia
     path('shop/', views.shop, name='shop'),
+    path('advanced-search/', views.advanced_search, name='advanced_search'),
+    path('search/', views.search_products, name='search_products'),
+    path('test-search/', views.test_search, name='test_search'),
     path('elements/', views.elements, name='elements'),
     path('account/', views.account,name='account'),
     path('wishlist/', views.wishlist, name='wishlist'),
     path('compare/', views.compare, name='compare'),
     path('checkout/', views.checkout, name='checkout'),
+    path('blog /', views.blog, name='blog'),
+    
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

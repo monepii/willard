@@ -1,0 +1,33 @@
+{% load static %}
+
+<div class="filters-sidebar">
+    <div class="filters-header">
+        <h3>Filtros</h3>
+        {% if filtros_aplicados %}
+            <a href="{% url 'ferretetia:shop' %}" class="clear-filters-btn">Limpiar filtros</a>
+        {% endif %}
+    </div>
+
+    <form method="get" class="filters-form">
+        <!-- Búsqueda general -->
+        <div class="filter-group">
+            <label for="{{ filter.form.search.id_for_label }}">Buscar productos</label>
+            {{ filter.form.search }}
+        </div>
+
+        <!-- Filtro por categoría -->
+        <div class="filter-group">
+            <label for="{{ filter.form.categoria.id_for_label }}">Categoría</label>
+            {{ filter.form.categoria }}
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="filter-actions">
+            <button type="submit" class="apply-filters-btn">Aplicar Filtros</button>
+        </div>
+    </form>
+    
+    <form method="get" action="{% url 'ferretetia:shop' %}" class="reset-form">
+        <button type="submit" class="reset-filters-btn">Restablecer</button>
+    </form>
+</div>

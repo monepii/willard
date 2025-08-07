@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'pages',
     'power_tools',
     'wishlist',
+    'django_filters',
 ]
 
 MIDDLEWARE = [

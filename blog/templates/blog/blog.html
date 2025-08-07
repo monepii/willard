@@ -4,138 +4,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page_title }} - Willard Ferretería</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'ferretetia/CSS/styles.css' %}">
-    <script src="{% static 'ferretetia/script.js' %}" defer></script>
+    <title>Blog - WILLARD</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
+    <link rel="stylesheet" href="{% static 'blog/styles.css' %}">
 </head>
 <body>
-    <!-- Header con información de contacto -->
-    <div class="top-bar">
-        <div class="container">
-            <div class="contact-info">
-                <span>📞 +3(800) 2345-6789</span>
-                <span>7 Days a week from 9:00 am to 7:00 pm</span>
-            </div>
-            <div class="currency-selector">
-                <span>USD, $</span>
-            </div>
-        </div>
-    </div>
+    {% include "ferretetia/auth.html" %}
 
-    <!-- Header principal -->
     <header>
-        <nav class="navbar">
-            <div class="navbar-left">
-                <div class="logo-container">
-                    <a href="{% url 'ferretetia:index' %}">
-                        <div class="logo-bg">WILLARD</div>
-                    </a>
-                </div>
-            </div>
-            <div class="navbar-center">
-                <div class="search-container">
-                    <input type="text" placeholder="Buscar Productos..." class="search-input">
-                    <button class="search-btn">BUSCAR</button>
-                </div>
-            </div>
-            <div class="navbar-right">
-                <a href="{% url 'wishlist:wishlist' %}" class="nav-item">
-                    <span class="icon">♡</span>
-                    <span>WISHLIST</span>
-                </a>
-                <a href="{% url 'compare:compare' %}" class="nav-item">
-                    <span class="icon">⚖</span>
-                    <span>COMPARE</span>
-                </a>
-                <a href="{% url 'account:account' %}" class="nav-item">
-                    <span class="icon">👤</span>
-                    <span>MY ACCOUNT</span>
-                </a>
-                <a href="{% url 'checkout:checkout' %}" class="nav-item">
-                    <span class="icon">📋</span>
-                    <span>CHECKOUT</span>
-                </a>
-                <a href="{% url 'cart:cart' %}" class="nav-item cart">
-                    <span class="icon">🛒</span>
-                    <span>CART</span>
-                    <span class="cart-count" id="cart-count">0</span>
-                </a>
-            </div>
-        </nav>
+        {% include "ferretetia/head_static.html" %}
     </header>
 
-    <!-- Menú de navegación inferior -->
-    <nav class="bottom-nav">
-        <div class="container">
-            <div class="nav-menu">
-
-                <div class="dropdown-menu">
-                    <a href="#" class="nav-link dropdown-toggle ">POWER TOOLS</a>
-                    <div class="dropdown-content">
-                        <a href="{% url 'power_tools:power_tools' %}?category=drill">Taladros</a>
-                        <a href="{% url 'power_tools:power_tools' %}?category=saw">Sierras</a>
-                        <a href="{% url 'power_tools:power_tools' %}?category=sander">Lijadoras</a>
-                        <a href="{% url 'power_tools:power_tools' %}?category=grinder">Amoladoras</a>
-                        <a href="{% url 'power_tools:power_tools' %}?category=router">Fresadoras</a>
-                        <a href="{% url 'power_tools:power_tools' %}?category=hammer">Martillos</a>
-                        <a href="{% url 'power_tools:power_tools' %}">Ver Todos</a>
-                    </div>
-                </div>
-                
-                <div class="dropdown-menu">
-                    <a href="#" class="nav-link dropdown-toggle active">BLOG</a>
-                    <div class="dropdown-content">
-                        <a href="{% url 'blog:blog' %}?category=tips">Consejos y Trucos</a>
-                        <a href="{% url 'blog:blog' %}?category=reviews">Reseñas de Productos</a>
-                        <a href="{% url 'blog:blog' %}?category=tutorials">Tutoriales</a>
-                        <a href="{% url 'blog:blog' %}?category=maintenance">Mantenimiento</a>
-                        <a href="{% url 'blog:blog' %}?category=safety">Seguridad</a>
-                        <a href="{% url 'blog:blog' %}">Ver Todos los Posts</a>
-                    </div>
-                </div>
-                
-                <div class="dropdown-menu">
-                    <a href="#" class="nav-link dropdown-toggle">SHOP</a>
-                    <div class="dropdown-content">
-                        <a href="{% url 'ferretetia:shop' %}?category=tools">Herramientas</a>
-                        <a href="{% url 'ferretetia:shop' %}?category=materials">Materiales</a>
-                        <a href="{% url 'ferretetia:shop' %}?category=paints">Pinturas</a>
-                        <a href="{% url 'ferretetia:shop' %}?category=electrical">Electricidad</a>
-                        <a href="{% url 'ferretetia:shop' %}?category=plumbing">Plomería</a>
-                        <a href="{% url 'ferretetia:shop' %}?category=hardware">Ferretería</a>
-                        <a href="{% url 'ferretetia:shop' %}">Ver Toda la Tienda</a>
-                    </div>
-                </div>
-                
-                <div class="dropdown-menu">
-                    <a href="#" class="nav-link dropdown-toggle">PAGES</a>
-                    <div class="dropdown-content">
-                        <a href="{% url 'pages:pages' %}?page=about">Acerca de Nosotros</a>
-                        <a href="{% url 'pages:pages' %}?page=contact">Contacto</a>
-                        <a href="{% url 'pages:pages' %}?page=services">Servicios</a>
-                        <a href="{% url 'pages:pages' %}?page=delivery">Entregas</a>
-                        <a href="{% url 'pages:pages' %}?page=warranty">Garantías</a>
-                        <a href="{% url 'pages:pages' %}?page=faq">Preguntas Frecuentes</a>
-                        <a href="{% url 'pages:pages' %}">Ver Todas las Páginas</a>
-                    </div>
-                </div>
-                
-                <div class="dropdown-menu">
-                    <a href="#" class="nav-link dropdown-toggle">ELEMENTS</a>
-                    <div class="dropdown-content">
-                        <a href="{% url 'ferretetia:elements' %}?type=buttons">Botones</a>
-                        <a href="{% url 'ferretetia:elements' %}?type=forms">Formularios</a>
-                        <a href="{% url 'ferretetia:elements' %}?type=cards">Tarjetas</a>
-                        <a href="{% url 'ferretetia:elements' %}?type=tables">Tablas</a>
-                        <a href="{% url 'ferretetia:elements' %}?type=modals">Modales</a>
-                        <a href="{% url 'ferretetia:elements' %}?type=alerts">Alertas</a>
-                        <a href="{% url 'ferretetia:elements' %}">Ver Todos los Elementos</a>
-                    </div>
-                </div>
+    <main class="main-content">
+        <div class="blog-container">
+            <div class="blog-header">
+                <h1>Blog de Ferretería</h1>
+                <p>Consejos, tutoriales y novedades del mundo de las herramientas</p>
             </div>
-        </div>
-    </nav>
 
-  <main>
-    
-  </main>
+            {% if posts %}
+                <div class="blog-grid">
+                    {% for post in posts %}
+                        <article class="blog-card">
+                            <a href="{% url 'blog:post_detail' post.id %}" class="blog-card-link">
+                                {% if post.imagen %}
+                                    <img src="{{ post.imagen.url }}" alt="{{ post.titulo }}" class="blog-card-image">
+                                {% else %}
+                                    <img src="{% static 'images/default-blog.jpg' %}" alt="{{ post.titulo }}" class="blog-card-image">
+                                {% endif %}
+                                
+                                <div class="blog-card-content">
+                                    <h2 class="blog-card-title">{{ post.titulo }}</h2>
+                                    <p class="blog-card-excerpt">{{ post.descripcion }}</p>
+                                    
+                                    <div class="blog-card-meta">
+                                        <span class="blog-card-author">{{ post.autor }}</span>
+                                        <span class="blog-card-date">{{ post.fecha|date:"d M Y" }}</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-posts">
+                    <h3>No hay posts disponibles</h3>
+                    <p>Pronto publicaremos contenido interesante sobre herramientas y ferretería.</p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer>
+        {% include "ferretetia/footer.html" %}
+    </footer>
+</body>
+</html>

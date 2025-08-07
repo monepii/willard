@@ -7,8 +7,10 @@
     <title>Tienda - WILLARD</title>
     <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
     <link rel="stylesheet" href="{% static 'ferretetia/CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'ferretetia/CSS/filters.css' %}">
+    <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
     <link rel="stylesheet" href="{% static 'CSS/styles2.css' %}">
-   <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
 </head>
 <body>
     {% include "ferretetia/auth.html" %}
@@ -51,30 +53,26 @@
     <main class="main-content">
         <div class="container">
             
-            <section class="categories-section">
-                <h2>Categorías Disponibles</h2>
-                <div class="categories-grid">
-                    {% for categoria in categorias %}
-                    <div class="category-card">
-                        <h3>{{ categoria.nombre }}</h3>
-                        <p>{{ categoria.descripcion|default:"Explora nuestra selección de productos" }}</p>
-                        <a href="?categoria={{ categoria.nombre|urlencode }}" class="add-to-cart">
-                         Productos 
-                        </a>
-                    </div>
-                    {% empty %}
-                    {% endfor %}
-                    
-                    <div class="category-card">
-                        <h3>Todos los Productos</h3>
-                        <p>Ver todos los productos disponibles</p>
-                        <a href="{% url 'ferretetia:shop' %}" class="add-to-cart">Ver Todos</a>
-                    </div>
-                </div>
-            </section>
 
-            <section class="products-section">
-                <h2>Productos Destacados</h2>
+
+            <div class="shop-layout">
+                <!-- Sidebar con filtros -->
+                <aside class="shop-sidebar">
+                    {% include "ferretetia/filters.html" %}
+                </aside>
+                            <!-- Header de la tienda con contador -->
+            <div class="shop-header">
+                <div class="shop-stats">
+                    <span class="products-count">{{ total_productos }} producto encontrado{{ total_productos|pluralize }}</span>
+                </div>
+            </div>
+
+                <!-- Contenido principal -->
+                <main class="shop-main">
+                    <section class="products-section">
+                        <div class="products-header">
+                            <h2>Productos</h2>
+                        </div>
                 <div class="products-grid">
                     {% for producto in productos %}
                     <div class="product-card">
@@ -113,11 +111,11 @@
                     {% empty %}
                     <div class="no-products">
                         <h3>No hay productos disponibles</h3>
-                        <p>Pronto tendremos productos para ti</p>
-                    </div>
                     {% endfor %}
                 </div>
             </section>
+                </main>
+            </div>
         </div>
     </main>
 
@@ -126,163 +124,7 @@
     </footer>
 
     <script src="{% static 'ferretetia/script.js' %}"></script>
-    <script>
-        // Funcionalidad para botones de wishlist
-        document.addEventListener('DOMContentLoaded', function() {
-            // Manejar botones de wishlist
-            document.querySelectorAll('.wishlist-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const productId = this.dataset.productId;
-                    const wishlistIcon = this.querySelector('.wishlist-icon');
-                    
-                    fetch(`/wishlist/add/${productId}/`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': getCookie('csrftoken'),
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(response => {
-                        if (response.status === 403) {
-                            // Usuario no autenticado
-                            showMessage('Debes iniciar sesión para agregar productos al wishlist', 'error');
-                            setTimeout(() => {
-                                window.location.href = '/account/login/';
-                            }, 2000);
-                            return null;
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data === null) return; // Ya se manejó el error de autenticación
-                        
-                        if (data.success) {
-                            // Cambiar el ícono para mostrar que está en el wishlist
-                            wishlistIcon.textContent = '❤️';
-                            this.title = 'Eliminar de favoritos';
-                            
-                            // Mostrar mensaje de éxito
-                            showMessage(data.message, 'success');
-                        } else {
-                            if (data.message && data.message.includes('logueado')) {
-                                showMessage('Debes iniciar sesión para agregar productos al wishlist', 'error');
-                                setTimeout(() => {
-                                    window.location.href = '/account/login/';
-                                }, 2000);
-                            } else {
-                                showMessage(data.message || 'Error al agregar al wishlist', 'error');
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showMessage('Error al agregar al wishlist', 'error');
-                    });
-                });
-            });
-
-            // Manejar botones de agregar al carrito
-            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const productId = this.dataset.productId;
-                    
-                    fetch(`/cart/add/${productId}/`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': getCookie('csrftoken'),
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            showMessage(data.message, 'success');
-                            // Actualizar contador del carrito si existe
-                            const cartCountElement = document.querySelector('.cart-count');
-                            if (cartCountElement && data.cart_count !== undefined) {
-                                cartCountElement.textContent = data.cart_count;
-                            }
-                        } else {
-                            if (data.message && data.message.includes('logueado')) {
-                                showMessage('Debes iniciar sesión para agregar productos al carrito', 'error');
-                                // Opcional: redirigir al login después de un breve delay
-                                setTimeout(() => {
-                                    window.location.href = '/account/login/';
-                                }, 2000);
-                            } else {
-                                showMessage(data.message || 'Error al agregar al carrito', 'error');
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showMessage('Error al agregar al carrito', 'error');
-                    });
-                });
-            });
-
-            // Función para obtener cookies
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
-                    }
-                }
-                return cookieValue;
-            }
-
-            // Función para mostrar mensajes
-            function showMessage(message, type) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${type}`;
-                messageDiv.textContent = message;
-                messageDiv.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    padding: 1rem;
-                    border-radius: 5px;
-                    color: white;
-                    font-weight: 600;
-                    z-index: 1000;
-                    animation: slideIn 0.3s ease;
-                `;
-                
-                if (type === 'success') {
-                    messageDiv.style.backgroundColor = '#28a745';
-                } else if (type === 'error') {
-                    messageDiv.style.backgroundColor = '#dc3545';
-                }
-                
-                document.body.appendChild(messageDiv);
-                
-                setTimeout(() => {
-                    messageDiv.remove();
-                }, 3000);
-            }
-
-            // Agregar estilos CSS para la animación
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideIn {
-                    from {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-        });
-    </script>
+    <script src="{% static 'ferretetia/search.js' %}"></script>
+    <script src="{% static 'ferretetia/products.js' %}"></script>
 </body>
 </html>

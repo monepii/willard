@@ -1,5 +1,7 @@
 
 from django.db import models
+import django_filters
+
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
@@ -31,9 +33,18 @@ class Producto(models.Model):
     precioDescuento = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     imagen = models.ImageField(upload_to='images/',default='images/default.jpg',blank=False)
 
+    def __unicode__(self):
+        return '%s' % (self.descripcion)
+
     class Meta:
         ordering = ['-creado']
 
     def __str__(self):
         return self.nombre
+
+
+class ProductFilter(django_filters.FilterSet):
+    class Meta:
+        model = Producto
+        fields = ['nombre', 'precio']
     

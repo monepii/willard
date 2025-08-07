@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.titulo }} - Blog WILLARD</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
+    <link rel="stylesheet" href="{% static 'blog/styles.css' %}">
+</head>
+<body>
+    {% include "ferretetia/auth.html" %}
+
+    <header>
+        {% include "ferretetia/head_static.html" %}
+    </header>
+
+    <main class="main-content">
+        <div class="post-container">
+            <article>
+                    <h1 class="post-title">{{ post.titulo }}</h1>
+                    <div class="post-meta">
+                        <span class="post-author">Por {{ post.autor }}</span>
+                        <span class="post-date">{{ post.fecha|date:"d de F Y" }}</span>
+                    </div>
+
+                {% if post.imagen %}
+                    <img src="{{ post.imagen.url }}" alt="{{ post.titulo }}" class="post-image">
+                {% endif %}
+
+                <div class="post-content">
+                    <p class="post-description">{{ post.descripcion }}</p>
+                    
+                    {% if post.contenido %}
+                        <div class="post-body">
+                            {{ post.contenido|linebreaks }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <a href="{% url 'blog:blog' %}" class="back-link">Volver al Blog</a>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        {% include "ferretetia/footer.html" %}
+    </footer>
+</body>
+</html>
