@@ -71,7 +71,11 @@
                 <main class="shop-main">
                     <section class="products-section">
                         <div class="products-header">
-                            <h2>Productos</h2>
+                            <h2>
+                                Productos
+                            </h2>
+                            {% if categoria_actual %}
+                            {% endif %}
                         </div>
                 <div class="products-grid">
                     {% for producto in productos %}
@@ -111,6 +115,8 @@
                     {% empty %}
                     <div class="no-products">
                         <h3>No hay productos disponibles</h3>
+                        <p>No se encontraron productos que coincidan con los filtros aplicados.</p>
+                    </div>
                     {% endfor %}
                 </div>
             </section>

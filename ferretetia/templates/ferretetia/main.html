@@ -68,11 +68,7 @@
                 </div>
                 
                 <div class="dropdown-menu">
-                    <a href="#" class="nav-link dropdown-toggle">BLOG</a>
-                    <div class="dropdown-content">
-                        <a href="#">Consejos y Trucos</a>
-                        <a href="#">Ver Todos los Posts</a>
-                    </div>
+                    <a href="{% url 'blog:blog' %}" class="nav-link">BLOG</a>
                 </div>
                 
                 <div class="dropdown-menu">
@@ -221,6 +217,31 @@
                 </div>
             </section>
 
+        <!--Blog-->
+        <section class="blog-section">
+            <h2>Blog</h2>
+            <div class="blog-grid">
+                {% for blog in blogs %}
+                <a href="{% url 'blog:post_detail' blog.id %}" class="blog-card-link">
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="{{ blog.imagen.url }}" alt="{{ blog.titulo }}">
+                        </div>
+                        <div class="blog-content">
+                            <h3 class="blog-title">{{ blog.titulo }}</h3>
+                            <div class="blog-meta">
+                                <span class="blog-date">{{ blog.fecha|date:"F d, Y"|upper }} 0</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% empty %}
+                <p>No hay posts del blog disponibles.</p>
+                {% endfor %}
+            </div>
+        </section>
+            
+          
         </div>
     </main>
 </body>

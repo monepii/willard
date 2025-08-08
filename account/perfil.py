@@ -1,7 +1,7 @@
 from .models import PerfilUsuario
 
 def perfil_usuario(request):
-    if request.user.is_authenticated:
+    if hasattr(request, 'user') and request.user.is_authenticated:
         try:
             perfil = PerfilUsuario.objects.get(user=request.user)
         except PerfilUsuario.DoesNotExist:

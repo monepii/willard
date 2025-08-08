@@ -14,15 +14,20 @@ def global_categories(request):
 def index(request):
     """Vista principal de la ferretería"""
     from .models import Producto, Categoria
+    from blog.models import Blog
     
     productos = Producto.objects.filter(disponible=True).order_by('-creado')[:12]
     
     # Obtener categorías para el dropdown
     categorias = Categoria.objects.filter(activa=True).distinct()
     
+    # Obtener posts del blog publicados
+    blogs = Blog.objects.filter(publicado=True).order_by('-fecha')[:4]
+    
     context = {
         "productos": productos,
-        "categorias": categorias
+        "categorias": categorias,
+        "blogs": blogs
     }
     return render(request, 'ferretetia/main.html', context)
 
@@ -85,16 +90,30 @@ def shop(request):
     from .models import Producto, Categoria
     from .filters import ProductoFilter
     
-    # Verificar si hay un parámetro de búsqueda directo
-    search_query = request.GET.get('search')
-    if search_query:
-        # Si hay búsqueda directa, crear un GET modificado para el filtro
-        modified_get = request.GET.copy()
-        modified_get['search'] = search_query
-        producto_filter = ProductoFilter(modified_get, queryset=Producto.objects.filter(disponible=True))
+    # Verificar si hay un parámetro de categoría por nombre
+    categoria_nombre = request.GET.get('categoria')
+    if categoria_nombre:
+        try:
+            # Buscar la categoría por nombre
+            categoria = Categoria.objects.get(nombre=categoria_nombre, activa=True)
+            # Crear un GET modificado con el ID de la categoría
+            modified_get = request.GET.copy()
+            modified_get['categoria'] = categoria.id
+            producto_filter = ProductoFilter(modified_get, queryset=Producto.objects.filter(disponible=True))
+        except Categoria.DoesNotExist:
+            # Si no se encuentra la categoría, usar filtros normales
+            producto_filter = ProductoFilter(request.GET, queryset=Producto.objects.filter(disponible=True))
     else:
-        # Aplicar filtros normales
-        producto_filter = ProductoFilter(request.GET, queryset=Producto.objects.filter(disponible=True))
+        # Verificar si hay un parámetro de búsqueda directo
+        search_query = request.GET.get('search')
+        if search_query:
+            # Si hay búsqueda directa, crear un GET modificado para el filtro
+            modified_get = request.GET.copy()
+            modified_get['search'] = search_query
+            producto_filter = ProductoFilter(modified_get, queryset=Producto.objects.filter(disponible=True))
+        else:
+            # Aplicar filtros normales
+            producto_filter = ProductoFilter(request.GET, queryset=Producto.objects.filter(disponible=True))
     
     productos = producto_filter.qs
     
@@ -111,7 +130,8 @@ def shop(request):
         'filter': producto_filter,
         'total_productos': total_productos,
         'filtros_aplicados': any(request.GET.values()),
-        'search_query': search_query
+        'search_query': request.GET.get('search'),
+        'categoria_actual': categoria_nombre
     }
     return render(request, 'ferretetia/shop.html', context)
 
