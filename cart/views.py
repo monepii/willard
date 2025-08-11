@@ -98,6 +98,7 @@ def add_to_cart(request, product_id):
                 'success': False,
                 'message': 'Producto no encontrado o no disponible.'
             })
+        return redirect('cart:cart')
     except Exception as e:
         messages.error(request, f"Error al agregar el producto: {str(e)}")
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':

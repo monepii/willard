@@ -11,18 +11,7 @@ def wishlist_view(request):
     """Vista de la lista de deseos"""
     print("=== WISHLIST DEBUG ===")
     print(f"Usuario: {request.user.username}")
-    print(f"ID: {request.user.id}")
     print(f"Autenticado: {request.user.is_authenticated}")
-    print(f"Tipo de usuario: {type(request.user)}")
-    print(f"Es anónimo: {request.user.is_anonymous}")
-    
-    # Verificar sesión
-    if hasattr(request, 'session'):
-        print(f"Session ID: {request.session.session_key}")
-        if '_auth_user_id' in request.session:
-            print(f"Auth user ID en sesión: {request.session['_auth_user_id']}")
-        else:
-            print("No hay auth_user_id en sesión")
     
     # Si no está autenticado, mostrar mensaje de login
     if not request.user.is_authenticated:
@@ -30,46 +19,37 @@ def wishlist_view(request):
             'page_title': 'Lista de Deseos',
             'wishlist_items': [],
             'perfil': None,
-            'debug_user': "No autenticado",
-            'debug_count': 0,
-            'debug_all_count': 0
         }
         return render(request, 'wishlist/wishlist.html', context)
     
-    # Obtener wishlist del usuario con productos relacionados y convertir a lista
-    items = list(WishlistItem.objects.filter(usuario=request.user).select_related('producto'))
-    print(f"Elementos encontrados: {items.count()}")
-    print(f"Usuario actual: {request.user.username} (ID: {request.user.id})")
-    print(f"Usuario autenticado: {request.user.is_authenticated}")
+    # Obtener wishlist del usuario
+    items = WishlistItem.objects.filter(usuario=request.user).select_related('producto')
+    items_count = items.count()
+    print(f"Elementos encontrados para {request.user.username}: {items_count}")
     
     # Mostrar cada elemento
     for item in items:
-        print(f"  - {item.producto.nombre}")
+        print(f"  - {item.producto.nombre} (ID: {item.producto.id})")
     
-    # Verificar si hay items en total
-    all_items = WishlistItem.objects.all()
-    print(f"Total de items en wishlist (todos los usuarios): {all_items.count()}")
-    for item in all_items:
-        print(f"  - {item.usuario.username} -> {item.producto.nombre}")
-    
-    # Obtener o crear perfil del usuario
-    perfil, created = PerfilUsuario.objects.get_or_create(
-        user=request.user,
-        defaults={
-            'nombre': request.user.first_name or request.user.username,
-            'email': request.user.email,
-            'telefono': '',
-            'direccion': ''
-        }
-    )
+    # Obtener perfil del usuario
+    try:
+        perfil = PerfilUsuario.objects.get(user=request.user)
+        print(f"Perfil encontrado: {perfil.nombre}")
+    except PerfilUsuario.DoesNotExist:
+        print("No se encontró perfil, creando uno...")
+        perfil = PerfilUsuario.objects.create(
+            user=request.user,
+            nombre=request.user.first_name or request.user.username,
+            email=request.user.email,
+            telefono='',
+            direccion=''
+        )
+        print(f"Perfil creado: {perfil.nombre}")
     
     context = {
         'page_title': 'Lista de Deseos',
         'wishlist_items': items,
-        'perfil': perfil,  # Usar el perfil del modelo PerfilUsuario
-        'debug_user': request.user.username,
-        'debug_count': items.count(),
-        'debug_all_count': WishlistItem.objects.all().count()
+        'perfil': perfil,
     }
     
     print("=== FIN DEBUG ===")

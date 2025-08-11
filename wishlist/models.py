@@ -5,7 +5,6 @@ from ferretetia.models import Producto
 # Create your models here.
 
 class WishlistItem(models.Model):
-    """Modelo para los elementos de la lista de deseos"""
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlist_items')
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='wishlist_items')
     fecha_agregado = models.DateTimeField(auto_now_add=True)

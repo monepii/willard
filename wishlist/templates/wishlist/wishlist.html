@@ -51,71 +51,74 @@
     <!-- Contenido principal -->
     <main class="main-content">
         <div class="container">
+            <!-- Debug info -->
+            <div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px;">
+                <strong>DEBUG:</strong><br>
+                Usuario: {{ request.user.username }}<br>
+                Items en wishlist: {{ wishlist_items.count }}<br>
+                {% if wishlist_items %}
+                    <br><strong>Productos:</strong><br>
+                    {% for item in wishlist_items %}
+                        - {{ item.producto.nombre }} (ID: {{ item.producto.id }})<br>
+                    {% endfor %}
+                    {% else %}
+                    <span>no hay mada</span>
+                {% endif %}
+            </div>
+            
             {% if perfil %}
                 <div class="wishlist-content">
-                    <div class="wishlist-stats">
-                        <span class="item-count">{{ wishlist_items.count }} producto{{ wishlist_items.count|pluralize }}</span>
-                    </div>
+                    <h1>Mi Lista de Deseos</h1>
                     
-                    <div class="wishlist-grid">
-                        {% for item in wishlist_items %}
-                        <div class="wishlist-item" data-product-id="{{ item.producto.id }}">
-                            <div class="item-image">
-                                {% if item.producto.imagen %}
-                                    <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}">
-                                {% else %}
-                                    <img src="{% static 'images/default.jpg' %}" alt="Sin imagen">
-                                {% endif %}
-                                {% if item.producto.descuento and item.producto.precioDescuento %}
-                                    <span class="sale-badge">SALE</span>
-                                {% endif %}
-                            </div>
-                            <div class="item-info">
-                                <h3 class="item-title">{{ item.producto.nombre }}</h3>
-                                {% if item.producto.descripcion %}
-                                    <p class="item-description">{{ item.producto.descripcion|truncatewords:20 }}</p>
-                                {% endif %}
-                                <div class="item-pricing">
-                                    {% if item.producto.descuento and item.producto.precioDescuento %}
-                                        <span class="price-original">${{ item.producto.precio }}</span>
-                                        <span class="price-sale">${{ item.producto.precioDescuento }}</span>
-                                    {% else %}
-                                        <span class="price-current">${{ item.producto.precio }}</span>
-                                    {% endif %}
-                                </div>
-                                <div class="item-actions">
-                                    <button class="add-to-cart-btn" data-product-id="{{ item.producto.id }}">
-                                        Agregar al Carrito
-                                    </button>
-                                    <button class="remove-from-wishlist-btn" data-product-id="{{ item.producto.id }}">
-                                        ❌ Eliminar
-                                    </button>
-                                </div>
-                                
-                                <div class="item-meta">
-                                    <span class="added-date">Agregado: {{ item.fecha_agregado|date:"d/m/Y" }}</span>
-                                    {% if item.producto.categoria %}
-                                    <span class="category">{{ item.producto.categoria.nombre }}</span>
-                                    {% endif %}
-                                </div>
-                            </div>
+                    {% if wishlist_items %}
+                        <div class="wishlist-stats">
+                            <span class="item-count">{{ wishlist_items.count }} producto{{ wishlist_items.count|pluralize }}</span>
                         </div>
-                        {% endfor %}
-                    </div>
-                    
-                    <div class="wishlist-actions">
-                        <button class="clear-wishlist-btn">Limpiar Lista</button>
-                        <a href="{% url 'ferretetia:shop' %}" class="continue-shopping-btn">Continuar Comprando</a>
-                    </div>
+                        
+                        <div class="wishlist-grid">
+                            {% for item in wishlist_items %}
+                            <div class="wishlist-item" data-product-id="{{ item.producto.id }}">
+                                <div class="item-image">
+                                    {% if item.producto.imagen %}
+                                        <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}">
+                                    {% else %}
+                                        <div style="width: 100%; height: 200px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #666;">
+                                            Sin imagen
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="item-info">
+                                    <h3 class="item-title">{{ item.producto.nombre }}</h3>
+                                    <div class="item-pricing">
+                                        <span class="price-current">${{ item.producto.precio }}</span>
+                                    </div>
+                                    <div class="item-actions">
+                                        <button class="add-to-cart-btn" data-product-id="{{ item.producto.id }}">
+                                            Agregar al Carrito
+                                        </button>
+                                        <button class="remove-from-wishlist-btn" data-product-id="{{ item.producto.id }}">
+                                            Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="wishlist-actions">
+                            <button class="clear-wishlist-btn">Limpiar Lista</button>
+                            <a href="{% url 'ferretetia:shop' %}" class="continue-shopping-btn">Continuar Comprando</a>
+                        </div>
+                    {% else %}
+                        <div class="empty-wishlist">
+                            <div class="empty-icon">♡</div>
+                            <h2>Tu lista de deseos está vacía</h2>
+                            <p>No tienes productos guardados en tu lista de deseos.</p>
+                            <a href="{% url 'ferretetia:shop' %}" class="btn-primary">Explorar Productos</a>
+                        </div>
+                    {% endif %}
                 </div>
-                {% else %}
-                <div class="empty-wishlist">
-                    <div class="empty-icon">♡</div>
-                    <h2>Tu lista de deseos está vacía</h2>
-                    <p>No tienes productos guardados en tu lista de deseos.</p>
-                    <a href="{% url 'ferretetia:shop' %}" class="btn-primary">Explorar Productos</a>
-                </div>
-            
+            {% else %}
                 <div class="login-message">
                     <h1>{{ page_title }}</h1>
                     <p>Gestiona tu lista de productos favoritos <a href="{% url 'account:login' %}">iniciando sesión.</a></p>
