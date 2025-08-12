@@ -8,10 +8,12 @@
     <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
     <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
     <link rel="stylesheet" href="{% static 'compare/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
 </head>
 <body>
     {% include "ferretetia/auth.html" %}
 
+    <!-- Header principal -->
     <header>
         <nav class="navbar">
             <div class="navbar-left">
@@ -31,7 +33,7 @@
                 <a href="{% url 'wishlist:wishlist' %}" class="nav-item">
                     <span class="icon">♡ WISHLIST</span>
                 </a>
-                <a href="{% url 'compare:compare' %}" class="nav-item active">
+                <a href="{% url 'compare:compare' %}" class="nav-item">
                     <span class="icon">⚖ COMPARAR</span>
                 </a>
                 <a href="{% url 'account:account' %}" class="nav-item">
@@ -41,7 +43,7 @@
                     <span class="icon">📋 CHECKOUT</span>
                 </a>
                 <a href="{% url 'cart:cart' %}" class="nav-item cart">
-                   <span class="icon">🛒 CARRITO {% if cart_count > 0 %}({{ cart_count }}){% endif %}</span>
+                    <span class="icon">🛒 CARRITO {% if cart_count > 0 %}({{ cart_count }}){% endif %}</span>
                 </a>
             </div>
         </nav>

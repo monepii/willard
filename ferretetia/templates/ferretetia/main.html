@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="{% static 'CSS/styles2.css' %}">
     <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
     <script src="{% static 'ferretetia/script.js' %}" defer></script>
-    <script src="{% static 'ferretetia/search.js' %}" defer></script>
     <script src="{% static 'ferretetia/JS/products.js' %}" defer></script>
     <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
     <link rel="stylesheet" href="{% static 'CSS/styles_img.css' %}">
@@ -31,9 +30,7 @@
             <div class="navbar-center">
                 <div class="search-container">
                     <input type="text" placeholder="Buscar Productos..." class="search-input">
-                    <button class="search-btn">BUSCAR
-                        {{ filter.form.search }}
-                    </button>
+                    <button class="search-btn">BUSCAR</button>
                 </div>
             </div>
             <div class="navbar-right">
@@ -210,6 +207,7 @@
                                 <button class="view-btn" title="Vista rápida">👁</button>
                             </div>
                             <button class="add-to-cart-btn" data-product-id="{{ producto.id }}">Agregar al Carrito</button>
+                            
                         </div>
                     </div>
                     {% endif %}

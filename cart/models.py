@@ -36,8 +36,9 @@ class Carrito(models.Model):
         """Limpia todos los items del carrito"""
         self.items.all().delete()
 
+    @staticmethod
     def obtener_o_crear_carrito(request):
-        """Método de clase para obtener o crear un carrito"""
+        """Método estático para obtener o crear un carrito"""
         if request.user.is_authenticated:
             carrito, creado = Carrito.objects.get_or_create(
                 usuario=request.user,

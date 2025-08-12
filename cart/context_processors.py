@@ -18,7 +18,7 @@ def cart_context(request):
                 'cart_total': 0,
                 'cart_is_empty': True
             }
-    except Exception:
+    except Exception as e:
         # Si hay algún error, retornar valores por defecto
         return {
             'cart_count': 0,

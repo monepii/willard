@@ -101,7 +101,6 @@
 }
 
 .price-current {
-    color: #28a745;
     font-weight: 600;
     font-size: 1.1rem;
 }
@@ -114,8 +113,6 @@
 
 .add-to-cart-btn {
     flex: 1;
-    background-color: #28a745;
-    color: white;
     border: none;
     padding: 0.75rem 1rem;
     border-radius: 6px;
@@ -124,13 +121,10 @@
     transition: background-color 0.3s ease;
 }
 
-.add-to-cart-btn:hover {
-    background-color: #218838;
-}
+
 
 .remove-from-wishlist-btn {
-    background-color: #dc3545;
-    color: white;
+
     border: none;
     padding: 0.75rem 1rem;
     border-radius: 6px;
@@ -139,9 +133,6 @@
     transition: background-color 0.3s ease;
 }
 
-.remove-from-wishlist-btn:hover {
-    background-color: #c82333;
-}
 
 .wishlist-actions {
     display: flex;
@@ -152,8 +143,6 @@
 }
 
 .clear-wishlist-btn {
-    background-color: #6c757d;
-    color: white;
     border: none;
     padding: 1rem 2rem;
     border-radius: 8px;
@@ -162,13 +151,9 @@
     transition: background-color 0.3s ease;
 }
 
-.clear-wishlist-btn:hover {
-    background-color: #5a6268;
-}
 
 .continue-shopping-btn {
-    background-color: #007bff;
-    color: white;
+
     text-decoration: none;
     padding: 1rem 2rem;
     border-radius: 8px;
@@ -177,11 +162,6 @@
     display: inline-block;
 }
 
-.continue-shopping-btn:hover {
-    background-color: #0056b3;
-    color: white;
-    text-decoration: none;
-}
 
 .empty-wishlist {
     text-align: center;

@@ -11,10 +11,13 @@
     <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
     <link rel="stylesheet" href="{% static 'CSS/styles2.css' %}">
     <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
+    <script src="{% static 'ferretetia/script.js' %}" defer></script>
+    <script src="{% static 'ferretetia/JS/products.js' %}" defer></script>
 </head>
 <body>
     {% include "ferretetia/auth.html" %}
     
+    <!-- Header principal -->
     <header>
         <nav class="navbar">
             <div class="navbar-left">
@@ -72,7 +75,7 @@
                     <section class="products-section">
                         <div class="products-header">
                             <h2>
-                                Productos
+                                Productos ({{total_productos}})
                             </h2>
                             {% if categoria_actual %}
                             {% endif %}

@@ -8,10 +8,13 @@
     <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
     <link rel="stylesheet" href="{% static 'cart/CSS/styles.css' %}">
     <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
+    <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
     <script src="{% static 'ferretetia/script.js' %}" defer></script>
 </head>
 <body>
     {% include "ferretetia/auth.html" %}
+    
+    <!-- Header principal -->
     <header>
         <nav class="navbar">
             <div class="navbar-left">
@@ -40,7 +43,7 @@
                 <a href="{% url 'checkout:checkout' %}" class="nav-item">
                     <span class="icon">📋 CHECKOUT</span>
                 </a>
-                <a href="{% url 'cart:cart' %}" class="nav-item cart active">
+                <a href="{% url 'cart:cart' %}" class="nav-item cart">
                     <span class="icon">🛒 CARRITO {% if cart_count > 0 %}({{ cart_count }}){% endif %}</span>
                 </a>
             </div>
@@ -52,16 +55,7 @@
 
             
             <h1>Carrito de Compras</h1>
-            
-            {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                <div class="message {{ message.tags }}">
-                    {{ message }}
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
+
             
 
             {% if perfil %} 
@@ -74,7 +68,7 @@
             {% else %}
                 <div class="cart-container">
                     <div class="cart-items">
-                        <h2>Productos en tu carrito ({{ total_items }} items)</h2>
+                        <h2>Productos en tu carrito ({{ total_items }})</h2>
                         
                         {% for item in items %}
                         <div class="cart-item" data-item-id="{{ item.id }}">
@@ -90,22 +84,19 @@
                             
                             <div class="item-details">
                                 <h3 class="item-name">{{ item.producto.nombre }}</h3>
-                                <p class="item-sku">SKU: {{ item.producto.sku }}</p>
-                                {% if item.producto.categoria %}
-                                <p class="item-category">{{ item.producto.categoria.nombre }}</p>
-                                {% endif %}
+
                             </div>
                             
                             <div class="item-price">
                                 {% if item.producto.descuento and item.producto.precioDescuento %}
-                                <span class="price-original">${{ item.producto.precio|floatformat:2 }}</span>
-                                <span class="price-current">${{ item.precio_unitario|floatformat:2 }}</span>
+                                <span class="price-original">${{ item.producto.precio }}</span>
+                                <span class="price-current">${{ item.precio_unitario}}</span>
                                 {% else %}
-                                <span class="price-current">${{ item.precio_unitario|floatformat:2 }}</span>
+                                <span class="price-current">${{ item.precio_unitario}}</span>
                                 {% endif %}
                             </div>
                             
-                            <div class="item-quantity">
+                           <div class="item-quantity">
                                 <form method="POST" action="{% url 'cart:update_cart' item.id %}" class="quantity-form">
                                     {% csrf_token %}
                                     <label for="cantidad-{{ item.id }}">Cantidad:</label>
@@ -118,8 +109,7 @@
                                            class="quantity-input">
                                     <button type="submit" class="btn-update">Actualizar</button>
                                 </form>
-                                <p class="stock-info">Stock disponible: {{ item.producto.stock }}</p>
-                            </div>
+                            </div>
                             
                             <div class="item-total">
                                 <span class="total-price">${{ item.precio_total|floatformat:2 }}</span>
@@ -146,37 +136,7 @@
                             </a>
                         </div>
                     </div>
-                    
-                    <div class="cart-summary">
-                        <h3>Resumen del Pedido</h3>
-                        <div class="summary-line">
-                            <span>Subtotal ({{ total_items }} items):</span>
-                            <span>${{ total_precio|floatformat:2 }}</span>
-                        </div>
-                        <div class="summary-line">
-                            <span>Envío:</span>
-                            <span>$10.00</span>
-                        </div>
-                        <div class="summary-line total">
-                            <span>Total:</span>
-                            <span>${{ total_precio|add:10|floatformat:2 }}</span>
-                        </div>
-                        
-                        <div class="checkout-actions">
-                            <a href="{% url 'checkout:checkout' %}" class="btn-checkout">
-                                Proceder al Checkout
-                            </a>
-                        </div>
-                        
-                        <div class="cart-info">
-                            <p><strong>Información importante:</strong></p>
-                            <ul>
-                                <li>Los precios incluyen IVA</li>
-                                <li>Envío gratuito en compras superiores a $100</li>
-                                <li>Devoluciones gratuitas hasta 30 días</li>
-                            </ul>
-                        </div>
-                    </div>
+                
                 </div>
             {% endif %}
              {% else %}

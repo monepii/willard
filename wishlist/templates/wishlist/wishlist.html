@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
     <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
     <link rel="stylesheet" href="{% static 'wishlist/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
 </head>
 <body>
     {% include "ferretetia/auth.html" %}
@@ -29,7 +30,7 @@
                 </div>
             </div>
             <div class="navbar-right">
-                <a href="{% url 'wishlist:wishlist' %}" class="nav-item active">
+                <a href="{% url 'wishlist:wishlist' %}" class="nav-item">
                     <span class="icon">♡ WISHLIST</span>
                 </a>
                 <a href="{% url 'compare:compare' %}" class="nav-item">
@@ -51,20 +52,6 @@
     <!-- Contenido principal -->
     <main class="main-content">
         <div class="container">
-            <!-- Debug info -->
-            <div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px;">
-                <strong>DEBUG:</strong><br>
-                Usuario: {{ request.user.username }}<br>
-                Items en wishlist: {{ wishlist_items.count }}<br>
-                {% if wishlist_items %}
-                    <br><strong>Productos:</strong><br>
-                    {% for item in wishlist_items %}
-                        - {{ item.producto.nombre }} (ID: {{ item.producto.id }})<br>
-                    {% endfor %}
-                    {% else %}
-                    <span>no hay mada</span>
-                {% endif %}
-            </div>
             
             {% if perfil %}
                 <div class="wishlist-content">

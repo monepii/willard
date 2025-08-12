@@ -82,14 +82,7 @@ def add_to_cart(request, product_id):
                 messages.success(request, f"{producto.nombre} ha sido agregado al carrito.")
             else:
                 messages.error(request, "Producto sin stock disponible.")
-        
-        # Si es una petición AJAX, devolver JSON
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({
-                'success': True,
-                'message': f'{producto.nombre} agregado al carrito',
-                'cart_count': carrito.total_items
-            })
+ 
         
     except Producto.DoesNotExist:
         messages.error(request, "Producto no encontrado o no disponible.")

@@ -34,16 +34,8 @@ def wishlist_view(request):
     # Obtener perfil del usuario
     try:
         perfil = PerfilUsuario.objects.get(user=request.user)
-        print(f"Perfil encontrado: {perfil.nombre}")
     except PerfilUsuario.DoesNotExist:
-        print("No se encontró perfil, creando uno...")
-        perfil = PerfilUsuario.objects.create(
-            user=request.user,
-            nombre=request.user.first_name or request.user.username,
-            email=request.user.email,
-            telefono='',
-            direccion=''
-        )
+
         print(f"Perfil creado: {perfil.nombre}")
     
     context = {
@@ -53,6 +45,11 @@ def wishlist_view(request):
     }
     
     print("=== FIN DEBUG ===")
+    print(f"Contexto enviado al template:")
+    print(f"  - wishlist_items: {len(context['wishlist_items'])} items")
+    print(f"  - perfil: {context['perfil'].nombre if context['perfil'] else 'None'}")
+    print(f"  - page_title: {context['page_title']}")
+    
     return render(request, 'wishlist/wishlist.html', context)
 
 @login_required

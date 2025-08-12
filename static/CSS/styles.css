@@ -180,6 +180,17 @@ header {
     color: var(--color-primary);
 }
 
+.nav-item.active {
+    background-color: var(--color-primary);
+    color: #333;
+    font-weight: 600;
+}
+
+.nav-item.active:hover {
+    background-color: var(--color-primary);
+    color: #333;
+}
+
 .nav-item .icon {
     font-size: 18px;
     margin-bottom: 2px;

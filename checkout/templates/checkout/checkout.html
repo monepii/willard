@@ -8,10 +8,12 @@
     <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
     <link rel="stylesheet" href="{% static 'checkout/CSS/styles.css' %}">
     <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
+    <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
 </head>
 <body>
     {% include "ferretetia/auth.html" %}
 
+    <!-- Header principal -->
     <header>
         <nav class="navbar">
             <div class="navbar-left">
@@ -23,7 +25,7 @@
             </div>
             <div class="navbar-center">
                 <div class="search-container">
-                    <input type="text" placeholder="Search Products..." class="search-input">
+                    <input type="text" placeholder="Buscar Productos..." class="search-input">
                     <button class="search-btn">BUSCAR</button>
                 </div>
             </div>
@@ -37,7 +39,7 @@
                 <a href="{% url 'account:account' %}" class="nav-item">
                     <span class="icon">👤 MI CUENTA</span>
                 </a>
-                <a href="{% url 'checkout:checkout' %}" class="nav-item active">
+                <a href="{% url 'checkout:checkout' %}" class="nav-item">
                     <span class="icon">📋 CHECKOUT</span>
                 </a>
                 <a href="{% url 'cart:cart' %}" class="nav-item cart">
