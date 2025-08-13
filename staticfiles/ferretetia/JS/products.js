@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const productId = this.dataset.productId;
             const wishlistIcon = this.querySelector('.wishlist-icon');
             
-            console.log('💖 Agregando producto al wishlist:', productId);
+            console.log('Agregando producto al wishlist:', productId);
             
             fetch(`/wishlist/add/${productId}/`, {
                 method: 'POST',
@@ -60,8 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.add-to-cart-btn').forEach(button => {
         button.addEventListener('click', function() {
             const productId = this.dataset.productId;
-            
-            console.log('🛒 Agregando producto al carrito:', productId);
+        
             
             fetch(`/cart/add/${productId}/`, {
                 method: 'POST',
@@ -117,35 +116,6 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// Función para mostrar mensajes
-function showMessage(message, type) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${type}`;
-    messageDiv.textContent = message;
-    messageDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 1rem;
-        border-radius: 5px;
-        color: white;
-        font-weight: 600;
-        z-index: 1000;
-        animation: slideIn 0.3s ease;
-    `;
-    
-    if (type === 'success') {
-        messageDiv.style.backgroundColor = '#28a745';
-    } else if (type === 'error') {
-        messageDiv.style.backgroundColor = '#dc3545';
-    }
-    
-    document.body.appendChild(messageDiv);
-    
-    setTimeout(() => {
-        messageDiv.remove();
-    }, 3000);
-}
 
 // Agregar estilos CSS para la animación
 const style = document.createElement('style');

@@ -135,6 +135,10 @@
                                 Continuar Comprando
                             </a>
                         </div>
+                        <div class="cart-actions">
+                            <h2>Total: {{total_precio}}</h2>
+                        </div>
+                        
                     </div>
                 
                 </div>
@@ -142,6 +146,9 @@
              {% else %}
             <p>Gestiona tu cuenta, pedidos y preferencias <a style="color:blue;" href="{% url 'account:login' %}">iniciando sesión.</a></p>
             {% endif %}
+        </div>
+        <div>
+            
         </div>
     </main>
 

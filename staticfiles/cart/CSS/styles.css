@@ -100,18 +100,14 @@
 }
 
 .btn-update {
-    background: #007bff;
-    color: white;
-    border: none;
+   border: none;
     padding: 0.5rem 1rem;
     border-radius: 4px;
     cursor: pointer;
+    text-decoration: none;
     font-size: 0.9rem;
 }
 
-.btn-update:hover {
-    background: #0056b3;
-}
 
 .stock-info {
     font-size: 0.8rem;
@@ -134,18 +130,12 @@
 }
 
 .btn-remove {
-    background: #dc3545;
-    color: white;
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 4px;
     cursor: pointer;
     text-decoration: none;
     font-size: 0.9rem;
-}
-
-.btn-remove:hover {
-    background: #c82333;
 }
 
 .cart-actions {
@@ -157,8 +147,7 @@
 }
 
 .btn-clear-cart {
-    background: #6c757d;
-    color: white;
+    
     border: none;
     padding: 0.75rem 1.5rem;
     border-radius: 4px;
@@ -166,13 +155,9 @@
     text-decoration: none;
 }
 
-.btn-clear-cart:hover {
-    background: #5a6268;
-}
+
 
 .btn-continue-shopping {
-    background: #28a745;
-    color: white;
     border: none;
     padding: 0.75rem 1.5rem;
     border-radius: 4px;
@@ -180,9 +165,7 @@
     text-decoration: none;
 }
 
-.btn-continue-shopping:hover {
-    background: #218838;
-}
+
 
 .cart-summary {
     background: white;

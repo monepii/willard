@@ -180,6 +180,17 @@ header {
     color: var(--color-primary);
 }
 
+.nav-item.active {
+    background-color: var(--color-primary);
+    color: #333;
+    font-weight: 600;
+}
+
+.nav-item.active:hover {
+    background-color: var(--color-primary);
+    color: #333;
+}
+
 .nav-item .icon {
     font-size: 18px;
     margin-bottom: 2px;
@@ -475,8 +486,20 @@ header {
 .products-section h2 {
     color: var(--color-text);
     font-size: var(--font-size-h2);
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
     text-align: center;
+}
+
+.category-filter-info {
+    text-align: center;
+    color: var(--color-text-light);
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-lg);
+}
+
+.category-filter-info strong {
+    color: var(--color-primary);
+    font-weight: 600;
 }
 
 .categories-grid {
@@ -914,15 +937,25 @@ header {
     border-radius: 8px;
     padding: var(--spacing-lg);
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.3s ease;
     text-decoration: none;
     color: var(--color-text);
     min-height: 120px;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.category-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .category-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    border-color: var(--color-text);
+    background: #FFE44D;
 }
 
 .category-icon {
@@ -938,6 +971,11 @@ header {
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+.category-button:hover .category-text {
+    color: #333;
 }
 
 /* Responsive Design */

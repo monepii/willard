@@ -1,41 +1,50 @@
 // Funcionalidad JavaScript para el wishlist
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Wishlist JavaScript cargado');
+    
+    // Verificar elementos en la página
+    const wishlistItems = document.querySelectorAll('.wishlist-item');
+    console.log('Items de wishlist encontrados:', wishlistItems.length);
+    
     // Eliminar de wishlist
     document.querySelectorAll('.remove-from-wishlist-btn').forEach(button => {
+        console.log('Botón eliminar encontrado:', button);
         button.addEventListener('click', function() {
             const productId = this.dataset.productId;
-            const wishlistItem = this.closest('.wishlist-item');
+            console.log('Eliminando producto:', productId);
             
-            fetch(`/wishlist/remove/${productId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    wishlistItem.remove();
-                    updateWishlistCount();
-                    
-                    // Mostrar mensaje
-                    showMessage(data.message, 'success');
-                } else {
+            if (confirm('¿Estás seguro de que quieres eliminar este producto de tu lista de deseos?')) {
+                fetch(`/wishlist/remove/${productId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.closest('.wishlist-item').remove();
+                        showMessage(data.message, 'success');
+                        updateWishlistCount();
+                    } else {
+                        showMessage('Error al eliminar el producto', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
                     showMessage('Error al eliminar el producto', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showMessage('Error al eliminar el producto', 'error');
-            });
+                });
+            }
         });
     });
 
     // Agregar al carrito
     document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        console.log('Botón agregar al carrito encontrado:', button);
         button.addEventListener('click', function() {
             const productId = this.dataset.productId;
+            console.log('Agregando al carrito:', productId);
             
             fetch(`/cart/add/${productId}/`, {
                 method: 'POST',
@@ -49,15 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     showMessage('Producto agregado al carrito', 'success');
                 } else {
-                    if (data.message && data.message.includes('logueado')) {
-                        showMessage('Debes iniciar sesión para agregar productos al carrito', 'error');
-                        // Opcional: redirigir al login después de un breve delay
-                        setTimeout(() => {
-                            window.location.href = '/account/login/';
-                        }, 2000);
-                    } else {
-                        showMessage('Error al agregar al carrito', 'error');
-                    }
+                    showMessage(data.message || 'Error al agregar al carrito', 'error');
                 }
             })
             .catch(error => {
@@ -70,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Limpiar wishlist
     const clearWishlistBtn = document.querySelector('.clear-wishlist-btn');
     if (clearWishlistBtn) {
+        console.log('Botón limpiar wishlist encontrado');
         clearWishlistBtn.addEventListener('click', function() {
             if (confirm('¿Estás seguro de que quieres limpiar toda tu lista de deseos?')) {
                 fetch('/wishlist/clear/', {
@@ -82,19 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Limpiar la interfaz
-                        const wishlistContent = document.querySelector('.wishlist-content');
-                        if (wishlistContent) {
-                            wishlistContent.innerHTML = `
-                                <div class="empty-wishlist">
-                                    <div class="empty-icon">♡</div>
-                                    <h2>Tu lista de deseos está vacía</h2>
-                                    <p>No tienes productos guardados en tu lista de deseos.</p>
-                                    <a href="/shop/" class="btn-primary">Explorar Productos</a>
-                                </div>
-                            `;
-                        }
-                        showMessage(data.message, 'success');
+                        location.reload();
                     } else {
                         showMessage('Error al limpiar la lista de deseos', 'error');
                     }
@@ -113,34 +103,29 @@ document.addEventListener('DOMContentLoaded', function() {
         if (countElement) {
             countElement.textContent = `${items.length} producto${items.length !== 1 ? 's' : ''}`;
         }
-        
-        // Si no hay items, mostrar mensaje de lista vacía
-        if (items.length === 0) {
-            const wishlistContent = document.querySelector('.wishlist-content');
-            if (wishlistContent) {
-                wishlistContent.innerHTML = `
-                    <div class="empty-wishlist">
-                        <div class="empty-icon">♡</div>
-                        <h2>Tu lista de deseos está vacía</h2>
-                        <p>No tienes productos guardados en tu lista de deseos.</p>
-                        <a href="/shop/" class="btn-primary">Explorar Productos</a>
-                    </div>
-                `;
-            }
-        }
     }
 
     function showMessage(message, type) {
+        console.log('Mostrando mensaje:', message, type);
+        
+        // Remover mensajes existentes
+        const existingMessages = document.querySelectorAll('.message');
+        existingMessages.forEach(msg => msg.remove());
+        
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${type}`;
         messageDiv.textContent = message;
         
         const container = document.querySelector('.container');
-        container.insertBefore(messageDiv, container.firstChild);
-        
-        setTimeout(() => {
-            messageDiv.remove();
-        }, 3000);
+        if (container) {
+            container.insertBefore(messageDiv, container.firstChild);
+            
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 3000);
+        }
     }
 
     function getCookie(name) {
@@ -157,4 +142,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return cookieValue;
     }
+    
+    console.log('Wishlist JavaScript inicializado completamente');
 }); 

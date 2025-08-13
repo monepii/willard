@@ -11,9 +11,6 @@ class ProductoAdmin(admin.ModelAdmin):
     list_editable = ("precio", "stock", "disponible")
     readonly_fields = ("creado", "actualizado")
     
-    # Filtros personalizados
-    filter_class = ProductoFilter
-    
     # Campos para edición rápida
     list_per_page = 25
     

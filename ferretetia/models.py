@@ -9,7 +9,7 @@ class Categoria(models.Model):
     activa = models.BooleanField(default=True)
     creado = models.DateTimeField(auto_now_add=True)
     actualizado = models.DateTimeField(auto_now=True)
-    imagen = models.ImageField(upload_to='images/',default='images/default.jpg',blank=False)
+    imagen = models.ImageField(upload_to='images/', default='images/default.jpg', blank=False)
 
     class Meta:
         verbose_name = 'Categoría'
@@ -18,6 +18,7 @@ class Categoria(models.Model):
 
     def __str__(self):
         return self.nombre
+
 
 class Producto(models.Model):
     sku = models.CharField(max_length=50, unique=True)
@@ -31,10 +32,7 @@ class Producto(models.Model):
     actualizado = models.DateTimeField(auto_now=True)
     descuento = models.BooleanField(default=False)
     precioDescuento = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    imagen = models.ImageField(upload_to='images/',default='images/default.jpg',blank=False)
-
-    def __unicode__(self):
-        return '%s' % (self.descripcion)
+    imagen = models.ImageField(upload_to='images/', default='images/default.jpg', blank=False)
 
     class Meta:
         ordering = ['-creado']
@@ -44,7 +42,14 @@ class Producto(models.Model):
 
 
 class ProductFilter(django_filters.FilterSet):
+    nombre = django_filters.CharFilter(lookup_expr='icontains')
+    precio_min = django_filters.NumberFilter(field_name='precio', lookup_expr='gte')
+    precio_max = django_filters.NumberFilter(field_name='precio', lookup_expr='lte')
+    categoria = django_filters.ModelChoiceFilter(queryset=Categoria.objects.filter(activa=True))
+    disponible = django_filters.BooleanFilter()
+    
     class Meta:
         model = Producto
-        fields = ['nombre', 'precio']
+        fields = ['nombre', 'categoria', 'disponible']
+    
     
