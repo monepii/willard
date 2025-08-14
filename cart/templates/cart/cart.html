@@ -43,7 +43,7 @@
                 <a href="{% url 'checkout:checkout' %}" class="nav-item">
                     <span class="icon">📋 CHECKOUT</span>
                 </a>
-                <a href="{% url 'cart:cart' %}" class="nav-item cart">
+                <a href="{% url 'cart:cart' %}" class="nav-item active cart ">
                     <span class="icon">🛒 CARRITO {% if cart_count > 0 %}({{ cart_count }}){% endif %}</span>
                 </a>
             </div>

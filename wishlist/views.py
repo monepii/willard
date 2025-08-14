@@ -9,10 +9,6 @@ from account.models import PerfilUsuario
 
 def wishlist_view(request):
     """Vista de la lista de deseos"""
-    print("=== WISHLIST DEBUG ===")
-    print(f"Usuario: {request.user.username}")
-    print(f"Autenticado: {request.user.is_authenticated}")
-    
     # Si no está autenticado, mostrar mensaje de login
     if not request.user.is_authenticated:
         context = {
@@ -24,31 +20,18 @@ def wishlist_view(request):
     
     # Obtener wishlist del usuario
     items = WishlistItem.objects.filter(usuario=request.user).select_related('producto')
-    items_count = items.count()
-    print(f"Elementos encontrados para {request.user.username}: {items_count}")
-    
-    # Mostrar cada elemento
-    for item in items:
-        print(f"  - {item.producto.nombre} (ID: {item.producto.id})")
     
     # Obtener perfil del usuario
     try:
         perfil = PerfilUsuario.objects.get(user=request.user)
     except PerfilUsuario.DoesNotExist:
-
-        print(f"Perfil creado: {perfil.nombre}")
+        perfil = None
     
     context = {
         'page_title': 'Lista de Deseos',
         'wishlist_items': items,
         'perfil': perfil,
     }
-    
-    print("=== FIN DEBUG ===")
-    print(f"Contexto enviado al template:")
-    print(f"  - wishlist_items: {len(context['wishlist_items'])} items")
-    print(f"  - perfil: {context['perfil'].nombre if context['perfil'] else 'None'}")
-    print(f"  - page_title: {context['page_title']}")
     
     return render(request, 'wishlist/wishlist.html', context)
 
@@ -66,26 +49,31 @@ def add_to_wishlist(request, product_id):
         )
         
         if created:
-            messages.success(request, f"'{producto.nombre}' agregado a tu lista de deseos.")
+            success_message = f"¡'{producto.nombre}' ha sido agregado a tu whishlist"
+            messages.success(request, success_message)
         else:
-            messages.info(request, f"'{producto.nombre}' ya está en tu lista de deseos.")
+            info_message = f"{producto.nombre}   ya está en tu whislist."
+            messages.info(request, info_message)
         
         # Si es una petición AJAX, devolver JSON
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
                 'success': True,
-                'message': 'Producto agregado a la lista de deseos',
-                'in_wishlist': True
+                'message': success_message if created else info_message,
+                'in_wishlist': True,
+                'product_name': producto.nombre,
+                'created': created
             })
         
         return redirect(request.META.get('HTTP_REFERER', 'wishlist:wishlist'))
         
     except Exception as e:
-        messages.error(request, "Error al agregar el producto a la lista de deseos.")
+        error_message = "Error al agregar el producto a la lista de deseos."
+        messages.error(request, error_message)
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
                 'success': False,
-                'message': 'Error al agregar el producto'
+                'message': error_message
             })
         return redirect(request.META.get('HTTP_REFERER', 'wishlist:wishlist'))
 
