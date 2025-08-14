@@ -179,6 +179,36 @@ def elements(request):
     }
     return render(request, 'ferretetia/elements.html', context)
 
+# def account(request):
+#     """Vista de cuenta - COMENTADA PARA EVITAR CONFLICTO"""
+#     context = {
+#         'page_title': 'Account'
+#     }
+#     return render(request, 'account/account.html', context)
+
+# def wishlist(request):
+#     """Vista de wishlist - COMENTADA PARA EVITAR CONFLICTO"""
+#     context = {
+#         'page_title': 'Wishlist'
+#     }
+#     return render(request, 'wishlist/wishlist.html', context)
+
+
+# def compare(request):
+#     """Vista de comparar - COMENTADA PARA EVITAR CONFLICTO"""
+#     context = {
+#         'page_title': 'Compare'
+#     }
+#     return render(request, 'compare/compare.html', context)
+
+
+# def checkout(request):
+#     """Vista de checkout - COMENTADA PARA EVITAR CONFLICTO"""
+#     context = {
+#         'page_title': 'checkout'
+#     }
+#     return render(request, 'checkout/checkout.html', context)
+
 
 def blog(request):
     """Vista de blog"""
@@ -186,6 +216,7 @@ def blog(request):
         'page_title': 'blog'
     }
     return render(request, 'blog/blog.html', context)
+
 
 def test_search(request):
     """Vista para probar la búsqueda"""
