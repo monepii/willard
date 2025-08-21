@@ -18,14 +18,27 @@ def index(request):
     
     productos = Producto.objects.filter(disponible=True).order_by('-creado')[:12]
     
+    # Productos para el carrusel (productos destacados o en oferta)
+    productos_carrusel = Producto.objects.filter(
+        disponible=True,
+        descuento=True
+    ).order_by('-creado')[:5]
+    
+    # Si no hay productos en oferta, usar productos destacados
+    if not productos_carrusel.exists():
+        productos_carrusel = Producto.objects.filter(
+            disponible=True
+        ).order_by('-creado')[:5]
+    
     # Obtener categorías para el dropdown
     categorias = Categoria.objects.filter(activa=True).distinct()
     
-    # Obtener posts del blog publicados
-    blogs = Blog.objects.filter(publicado=True).order_by('-fecha')[:4]
+    # Obtener posts del blog publicados para el carrusel
+    blogs = Blog.objects.filter(publicado=True).order_by('-fecha')[:8]
     
     context = {
         "productos": productos,
+        "productos_carrusel": productos_carrusel,
         "categorias": categorias,
         "blogs": blogs
     }
@@ -178,37 +191,6 @@ def elements(request):
         'page_title': 'Elementos'
     }
     return render(request, 'ferretetia/elements.html', context)
-
-# def account(request):
-#     """Vista de cuenta - COMENTADA PARA EVITAR CONFLICTO"""
-#     context = {
-#         'page_title': 'Account'
-#     }
-#     return render(request, 'account/account.html', context)
-
-# def wishlist(request):
-#     """Vista de wishlist - COMENTADA PARA EVITAR CONFLICTO"""
-#     context = {
-#         'page_title': 'Wishlist'
-#     }
-#     return render(request, 'wishlist/wishlist.html', context)
-
-
-# def compare(request):
-#     """Vista de comparar - COMENTADA PARA EVITAR CONFLICTO"""
-#     context = {
-#         'page_title': 'Compare'
-#     }
-#     return render(request, 'compare/compare.html', context)
-
-
-# def checkout(request):
-#     """Vista de checkout - COMENTADA PARA EVITAR CONFLICTO"""
-#     context = {
-#         'page_title': 'checkout'
-#     }
-#     return render(request, 'checkout/checkout.html', context)
-
 
 def blog(request):
     """Vista de blog"""

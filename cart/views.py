@@ -60,9 +60,26 @@ def add_to_cart(request, product_id):
                 item.actualizar_precio()
                 item.save()
 
-                messages.success(request, f"Cantidad de {producto.nombre} actualizada en el carrito.")
+                success_message = f"Cantidad de {producto.nombre} actualizada en el carrito."
+                messages.success(request, success_message)
+                
+                # Si es una petición AJAX, devolver JSON
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({
+                        'success': True,
+                        'message': success_message,
+                        'cart_count': carrito.total_items
+                    })
             else:
-                messages.error(request, f"No hay suficiente stock disponible. Máximo: {producto.stock}")
+                error_message = f"No hay suficiente stock disponible. Máximo: {producto.stock}"
+                messages.error(request, error_message)
+                
+                # Si es una petición AJAX, devolver JSON
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({
+                        'success': False,
+                        'message': error_message
+                    })
         except ItemCarrito.DoesNotExist:
             # Si no existe, crear nuevo item
             if producto.stock > 0:
@@ -79,27 +96,47 @@ def add_to_cart(request, product_id):
                     precio_unitario=precio_unitario
                 )
 
-                messages.success(request, f"{producto.nombre} ha sido agregado al carrito.")
+                success_message = f"{producto.nombre} ha sido agregado al carrito."
+                messages.success(request, success_message)
+                
+                # Si es una petición AJAX, devolver JSON
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({
+                        'success': True,
+                        'message': success_message,
+                        'cart_count': carrito.total_items
+                    })
             else:
-                messages.error(request, "Producto sin stock disponible.")
+                error_message = "Producto sin stock disponible."
+                messages.error(request, error_message)
+                
+                # Si es una petición AJAX, devolver JSON
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({
+                        'success': False,
+                        'message': error_message
+                    })
  
         
     except Producto.DoesNotExist:
-        messages.error(request, "Producto no encontrado o no disponible.")
+        error_message = "Producto no encontrado o no disponible."
+        messages.error(request, error_message)
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
                 'success': False,
-                'message': 'Producto no encontrado o no disponible.'
+                'message': error_message
             })
         return redirect('cart:cart')
     except Exception as e:
-        messages.error(request, f"Error al agregar el producto: {str(e)}")
+        error_message = f"Error al agregar el producto: {str(e)}"
+        messages.error(request, error_message)
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
                 'success': False,
-                'message': f'Error al agregar el producto: {str(e)}'
+                'message': error_message
             })
     
+    # Si no es AJAX o no se ha devuelto JSON, redirigir
     return redirect('cart:cart')
 
 

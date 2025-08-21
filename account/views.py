@@ -77,3 +77,12 @@ def logout_view(request):
     logout(request)
     messages.success(request, 'Has cerrado sesión exitosamente')
     return redirect('ferretetia:index')
+
+def update_view(request):
+    """Vista de modificar"""
+    context = {
+        'page_title': 'update'
+    }
+    return render(request, 'account/update.html', context)
+
+    

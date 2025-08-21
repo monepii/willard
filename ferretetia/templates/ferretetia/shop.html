@@ -6,13 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda - WILLARD</title>
     <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
-    <link rel="stylesheet" href="{% static 'ferretetia/CSS/styles.css' %}">
-    <link rel="stylesheet" href="{% static 'ferretetia/CSS/filters.css' %}">
-    <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
     <link rel="stylesheet" href="{% static 'CSS/styles2.css' %}">
+    <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
     <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
     <script src="{% static 'ferretetia/script.js' %}" defer></script>
     <script src="{% static 'ferretetia/JS/products.js' %}" defer></script>
+    
 </head>
 <body>
     {% include "ferretetia/auth.html" %}
@@ -105,13 +104,7 @@
                                 <span class="price-current">${{ producto.precio }}</span>
                                 {% endif %}
                             </div>
-                            <div class="product-actions">
-                                <button class="wishlist-btn" title="Agregar a favoritos" data-product-id="{{ producto.id }}">
-                                    <span class="wishlist-icon">♡</span>
-                                </button>
-                                <button class="compare-btn" title="Comparar" data-product-id="{{ producto.id }}">⚖</button>
-                                <button class="view-btn" title="Vista rápida" data-product-id="{{ producto.id }}">👁</button>
-                            </div>
+
                             <button class="add-to-cart-btn" data-product-id="{{ producto.id }}">Agregar al Carrito</button>
                         </div>
                     </div>

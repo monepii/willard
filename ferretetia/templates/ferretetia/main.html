@@ -8,10 +8,15 @@
     <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
     <link rel="stylesheet" href="{% static 'CSS/styles2.css' %}">
     <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
-    <script src="{% static 'ferretetia/script.js' %}" defer></script>
+    <link rel="stylesheet" href="{% static 'ferretetia/CSS/banner.css' %}">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="{% static 'ferretetia/JS/script.js' %}" defer></script>
     <script src="{% static 'ferretetia/JS/products.js' %}" defer></script>
     <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
     <link rel="stylesheet" href="{% static 'CSS/styles_img.css' %}">
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 </head>
 <body>
     
@@ -106,10 +111,65 @@
     
     <main class="main-content">
         <div class="container">
-
-            <section class="">
-                
-
+            <sectio n>
+                <!-- Carrusel de productos y blog -->
+                <div class="hero-carousel swiper">
+                    <div class="swiper-wrapper">
+                        <!-- Productos en oferta -->
+                        {% for producto in productos_carrusel %}
+                        <div class="swiper-slide">
+                            <div class="slide-content">
+                                <img src="{{ producto.imagen.url }}" 
+                                    alt="{{ producto.nombre }}" 
+                                    class="slide-image">
+                                <div class="slide-info">
+                                    <div class="slide-badge product-badge">PRODUCTO</div>
+                                    <h2>{{ producto.nombre }}</h2>
+                                    <p>{{ producto.descripcion|truncatewords:30 }}</p>
+                                    <div class="slide-price">
+                                        {% if producto.descuento and producto.precioDescuento %}
+                                            <span class="original">${{ producto.precio }}</span>
+                                            <span class="offer">${{ producto.precioDescuento }}</span>
+                                        {% else %}
+                                            <span>${{ producto.precio }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <a href="{% url 'ferretetia:shop' %}" 
+                                    class="slide-button product-button">
+                                        Ver Producto
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <!-- Posts del blog -->
+                        {% for blog in blogs %}
+                        <div class="swiper-slide">
+                            <div class="slide-content">
+                                <img src="{{ blog.imagen.url }}" 
+                                    alt="{{ blog.titulo }}" 
+                                    class="slide-image">
+                                <div class="slide-info">
+                                    <div class="slide-badge blog-badge">BLOG</div>
+                                    <h2>{{ blog.titulo }}</h2>
+                                    <p>{{ blog.contenido|truncatewords:30 }}</p>
+                                    <div class="slide-meta">
+                                        <span class="blog-date">{{ blog.fecha|date:"F d, Y"|upper }}</span>
+                                    </div>
+                                    <a href="{% url 'blog:post_detail' blog.id %}" 
+                                    class="slide-button blog-button">
+                                        Leer Más
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-pagination"></div>
+                </div>
             </section>
 
             <section class="tool-categories">
@@ -126,37 +186,72 @@
                 </div>
             </section>
 
+
+            <!-- OFERTAS -->
+            <section class="products-section">
+                <h2>Productos En Descuento</h2>
+                <div class="products-grid">
+                    {% for producto in productos|slice:":4" %}
+                    {% if producto.descuento == True %}
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                            <span class="sale-badge">SALE</span>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">{{ producto.nombre }}</h3>
+                            <div class="product-pricing">
+                                <span class="price-original">${{ producto.precio }}</span>
+                                <span class="price-sale">${{ producto.precioDescuento }}</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="wishlist-btn" title="Agregar a favoritos" data-product-id="{{ producto.id }}">
+                                    <span class="wishlist-icon">♡</span>
+                                </button>
+                                <button class="compare-btn" title="Comparar">⚖</button>
+                                <button class="view-btn" title="Vista rápida">👁</button>
+                            </div>
+                            <button class="add-to-cart-btn" data-product-id="{{ producto.id }}">Agregar al Carrito</button>
+                            
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% empty %}
+                    <p>No hay productos disponibles.</p>
+                    {% endfor %}
+                </div>
+            </section>
+            
             <section class="product-promotions">
-            <div class="promotion-left">
-                <h2>OFERTAS CALIENTES ESTA SEMANA</h2>
-                <p>Por otro lado, denunciamos con justa indignación y aversión a los hombres que están tan engañados y desmoralizados</p>
-                <div class="promotion-timer">
+                <div class="promotion-left">
+                    <h2>OFERTAS CALIENTES ESTA SEMANA</h2>
+                    <p>Por otro lado, denunciamos con justa indignación y aversión a los hombres que están tan engañados y desmoralizados</p>
+                    <div class="promotion-timer">
                     <div><span>06</span><br>DÍAS</div>
                     <div><span>15</span><br>HORAS</div>
                     <div><span>29</span><br>MINS</div>
                     <div><span>58</span><br>SECS</div>
+                    </div>
+                    <button class="shop-now-btn">COMPRAR AHORA &rsaquo;</button>
                 </div>
-                <button class="shop-now-btn">COMPRAR AHORA &rsaquo;</button>
-            </div>
-            <div class="promotion-right">
-                <h1 class="sale-title">¡OFERTA HASTA 50%!</h1>
-                <h3>HERRAMIENTAS DE CALIDAD</h3>
-                <p>Productos de Ferretería</p>
-                <span class="promotion-price">$520.00</span>
-                <span class="promotion-old-price">$750.00</span>
-                <div class="promotion-variants">
+                <div class="promotion-right">
+                    <h1 class="sale-title">¡OFERTA HASTA 50%!</h1>
+                    <h3>HERRAMIENTAS DE CALIDAD</h3>
+                    <p>Productos de Ferretería</p>
+                    <span class="promotion-price">$520.00</span>
+                    <span class="promotion-old-price">$750.00</span>
+                    <div class="promotion-variants">
                     <img src="{% static 'images/martillo.png' %}" alt="Martillo" style="width: 50px; height: 50px;">
                     <img src="{% static 'images/engrapadora.png' %}" alt="Engrapadora" style="width: 50px; height: 50px;">
+                    </div>
                 </div>
-            </div>
-        </section>
-        
-            
+            </section>
+
             <!-- Destacados -->
             <section class="products-section">
                 <h2>Productos Destacados</h2>
                 <div class="products-grid">
-                    {% for producto in productos %}
+                    {% for producto in productos|slice:":8" %}
                     <div class="product-card">
                         <div class="product-image">
                             <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
@@ -190,46 +285,11 @@
                 </div>
             </section>
 
-            <!-- OFERTAS -->
-            <section class="products-section">
-                <h2>Productos En Descuento</h2>
-                <div class="products-grid">
-                    {% for producto in productos %}
-                    {% if producto.descuento == True %}
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
-                            <span class="sale-badge">SALE</span>
-                        </div>
-                        <div class="product-info">
-                            <h3 class="product-title">{{ producto.nombre }}</h3>
-                            <div class="product-pricing">
-                                <span class="price-original">${{ producto.precio }}</span>
-                                <span class="price-sale">${{ producto.precioDescuento }}</span>
-                            </div>
-                            <div class="product-actions">
-                                <button class="wishlist-btn" title="Agregar a favoritos" data-product-id="{{ producto.id }}">
-                                    <span class="wishlist-icon">♡</span>
-                                </button>
-                                <button class="compare-btn" title="Comparar">⚖</button>
-                                <button class="view-btn" title="Vista rápida">👁</button>
-                            </div>
-                            <button class="add-to-cart-btn" data-product-id="{{ producto.id }}">Agregar al Carrito</button>
-                            
-                        </div>
-                    </div>
-                    {% endif %}
-                    {% empty %}
-                    <p>No hay productos disponibles.</p>
-                    {% endfor %}
-                </div>
-            </section>
-
         <!--Blog-->
         <section class="blog-section">
             <h2>Blog</h2>
             <div class="blog-grid">
-                {% for blog in blogs %}
+                {% for blog in blogs|slice:":4"%}
                 <a href="{% url 'blog:post_detail' blog.id %}" class="blog-card-link">
                     <div class="blog-card">
                         <div class="blog-image">
@@ -252,6 +312,8 @@
           
         </div>
     </main>
+    
+
 </body>
 <footer class="footer">
     {% include "ferretetia/footer.html" %}

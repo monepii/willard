@@ -84,6 +84,7 @@
                             
                             <div class="item-details">
                                 <h3 class="item-name">{{ item.producto.nombre }}</h3>
+                                <span class="stock-info">{{ item.producto.stock }} piezas disponibles. </span> 
 
                             </div>
                             
@@ -107,11 +108,10 @@
                                            min="1" 
                                            max="{{ item.producto.stock }}"
                                            class="quantity-input">
-                                    <button type="submit" class="btn-update">Actualizar</button>
                                 </form>
                             </div>
                             
-                            <div class="item-total">
+                            <div class="item-total">         
                                 <span class="total-price">${{ item.precio_total|floatformat:2 }}</span>
                             </div>
                             

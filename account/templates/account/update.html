@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Cuenta - WILLARD</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'account/CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
+    <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
+</head>
+<body>
+    <main>
+   {% include "ferretetia/auth.html" %}
+ <div class="main-content">
+    <div class="container">
+        <form>
+            <label for="fname">Nombre: {{perfil.nombre}} </label><br>
+            <input type="text" id="fname" name="fname"><br>
+            <label for="lname">Last name:</label><br>
+            <input type="text" id="lname" name="lname">
+            <input type="submit" value="Submit">
+        </form>   
+
+    </div>
+ </div>
+    </main>
+</body>
+
+<footer>
+    {% include "ferretetia/footer.html" %}
+</footer>
+</html>
