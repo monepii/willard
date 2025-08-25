@@ -236,10 +236,3 @@ def cart_count(request):
             'error': str(e)
         })
 
-
-@login_required
-def merge_cart(request):
-    """Fusionar carrito de sesión con carrito de usuario al hacer login"""
-    # Esta función ya no es necesaria ya que solo usuarios autenticados pueden usar el carrito
-    messages.info(request, "Tu carrito está listo para usar.")
-    return redirect('cart:cart')

@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -107,12 +108,13 @@
                                            value="{{ item.cantidad }}" 
                                            min="1" 
                                            max="{{ item.producto.stock }}"
-                                           class="quantity-input">
+                                           class="quantity-input"
+                                           onchange="this.form.submit()">
                                 </form>
                             </div>
                             
                             <div class="item-total">         
-                                <span class="total-price">${{ item.precio_total|floatformat:2 }}</span>
+                                <span class="total-price">${{ item.precio_total|floatformat:2}}</span>
                             </div>
                             
                             <div class="item-actions">

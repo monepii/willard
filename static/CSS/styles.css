@@ -209,15 +209,14 @@ header {
     gap: 4px; /* Espacio entre icono, texto y contador */
 }
 
-.cart-count {
+.cart-count- {
     position: static;
-    background-color: #ff4444;
+    background-color: var(--color-primary);
     color: white;
     border-radius: 50%;
-    width: 18px;
-    height: 18px;
+    width: 30px;
+    height: 30px;
     font-size: 10px;
-    display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;

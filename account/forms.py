@@ -16,7 +16,7 @@ class RegistroUsuarioForm(forms.ModelForm):
             raise forms.ValidationError('Las contraseñas no coinciden.')
         return cd.get('password2')
 
-class PerfilUsuarioForm(forms.ModelForm):
+class PerfilForm(forms.ModelForm):
     class Meta:
         model = PerfilUsuario
-        fields = ('nombre', 'telefono', 'direccion')
+        fields = ['nombre', 'apellido', 'telefono', 'direccion', 'email',]

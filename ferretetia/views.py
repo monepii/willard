@@ -24,21 +24,25 @@ def index(request):
         descuento=True
     ).order_by('-creado')[:5]
     
-    # Si no hay productos en oferta, usar productos destacados
     if not productos_carrusel.exists():
         productos_carrusel = Producto.objects.filter(
             disponible=True
         ).order_by('-creado')[:5]
     
-    # Obtener categorías para el dropdown
+    #  Productos en descuento para la sección de ofertas
+    productos_descuento = Producto.objects.filter(
+        disponible=True,
+        descuento=True
+    ).order_by('-creado')[:4]
+    
     categorias = Categoria.objects.filter(activa=True).distinct()
     
-    # Obtener posts del blog publicados para el carrusel
     blogs = Blog.objects.filter(publicado=True).order_by('-fecha')[:8]
     
     context = {
         "productos": productos,
         "productos_carrusel": productos_carrusel,
+        "productos_descuento": productos_descuento,  # ✅
         "categorias": categorias,
         "blogs": blogs
     }

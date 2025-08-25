@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'power_tools',
     'wishlist',
     'django_filters',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
@@ -115,12 +116,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-mx'
 
-TIME_ZONE = 'GMT'
+TIME_ZONE = "America/Mexico_City"
 
 USE_I18N = True
-
+USE_L10N = True 
 USE_TZ = True
 
 
@@ -148,3 +149,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/account/login/'
 LOGIN_REDIRECT_URL = '/account/'
 LOGOUT_REDIRECT_URL = '/'
+
+USE_THOUSAND_SEPARATOR = True
+THOUSAND_SEPARATOR = '.'
+DECIMAL_SEPARATOR = ','
+

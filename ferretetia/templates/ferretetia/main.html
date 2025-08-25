@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -52,7 +53,8 @@
                     <span class="icon">📋 CHECKOUT</span>
                 </a>
                 <a href="{% url 'cart:cart' %}" class="nav-item cart">
-                    <span class="icon">🛒 CARRITO {% if cart_count > 0 %}({{ cart_count }}){% endif %}</span>
+                    <span class="icon">🛒 CARRITO (<span class="cart-count">{% if cart_count > 0 %}{{ cart_count }}{% else %}0{% endif %}</span>)</span>
+
                 </a>
             </div>
         </nav>
@@ -88,10 +90,6 @@
                 <div class="dropdown-menu">
                     <a href="#" class="nav-link dropdown-toggle">PAGES</a>
                     <div class="dropdown-content">
-                        <a href="#">Acerca de Nosotros</a>
-                        <a href="#">Contacto</a>
-                        <a href="#">Servicios</a>
-                        <a href="#">Ver Todas las Páginas</a>
                     </div>
                 </div>
 
@@ -99,9 +97,6 @@
                 <div class="dropdown-menu">
                     <a href="#" class="nav-link dropdown-toggle">ELEMENTS</a>
                     <div class="dropdown-content">
-                        <a href="{% url 'ferretetia:elements' %}?type=buttons">Botones</a>
-                        <a href="{% url 'ferretetia:elements' %}?type=forms">Formularios</a>
-                        <a href="{% url 'ferretetia:elements' %}">Ver Todos los Elementos</a>
                     </div>
                 </div>
             </div>
@@ -111,12 +106,12 @@
     
     <main class="main-content">
         <div class="container">
-            <sectio n>
+            <section>
                 <!-- Carrusel de productos y blog -->
                 <div class="hero-carousel swiper">
                     <div class="swiper-wrapper">
                         <!-- Productos en oferta -->
-                        {% for producto in productos_carrusel %}
+                        {% for producto in productos_carrusel|slice:":3" %}
                         <div class="swiper-slide">
                             <div class="slide-content">
                                 <img src="{{ producto.imagen.url }}" 
@@ -144,7 +139,7 @@
                         {% endfor %}
                         
                         <!-- Posts del blog -->
-                        {% for blog in blogs %}
+                        {% for blog in blogs|slice:":2" %}
                         <div class="swiper-slide">
                             <div class="slide-content">
                                 <img src="{{ blog.imagen.url }}" 
@@ -170,6 +165,7 @@
                     <div class="swiper-button-prev"></div>
                     <div class="swiper-pagination"></div>
                 </div>
+                
             </section>
 
             <section class="tool-categories">
@@ -191,8 +187,7 @@
             <section class="products-section">
                 <h2>Productos En Descuento</h2>
                 <div class="products-grid">
-                    {% for producto in productos|slice:":4" %}
-                    {% if producto.descuento == True %}
+                    {% for producto in productos_descuento %}
                     <div class="product-card">
                         <div class="product-image">
                             <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
@@ -212,15 +207,14 @@
                                 <button class="view-btn" title="Vista rápida">👁</button>
                             </div>
                             <button class="add-to-cart-btn" data-product-id="{{ producto.id }}">Agregar al Carrito</button>
-                            
                         </div>
                     </div>
-                    {% endif %}
                     {% empty %}
                     <p>No hay productos disponibles.</p>
                     {% endfor %}
                 </div>
             </section>
+
             
             <section class="product-promotions">
                 <div class="promotion-left">

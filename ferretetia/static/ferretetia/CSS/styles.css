@@ -30,13 +30,11 @@
 }
 
 .product-promotions {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 100%;
-    margin: 0;
-    background: var(--color-background);
-    overflow: hidden;
+    margin-top: var(--spacing-xl);   /* espacio arriba */
+    margin-bottom: var(--spacing-xl); /* espacio abajo */
+    padding: var(--spacing-lg) 0;
 }
+
 
 .promotion-left,
 .promotion-right {

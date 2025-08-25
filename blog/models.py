@@ -8,6 +8,7 @@ class Blog(models.Model):
     imagen = models.ImageField(upload_to='blog_images/', default='blog_images/default.jpg', blank=True, null=True)
     autor = models.CharField(max_length=100, default='Admin')
     publicado = models.BooleanField(default=True)
+    mostarBanner = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Blog'

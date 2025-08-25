@@ -5,30 +5,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Cuenta - WILLARD</title>
+
+    <!-- Estilos globales -->
     <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
-    <link rel="stylesheet" href="{% static 'account/CSS/styles.css' %}">
     <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
     <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
+
+    <!-- Estilos específicos de cuenta -->
+    <link rel="stylesheet" href="{% static 'account/CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'account/CSS/styles_update.css' %}">
 </head>
 <body>
     <main>
-   {% include "ferretetia/auth.html" %}
- <div class="main-content">
-    <div class="container">
-        <form>
-            <label for="fname">Nombre: {{perfil.nombre}} </label><br>
-            <input type="text" id="fname" name="fname"><br>
-            <label for="lname">Last name:</label><br>
-            <input type="text" id="lname" name="lname">
-            <input type="submit" value="Submit">
-        </form>   
-
-    </div>
- </div>
+        {% include "ferretetia/auth.html" %}
+        <header>
+            {% include "ferretetia/head_static.html" %}
+        </header>
+        <div class="main-content">
+            <div class="form-container">
+                <h2>Editar Perfil</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="error">{{ field.errors }}</div>
+                        {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit">Guardar cambios</button>
+                </form>
+            </div>
+        </div>
     </main>
-</body>
 
-<footer>
-    {% include "ferretetia/footer.html" %}
-</footer>
+    <footer>
+        {% include "ferretetia/footer.html" %}
+    </footer>
+</body>
 </html>
