@@ -133,3 +133,4 @@ class CategoriaFilter(django_filters.FilterSet):
     class Meta:
         model = Categoria
         fields = ['nombre', 'activa']
+

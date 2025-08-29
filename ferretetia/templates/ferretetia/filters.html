@@ -1,33 +1,53 @@
 {% load static %}
+ <link rel="stylesheet" href="{% static 'ferretetia/CSS/styles_filter.css' %}">
 
 <div class="filters-sidebar">
     <div class="filters-header">
         <h3>Filtros</h3>
-        {% if filtros_aplicados %}
-            <a href="{% url 'ferretetia:shop' %}" class="clear-filters-btn">Limpiar filtros</a>
-        {% endif %}
+
+    </div>
+<form method="get" class="filters-form">
+    <!-- Búsqueda general -->
+    <div class="filter-group">
+        <label for="{{ filter.form.search.id_for_label }}">Buscar productos</label>
+        {{ filter.form.search }}
     </div>
 
-    <form method="get" class="filters-form">
-        <!-- Búsqueda general -->
-        <div class="filter-group">
-            <label for="{{ filter.form.search.id_for_label }}">Buscar productos</label>
-            {{ filter.form.search }}
-        </div>
+    <!-- Filtro por categoría -->
+    <div class="filter-group">
+        <label for="{{ filter.form.categoria.id_for_label }}">Categoría</label>
+        {{ filter.form.categoria }}
+    </div>
 
-        <!-- Filtro por categoría -->
-        <div class="filter-group">
-            <label for="{{ filter.form.categoria.id_for_label }}">Categoría</label>
-            {{ filter.form.categoria }}
-        </div>
+    <!-- Filtro por disponibilidad -->
+    <div class="filter-group">
+        <label for="{{ filter.form.disponible.id_for_label }}">Disponibilidad</label>
+        {{ filter.form.disponible }}
+    </div>
 
-        <!-- Botones de acción -->
-        <div class="filter-actions">
-            <button type="submit" class="apply-filters-btn">Aplicar Filtros</button>
-        </div>
-    </form>
+    <!-- Filtro por descuento -->
+    <div class="filter-group">
+        <label for="{{ filter.form.con_descuento.id_for_label }}">Con descuento</label>
+        {{ filter.form.con_descuento }}
+    </div>
+
+    <!-- Ordenamiento -->
+    <div class="filter-group">
+        <label for="{{ filter.form.ordenar.id_for_label }}">Ordenar por</label>
+        {{ filter.form.ordenar }}
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="filter-actions">
+        <button type="submit" class="apply-filters-btn">Aplicar Filtros</button>
+        <a href="?" class="reset-filters-btn">Limpiar</a>
+    </div>
+
     
     <form method="get" action="{% url 'ferretetia:shop' %}" class="reset-form">
         <button type="submit" class="reset-filters-btn">Restablecer</button>
     </form>
 </div>
+</form>
+
+    
