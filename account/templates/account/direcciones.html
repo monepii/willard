@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} - WILLARD</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'account/CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
+    <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
+</head>
+<body>
+   {% include "ferretetia/auth.html" %}
+
+    <!-- Header principal -->
+    <header>
+        <nav class="navbar">
+            <div class="navbar-left">
+                <div class="logo-container">
+                    <a href="{% url 'ferretetia:index' %}">
+                        <div class="logo-bg">WILLARD</div>
+                    </a>
+                </div>
+            </div>
+            <div class="navbar-center">
+                <div class="search-container">
+                    <input type="text" placeholder="Buscar Productos..." class="search-input">
+                    <button class="search-btn">BUSCAR</button>
+                </div>
+            </div>
+            <div class="navbar-right">
+                <a href="{% url 'wishlist:wishlist' %}" class="nav-item">
+                    <span class="icon">♡ WISHLIST</span>
+                </a>
+                <a href="{% url 'compare:compare' %}" class="nav-item">
+                    <span class="icon">⚖ COMPARAR</span>
+                </a>
+                <a href="{% url 'account:account' %}" class="nav-item active">
+                    <span class="icon">👤 MI CUENTA</span>
+                </a>
+                <a href="{% url 'checkout:checkout' %}" class="nav-item">
+                    <span class="icon">📋 CHECKOUT</span>
+                </a>
+                <a href="{% url 'cart:cart' %}" class="nav-item cart">
+                    <span class="icon">🛒 CARRITO {% if cart_count > 0 %}({{ cart_count }}){% endif %}</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>{{ page_title }}</h1>
+                <a href="{% url 'account:account' %}" class="btn btn-secondary">← Volver a Mi Cuenta</a>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="direcciones-header">
+                <a href="{% url 'account:agregar_direccion' %}" class="btn btn-primary">+ Agregar Nueva Dirección</a>
+            </div>
+
+            {% if direcciones %}
+                <div class="direcciones-grid">
+                    {% for direccion in direcciones %}
+                    <div class="direccion-card">
+                        <div class="direccion-header">
+                            <h3>{{ direccion.nombre }}</h3>
+                            <span class="badge badge-secondary">{{ direccion.get_tipo_display }}</span>
+                        </div>
+                        
+                        <div class="direccion-content">
+                            <p><strong>Dirección:</strong></p>
+                            <p>{{ direccion.calle }} #{{ direccion.numero_exterior }}{% if direccion.numero_interior %}, Int. {{ direccion.numero_interior }}{% endif %}</p>
+                            <p>{{ direccion.colonia }}, {{ direccion.municipio }}</p>
+                            <p>{{ direccion.estado }}, {{ direccion.codigo_postal }}</p>
+                            <p>{{ direccion.pais }}</p>
+                            
+                            {% if direccion.telefono %}
+                                <p><strong>Teléfono:</strong> {{ direccion.telefono }}</p>
+                            {% endif %}
+                            
+                            {% if direccion.instrucciones %}
+                                <p><strong>Instrucciones:</strong> {{ direccion.instrucciones }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="direccion-actions">
+                            <a href="{% url 'account:editar_direccion' direccion.id %}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                            
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmarEliminacion({{ direccion.id }}, '{{ direccion.nombre }}')">Eliminar</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>No tienes direcciones guardadas</h3>
+                    <p>Agrega tu primera dirección para facilitar tus compras futuras.</p>
+                    <a href="{% url 'account:agregar_direccion' %}" class="btn btn-primary">Agregar Primera Dirección</a>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        {% include "ferretetia/footer.html" %}
+    </footer>
+
+    <!-- Modal de confirmación de eliminación -->
+    <div id="modalEliminar" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Eliminación</h3>
+                <button type="button" class="modal-close" onclick="cerrarModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres eliminar la dirección <strong id="nombreDireccion"></strong>?</p>
+                <p class="text-muted">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                <form id="formEliminar" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function confirmarEliminacion(direccionId, nombreDireccion) {
+            document.getElementById('nombreDireccion').textContent = nombreDireccion;
+            document.getElementById('formEliminar').action = "{% url 'account:eliminar_direccion' 0 %}".replace('0', direccionId);
+            document.getElementById('modalEliminar').style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalEliminar').style.display = 'none';
+        }
+
+        // Cerrar modal al hacer clic fuera de él
+        document.getElementById('modalEliminar').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModal();
+            }
+        });
+
+        // Cerrar modal con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                cerrarModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+/* Estilos para Google Places Autocomplete */
+
+/* Mensajes de éxito y error */
+.address-success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    padding: 10px 15px;
+    margin: 10px 0;
+    font-size: 14px;
+    display: none;
+}
+
+.address-error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    padding: 10px 15px;
+    margin: 10px 0;
+    font-size: 14px;
+    display: none;
+}
+
+/* Texto de ayuda */
+.address-help-text {
+    margin-top: 5px;
+    color: #6c757d;
+    font-size: 12px;
+}
+
+.address-help-text small {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Estilos para el autocompletado de Google */
+.pac-container {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    font-family: inherit;
+    z-index: 1000;
+}
+
+.pac-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pac-item:hover {
+    background-color: #f8f9fa;
+}
+
+.pac-item:last-child {
+    border-bottom: none;
+}
+
+.pac-item-selected {
+    background-color: #e3f2fd;
+}
+
+.pac-matched {
+    font-weight: bold;
+    color: #1976d2;
+}
+
+.pac-item-query {
+    color: #333;
+    font-size: 14px;
+}
+
+.pac-item-description {
+    color: #666;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+/* Botones adicionales del formulario */
+.btn-info {
+    background-color: #FDD835;
+    border-color: #FDD835;
+    color: #000;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0 5px;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.btn-info:hover {
+    background-color: #f9c838;
+    border-color: #f9c838;
+    color: #000;
+}
+
+.btn-warning {
+    background-color: #FDD835;
+    border-color: #FDD835;
+    color: #000;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0 5px;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.btn-warning:hover {
+    background-color: #f9c838;
+    border-color: #f9c838;
+    color: #000;
+}
+
+/* Mejoras para el formulario de dirección */
+.direccion-form .form-group {
+    position: relative;
+}
+
+.direccion-form .form-group input[type="text"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.direccion-form .form-group input[type="text"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+/* Indicador de carga para el autocompletado */
+.pac-loading {
+    background-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px 16px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .pac-container {
+        width: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
+    }
+    
+    .form-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+        margin: 0;
+    }
+}
+
+/* Estilos para campos autocompletados */
+.form-group input[data-autocompleted="true"] {
+    background-color: #f8f9fa;
+    border-color: #28a745;
+}
+
+.form-group input[data-autocompleted="true"]:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
+}
+
+/* Iconos para los botones - Removidos */
+
+/* Animación para los mensajes */
+.address-success-message,
+.address-error-message {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

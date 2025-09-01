@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} - WILLARD</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'account/CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
+    <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
+</head>
+<body>
+   {% include "ferretetia/auth.html" %}
+
+    <!-- Header principal -->
+    <header>
+        <nav class="navbar">
+            <div class="navbar-left">
+                <div class="logo-container">
+                    <a href="{% url 'ferretetia:index' %}">
+                        <div class="logo-bg">WILLARD</div>
+                    </a>
+                </div>
+            </div>
+            <div class="navbar-center">
+                <div class="search-container">
+                    <input type="text" placeholder="Buscar Productos..." class="search-input">
+                    <button class="search-btn">BUSCAR</button>
+                </div>
+            </div>
+            <div class="navbar-right">
+                <a href="{% url 'wishlist:wishlist' %}" class="nav-item">
+                    <span class="icon">♡ WISHLIST</span>
+                </a>
+                <a href="{% url 'compare:compare' %}" class="nav-item">
+                    <span class="icon">⚖ COMPARAR</span>
+                </a>
+                <a href="{% url 'account:account' %}" class="nav-item active">
+                    <span class="icon">👤 MI CUENTA</span>
+                </a>
+                <a href="{% url 'checkout:checkout' %}" class="nav-item">
+                    <span class="icon">📋 CHECKOUT</span>
+                </a>
+                <a href="{% url 'cart:cart' %}" class="nav-item cart">
+                    <span class="icon">🛒 CARRITO {% if cart_count > 0 %}({{ cart_count }}){% endif %}</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>{{ page_title }}</h1>
+                <a href="{% url 'account:direcciones' %}" class="btn btn-secondary">← Volver a Direcciones</a>
+            </div>
+
+            <div class="delete-confirmation">
+                <div class="confirmation-card">
+                    <h2>¿Estás seguro de que quieres eliminar esta dirección?</h2>
+                    
+                    <div class="direccion-preview">
+                        <h3>{{ direccion.nombre }}</h3>
+                        {% if direccion.es_principal %}
+                            <span class="badge badge-primary">Principal</span>
+                        {% endif %}
+                        <span class="badge badge-secondary">{{ direccion.get_tipo_display }}</span>
+                        
+                        <div class="direccion-details">
+                            <p>{{ direccion.calle }} #{{ direccion.numero_exterior }}{% if direccion.numero_interior %}, Int. {{ direccion.numero_interior }}{% endif %}</p>
+                            <p>{{ direccion.colonia }}, {{ direccion.municipio }}</p>
+                            <p>{{ direccion.estado }}, {{ direccion.codigo_postal }}</p>
+                            <p>{{ direccion.pais }}</p>
+                            
+                            {% if direccion.telefono %}
+                                <p><strong>Teléfono:</strong> {{ direccion.telefono }}</p>
+                            {% endif %}
+                            
+                            {% if direccion.instrucciones %}
+                                <p><strong>Instrucciones:</strong> {{ direccion.instrucciones }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="warning-message">
+                        <p><strong>⚠️ Advertencia:</strong> Esta acción no se puede deshacer. La dirección será eliminada permanentemente.</p>
+                    </div>
+                    
+                    <div class="confirmation-actions">
+                        <form method="post" style="display: inline;">
+                            
+                        </form>
+                        <a href="{% url 'account:direcciones' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        {% include "ferretetia/footer.html" %}
+    </footer>
+</body>
+</html>

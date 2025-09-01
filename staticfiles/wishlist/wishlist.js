@@ -39,34 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Agregar al carrito
-    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-        console.log('Botón agregar al carrito encontrado:', button);
-        button.addEventListener('click', function() {
-            const productId = this.dataset.productId;
-            console.log('Agregando al carrito:', productId);
-            
-            fetch(`/cart/add/${productId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showMessage('Producto agregado al carrito', 'success');
-                } else {
-                    showMessage(data.message || 'Error al agregar al carrito', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showMessage('Error al agregar al carrito', 'error');
-            });
-        });
-    });
 
     // Limpiar wishlist
     const clearWishlistBtn = document.querySelector('.clear-wishlist-btn');

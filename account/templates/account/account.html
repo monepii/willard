@@ -66,6 +66,8 @@
                 <div class="account-section">
                     <h3>Direcciones</h3>
                     <p>Gestiona tus direcciones de envío</p>
+                    <a href="{% url 'account:direcciones' %}">Ver Mis Direcciones</a><br>
+                    <a href="{% url 'account:agregar_direccion' %}">Agregar Nueva Dirección</a>
                 </div>
             </div>
             {% else %}

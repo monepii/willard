@@ -1,25 +1,29 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .forms import PerfilForm
-from .models import PerfilUsuario
+from django.http import JsonResponse
+from .forms import PerfilForm, DireccionForm
+from .models import PerfilUsuario, Direccion
 
 
 def account_view(request):
     """Vista principal de la cuenta"""
     perfil = None
+    direcciones = []
     if request.user.is_authenticated:
         try:
             from .models import PerfilUsuario
             perfil = PerfilUsuario.objects.get(user=request.user)
+            direcciones = Direccion.objects.filter(user=request.user, activa=True)
         except PerfilUsuario.DoesNotExist:
             perfil = None
     context = {
         'page_title': 'Mi Cuenta',
         'user': request.user if request.user.is_authenticated else None,
-        'perfil': perfil
+        'perfil': perfil,
+        'direcciones': direcciones
     }
     return render(request, 'account/account.html', context)
 
@@ -101,3 +105,91 @@ def update_view(request):
         form = PerfilForm(instance=perfil)  
 
     return render(request, "account/update.html", {"form": form})
+
+# Vistas para gestión de direcciones
+@login_required
+def direcciones_view(request):
+    """Vista para listar todas las direcciones del usuario"""
+    direcciones = Direccion.objects.filter(user=request.user, activa=True)
+    context = {
+        'page_title': 'Mis Direcciones',
+        'direcciones': direcciones
+    }
+    return render(request, 'account/direcciones.html', context)
+
+@login_required
+def agregar_direccion_view(request):
+    """Vista para agregar una nueva dirección"""
+    if request.method == 'POST':
+        form = DireccionForm(request.POST)
+        if form.is_valid():
+            direccion = form.save(commit=False)
+            direccion.user = request.user
+            direccion.save()
+            messages.success(request, 'Dirección agregada exitosamente.')
+            return redirect('account:direcciones')
+        else:
+            messages.error(request, 'Por favor corrige los errores en el formulario.')
+    else:
+        form = DireccionForm()
+    
+    context = {
+        'page_title': 'Agregar Dirección',
+        'form': form
+    }
+    return render(request, 'account/agregar_direccion.html', context)
+
+@login_required
+def editar_direccion_view(request, direccion_id):
+    """Vista para editar una dirección existente"""
+    direccion = get_object_or_404(Direccion, id=direccion_id, user=request.user)
+    
+    if request.method == 'POST':
+        form = DireccionForm(request.POST, instance=direccion)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Dirección actualizada exitosamente.')
+            return redirect('account:direcciones')
+        else:
+            messages.error(request, 'Por favor corrige los errores en el formulario.')
+    else:
+        form = DireccionForm(instance=direccion)
+    
+    context = {
+        'page_title': 'Editar Dirección',
+        'form': form,
+        'direccion': direccion
+    }
+    return render(request, 'account/editar_direccion.html', context)
+
+@login_required
+def eliminar_direccion_view(request, direccion_id):
+    """Vista para eliminar una dirección (soft delete)"""
+    direccion = get_object_or_404(Direccion, id=direccion_id, user=request.user)
+    
+    if request.method == 'POST':
+        direccion.activa = False
+        direccion.save()
+        messages.success(request, 'Dirección eliminada exitosamente.')
+        return redirect('account:direcciones')
+    
+    context = {
+        'page_title': 'Eliminar Dirección',
+        'direccion': direccion
+    }
+    return render(request, 'account/eliminar_direccion.html', context)
+
+@login_required
+def establecer_principal_view(request, direccion_id):
+    """Vista para establecer una dirección como principal"""
+    direccion = get_object_or_404(Direccion, id=direccion_id, user=request.user)
+    
+    if request.method == 'POST':
+        # Desmarcar todas las direcciones principales del usuario
+        Direccion.objects.filter(user=request.user, es_principal=True).update(es_principal=False)
+        # Marcar esta dirección como principal
+        direccion.es_principal = True
+        direccion.save()
+        messages.success(request, 'Dirección principal actualizada.')
+    
+    return redirect('account:direcciones')
