@@ -10,10 +10,10 @@ class PerfilUsuarioAdmin(admin.ModelAdmin):
 
 @admin.register(Direccion)
 class DireccionAdmin(admin.ModelAdmin):
-    list_display = ("nombre", "user", "tipo", "calle", "numero_exterior", "colonia", "municipio", "estado", "es_principal", "activa", "creada")
-    search_fields = ("nombre", "user__username", "calle", "colonia", "municipio", "estado")
-    list_filter = ("tipo", "estado", "municipio", "es_principal", "activa", "creada")
-    list_display_links = ("nombre", "user")
+    list_display = ("user", "calle", "numero_exterior", "colonia", "municipio", "estado", "es_principal", "activa", "creada")
+    search_fields = ("user__username", "calle", "colonia", "municipio", "estado")
+    list_filter = ("estado", "municipio", "es_principal", "activa", "creada")
+    list_display_links = ("user", "calle")
     ordering = ("-es_principal", "-creada")
     list_editable = ("es_principal", "activa")
    

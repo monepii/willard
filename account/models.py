@@ -27,8 +27,6 @@ class Direccion(models.Model):
     ]
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='direcciones')
-    nombre = models.CharField(max_length=100, help_text="Nombre para identificar esta dirección")
-    tipo = models.CharField(max_length=20, choices=TIPO_DIRECCION_CHOICES, default='casa')
     calle = models.CharField(max_length=200)
     numero_exterior = models.CharField(max_length=20)
     numero_interior = models.CharField(max_length=20, blank=True, null=True)
@@ -45,7 +43,7 @@ class Direccion(models.Model):
     actualizada = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.nombre} - {self.calle} #{self.numero_exterior}, {self.colonia}"
+        return f"{self.calle} #{self.numero_exterior}, {self.colonia}"
     
     def save(self, *args, **kwargs):
         # Si se marca como principal, desmarcar las otras direcciones principales del usuario

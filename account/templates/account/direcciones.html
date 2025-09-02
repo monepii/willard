@@ -72,12 +72,7 @@
             {% if direcciones %}
                 <div class="direcciones-grid">
                     {% for direccion in direcciones %}
-                    <div class="direccion-card">
-                        <div class="direccion-header">
-                            <h3>{{ direccion.nombre }}</h3>
-                            <span class="badge badge-secondary">{{ direccion.get_tipo_display }}</span>
-                        </div>
-                        
+                    <div class="direccion-card">  
                         <div class="direccion-content">
                             <p><strong>Dirección:</strong></p>
                             <p>{{ direccion.calle }} #{{ direccion.numero_exterior }}{% if direccion.numero_interior %}, Int. {{ direccion.numero_interior }}{% endif %}</p>
@@ -98,7 +93,7 @@
                             <a href="{% url 'account:editar_direccion' direccion.id %}" class="btn btn-sm btn-outline-secondary">Editar</a>
                             
                             <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmarEliminacion({{ direccion.id }}, '{{ direccion.nombre }}')">Eliminar</button>
-                        </div>
+                         </div>
                     </div>
                     {% endfor %}
                 </div>

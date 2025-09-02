@@ -71,32 +71,12 @@
             <div class="form-container">
                 <form method="post" class="direccion-form">
                     {% csrf_token %}
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="{{ form.nombre.id_for_label }}">{{ form.nombre.label }}</label>
-                            {{ form.nombre }}
-                            {% if form.nombre.errors %}
-                                <div class="error-message">{{ form.nombre.errors.0 }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="{{ form.tipo.id_for_label }}">{{ form.tipo.label }}</label>
-                            {{ form.tipo }}
-                            {% if form.tipo.errors %}
-                                <div class="error-message">{{ form.tipo.errors.0 }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
+    
 
                     <div class="form-row">
                         <div class="form-group form-group-wide">
                             <label for="{{ form.calle.id_for_label }}">{{ form.calle.label }}</label>
                             {{ form.calle }}
-                            <div class="address-help-text">
-                                <small>💡 Escribe la dirección y selecciona una opción del autocompletado de Google</small>
-                            </div>
                             {% if form.calle.errors %}
                                 <div class="error-message">{{ form.calle.errors.0 }}</div>
                             {% endif %}
@@ -185,22 +165,10 @@
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <div class="checkbox-group">
-                                {{ form.es_principal }}
-                                <label for="{{ form.es_principal.id_for_label }}">{{ form.es_principal.label }}</label>
-                            </div>
-                            {% if form.es_principal.errors %}
-                                <div class="error-message">{{ form.es_principal.errors.0 }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
 
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Guardar Dirección</button>
                         <button type="button" class="btn btn-info" onclick="clearAddressForm()">Limpiar Dirección</button>
-                        <button type="button" class="btn btn-warning" onclick="validateAddressForm()">Validar Dirección</button>
                         <a href="{% url 'account:direcciones' %}" class="btn btn-secondary">Cancelar</a>
                     </div>
                 </form>
