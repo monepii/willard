@@ -61,18 +61,130 @@
         <div class="container">
             <h1>Checkout</h1>
             
-            {% if perfil %}
+            {% if user.is_authenticated %}
             <p>Finaliza tu compra de manera segura.</p>
-            <div class="checkout-form">
-                <h3>Información de Envío</h3>
-                <form>
-                    <input type="text" placeholder="Nombre completo" required>
-                    <input type="email" placeholder="Email" required>
-                    <input type="text" placeholder="Dirección" required>
-                    <input type="text" placeholder="Ciudad" required>
-                    <input type="text" placeholder="Código postal" required>
-                    <button type="submit" class="btn-primary">Procesar Pago</button>
-                </form>
+            <div class="checkout-grid">
+                <div class="checkout-form">
+                    <h3>Información de Envío</h3>
+                    <form method="post" action="{% url 'checkout:process' %}" id="checkoutForm">
+                        {% csrf_token %}
+                        
+                        <!-- Información personal -->
+                        <div class="form-section">
+                            <h4>Datos Personales</h4>
+                            <input type="text" name="nombre_completo" placeholder="Nombre completo" 
+                                   value="{% if perfil %}{{ perfil.nombre }} {{ perfil.apellido }}{% endif %}" required>
+                            <input type="email" name="email" placeholder="Email" 
+                                   value="{% if perfil %}{{ perfil.email }}{% elif user.email %}{{ user.email }}{% endif %}" required>
+                            <input type="text" name="telefono" placeholder="Teléfono (opcional)" 
+                                   value="{% if perfil %}{{ perfil.telefono }}{% endif %}">
+                        </div>
+                        
+                        <!-- Selección de dirección -->
+                        <div class="form-section">
+                            <h4>Dirección de Envío</h4>
+                            
+                            {% if direcciones %}
+                                <div class="address-section">
+                                    <select name="direccion_existente" id="direccion-select" onchange="updateAddressPreview()" required>
+                                        {% for direccion in direcciones %}
+                                            <option value="{{ direccion.id }}" 
+                                                    {% if direccion.es_principal %}selected{% endif %}
+                                                    data-calle="{{ direccion.calle }}"
+                                                    data-numero-ext="{{ direccion.numero_exterior }}"
+                                                    data-numero-int="{{ direccion.numero_interior }}"
+                                                    data-colonia="{{ direccion.colonia }}"
+                                                    data-municipio="{{ direccion.municipio }}"
+                                                    data-estado="{{ direccion.estado }}"
+                                                    data-cp="{{ direccion.codigo_postal }}"
+                                                    data-telefono="{{ direccion.telefono }}"
+                                                    data-instrucciones="{{ direccion.instrucciones }}">
+                                                {{ direccion.calle }} #{{ direccion.numero_exterior }}, {{ direccion.colonia }}
+                                                {% if direccion.es_principal %} (Principal){% endif %}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    
+                                    <div id="address-preview" class="address-preview">
+                                        <!-- Aquí se mostrará la dirección seleccionada -->
+                                    </div>
+                                    
+                                    <p class="address-note">
+                                        <a href="{% url 'account:direcciones' %}" target="_blank">Gestionar mis direcciones</a>
+                                    </p>
+                                </div>
+                            {% else %}
+                                <div class="no-address-warning">
+                                    <p><strong>⚠️ No tienes direcciones registradas</strong></p>
+                                    <p>Para completar tu pedido, primero debes agregar una dirección de envío.</p>
+                                    <a href="{% url 'account:agregar_direccion' %}" class="btn-add-address">Agregar Dirección</a>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Campo oculto para indicar que siempre usa dirección existente -->
+                            <input type="hidden" name="direccion_tipo" value="existente">
+                        </div>
+                        
+                        <textarea name="notas" placeholder="Notas adicionales (opcional)" rows="3"></textarea>
+                        <button type="submit" class="btn-primary">Confirmar Pedido</button>
+                    </form>
+                </div>
+                <aside class="checkout-summary">
+                    <h3>Resumen del Pedido</h3>
+                    {% if items %}
+                        <div class="order-count">
+                            <small>{{ items|length }} producto{{ items|length|pluralize }}</small>
+                        </div>
+                        
+                        <ul class="summary-items">
+                        {% for item in items %}
+                            <li class="summary-item">
+                                <span class="item-name">
+                                    {{ item.producto.nombre|truncatechars:25 }} 
+                                    <small class="item-qty">x{{ item.cantidad }}</small>
+                                </span>
+                                <span class="item-price">${{ item.precio_total }}</span>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                        
+                        <div class="summary-totals">
+                            <div>
+                                <span>Subtotal</span>
+                                <span>${{ subtotal }}</span>
+                            </div>
+                            {% if impuestos > 0 %}
+                            <div>
+                                <span>Impuestos</span>
+                                <span>${{ impuestos }}</span>
+                            </div>
+                            {% endif %}
+                            <div>
+                                <span>Envío</span>
+                                {% if envio > 0 %}
+                                    <span>${{ envio }}</span>
+                                {% else %}
+                                    <span class="free-shipping">Gratis</span>
+                                {% endif %}
+                            </div>
+                            <div class="summary-total">
+                                <span>Total</span>
+                                <span>${{ total }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-security">
+                            <small class="security-note">
+                                🔒 Pago seguro
+                            </small>
+                        </div>
+                    {% else %}
+                        <div class="empty-cart">
+                            <div class="empty-cart-icon">🛒</div>
+                            <p>Carrito vacío</p>
+                        </div>
+                    {% endif %}
+                </aside>
             </div>
             {% else %}
             <p>Para finalizar tu compra de manera segura deberás <a style="color: blue " href="{% url 'account:login' %}">iniciar sesión</a> o <a style="color:blue" href="{%url 'account:register' %}">registrarte.</a></p>
@@ -80,9 +192,63 @@
             {% endif %}
         </div>
     </main>
-</body>
- <!-- Footer -->
+    
+    <!-- Footer -->
     <footer class="footer">
-    {% include "ferretetia/footer.html"%}
+        {% include "ferretetia/footer.html"%}
     </footer>
+    
+    <script>
+        function updateAddressPreview() {
+            const select = document.getElementById('direccion-select');
+            const preview = document.getElementById('address-preview');
+            
+            if (!select || !preview) return;
+            
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (selectedOption) {
+                const calle = selectedOption.dataset.calle || '';
+                const numeroExt = selectedOption.dataset.numeroExt || '';
+                const numeroInt = selectedOption.dataset.numeroInt || '';
+                const colonia = selectedOption.dataset.colonia || '';
+                const municipio = selectedOption.dataset.municipio || '';
+                const estado = selectedOption.dataset.estado || '';
+                const cp = selectedOption.dataset.cp || '';
+                const telefono = selectedOption.dataset.telefono || '';
+                const instrucciones = selectedOption.dataset.instrucciones || '';
+                
+                let addressHTML = `
+                    <div class="selected-address">
+                        <p><strong>Dirección:</strong> ${calle} #${numeroExt}`;
+                        
+                if (numeroInt) {
+                    addressHTML += ` Int. ${numeroInt}`;
+                }
+                
+                addressHTML += `</p>
+                        <p><strong>Colonia:</strong> ${colonia}</p>
+                        <p><strong>Ciudad:</strong> ${municipio}, ${estado}</p>
+                        <p><strong>Código Postal:</strong> ${cp}</p>`;
+                        
+                if (telefono) {
+                    addressHTML += `<p><strong>Teléfono:</strong> ${telefono}</p>`;
+                }
+                
+                if (instrucciones) {
+                    addressHTML += `<p><strong>Instrucciones:</strong> ${instrucciones}</p>`;
+                }
+                
+                addressHTML += `</div>`;
+                
+                preview.innerHTML = addressHTML;
+            }
+        }
+        
+        // Inicializar al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAddressPreview();
+        });
+    </script>
+</body>
 </html>

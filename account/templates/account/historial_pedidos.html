@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} - WILLARD</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'account/CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
+    <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
+</head>
+<body>
+   {% include "ferretetia/auth.html" %}
+
+    <!-- Header principal -->
+    <header>
+        <nav class="navbar">
+            <div class="navbar-left">
+                <div class="logo-container">
+                    <a href="{% url 'ferretetia:index' %}">
+                        <div class="logo-bg">WILLARD</div>
+                    </a>
+                </div>
+            </div>
+            <div class="navbar-center">
+                <div class="search-container">
+                    <input type="text" placeholder="Buscar Productos..." class="search-input">
+                    <button class="search-btn">BUSCAR</button>
+                </div>
+            </div>
+            <div class="navbar-right">
+                <a href="{% url 'wishlist:wishlist' %}" class="nav-item">
+                    <span class="icon">♡ WISHLIST</span>
+                </a>
+                <a href="{% url 'compare:compare' %}" class="nav-item">
+                    <span class="icon">⚖ COMPARAR</span>
+                </a>
+                <a href="{% url 'account:account' %}" class="nav-item active">
+                    <span class="icon">👤 MI CUENTA</span>
+                </a>
+                <a href="{% url 'checkout:checkout' %}" class="nav-item">
+                    <span class="icon">📋 CHECKOUT</span>
+                </a>
+                <a href="{% url 'cart:cart' %}" class="nav-item cart">
+                    <span class="icon">🛒 CARRITO {% if cart_count > 0 %}({{ cart_count }}){% endif %}</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>{{ page_title }}</h1>
+                <a href="{% url 'account:account' %}" class="btn-back">← Volver a Mi Cuenta</a>
+            </div>
+            
+            {% if ordenes %}
+                <div class="orders-list">
+                    {% for orden in ordenes %}
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div class="order-info">
+                                    <h3>Pedido #{{ orden.numero_orden }}</h3>
+                                    <p class="order-date">Fecha: {{ orden.creado|date:"d/m/Y H:i" }}</p>
+                                </div>
+                                <div class="order-status-total">
+                                    <span class="order-status status-{{ orden.estado }}">{{ orden.get_estado_display }}</span>
+                                    <span class="order-total">${{ orden.total }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="order-summary">
+                                <div class="shipping-info">
+                                    <strong>Enviar a:</strong> {{ orden.nombre_completo }}<br>
+                                    {{ orden.direccion }}, {{ orden.ciudad }}
+                                </div>
+                                
+                                <div class="items-preview">
+                                    <strong>Productos ({{ orden.items.count }}):</strong>
+                                    {% for item in orden.items.all|slice:":3" %}
+                                        <span class="item-preview">{{ item.cantidad }}x {{ item.producto.nombre }}</span>{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                    {% if orden.items.count > 3 %}
+                                        y {{ orden.items.count|add:"-3" }} más...
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="order-actions">
+                                <a href="{% url 'account:detalle_pedido' orden.numero_orden %}" class="btn btn-primary">Ver Detalles</a>
+                                {% if orden.estado == 'pendiente' %}
+                                    <button class="btn btn-secondary">Cancelar Pedido</button>
+                                {% elif orden.estado == 'entregado' %}
+                                    <button class="btn btn-secondary">Reordenar</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-orders">
+                    <div class="no-orders-icon">📦</div>
+                    <h2>No tienes pedidos aún</h2>
+                    <p>Cuando realices tu primera compra, aparecerá aquí.</p>
+                    <a href="{% url 'ferretetia:shop' %}" class="btn btn-primary">Empezar a Comprar</a>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        {% include "ferretetia/footer.html" %}
+    </footer>
+</body>
+</html>

@@ -6,24 +6,31 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.http import JsonResponse
 from .forms import PerfilForm, DireccionForm
 from .models import PerfilUsuario, Direccion
+from checkout.models import Orden
 
 
 def account_view(request):
     """Vista principal de la cuenta"""
     perfil = None
     direcciones = []
+    ordenes_recientes = []
+    
     if request.user.is_authenticated:
         try:
             from .models import PerfilUsuario
             perfil = PerfilUsuario.objects.get(user=request.user)
             direcciones = Direccion.objects.filter(user=request.user, activa=True)
+            # Obtener las 3 órdenes más recientes
+            ordenes_recientes = Orden.objects.filter(usuario=request.user).order_by('-creado')[:3]
         except PerfilUsuario.DoesNotExist:
             perfil = None
+    
     context = {
         'page_title': 'Mi Cuenta',
         'user': request.user if request.user.is_authenticated else None,
         'perfil': perfil,
-        'direcciones': direcciones
+        'direcciones': direcciones,
+        'ordenes_recientes': ordenes_recientes
     }
     return render(request, 'account/account.html', context)
 
@@ -193,3 +200,27 @@ def establecer_principal_view(request, direccion_id):
         messages.success(request, 'Dirección principal actualizada.')
     
     return redirect('account:direcciones')
+
+
+@login_required
+def historial_pedidos_view(request):
+    """Vista para mostrar el historial completo de pedidos del usuario"""
+    ordenes = Orden.objects.filter(usuario=request.user).order_by('-creado')
+    
+    context = {
+        'page_title': 'Historial de Pedidos',
+        'ordenes': ordenes
+    }
+    return render(request, 'account/historial_pedidos.html', context)
+
+
+@login_required
+def detalle_pedido_view(request, numero_orden):
+    """Vista para mostrar el detalle de un pedido específico"""
+    orden = get_object_or_404(Orden, numero_orden=numero_orden, usuario=request.user)
+    
+    context = {
+        'page_title': f'Pedido #{orden.numero_orden}',
+        'orden': orden
+    }
+    return render(request, 'account/detalle_pedido.html', context)

@@ -12,6 +12,7 @@ urlpatterns = [
     
     # Shop y elementos que permanecen en ferretetia
     path('shop/', views.shop, name='shop'),
+    path('product/<int:product_id>/', views.product_detail, name='product_detail'),
     path('advanced-search/', views.advanced_search, name='advanced_search'),
     path('search/', views.search_products, name='search_products'),
     path('test-search/', views.test_search, name='test_search'),

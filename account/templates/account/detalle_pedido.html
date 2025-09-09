@@ -1,0 +1,209 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} - WILLARD</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'account/CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'checkout/CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/styles_footer.css' %}">
+    <link rel="stylesheet" href="{% static 'ferretetia/CSS/search.css' %}">
+</head>
+<body>
+   {% include "ferretetia/auth.html" %}
+
+    <!-- Header principal -->
+    <header>
+        <nav class="navbar">
+            <div class="navbar-left">
+                <div class="logo-container">
+                    <a href="{% url 'ferretetia:index' %}">
+                        <div class="logo-bg">WILLARD</div>
+                    </a>
+                </div>
+            </div>
+            <div class="navbar-center">
+                <div class="search-container">
+                    <input type="text" placeholder="Buscar Productos..." class="search-input">
+                    <button class="search-btn">BUSCAR</button>
+                </div>
+            </div>
+            <div class="navbar-right">
+                <a href="{% url 'wishlist:wishlist' %}" class="nav-item">
+                    <span class="icon">♡ WISHLIST</span>
+                </a>
+                <a href="{% url 'compare:compare' %}" class="nav-item">
+                    <span class="icon">⚖ COMPARAR</span>
+                </a>
+                <a href="{% url 'account:account' %}" class="nav-item active">
+                    <span class="icon">👤 MI CUENTA</span>
+                </a>
+                <a href="{% url 'checkout:checkout' %}" class="nav-item">
+                    <span class="icon">📋 CHECKOUT</span>
+                </a>
+                <a href="{% url 'cart:cart' %}" class="nav-item cart">
+                    <span class="icon">🛒 CARRITO {% if cart_count > 0 %}({{ cart_count }}){% endif %}</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>{{ page_title }}</h1>
+                <div class="breadcrumb">
+                    <a href="{% url 'account:account' %}">Mi Cuenta</a> › 
+                    <a href="{% url 'account:historial_pedidos' %}">Historial de Pedidos</a> › 
+                    <span>{{ orden.numero_orden }}</span>
+                </div>
+            </div>
+            
+            <div class="order-detail-container">
+                <div class="order-detail-header">
+                    <div class="order-status-section">
+                        <h2>Estado del Pedido</h2>
+                        <div class="status-indicator status-{{ orden.estado }}">
+                            {{ orden.get_estado_display }}
+                        </div>
+                        <p class="order-date">Pedido realizado el {{ orden.creado|date:"d/m/Y" }} a las {{ orden.creado|date:"H:i" }}</p>
+                    </div>
+                    
+                    <div class="order-actions-section">
+                        {% if orden.estado == 'pendiente' %}
+                            <button class="btn btn-warning">Cancelar Pedido</button>
+                        {% elif orden.estado == 'entregado' %}
+                            <button class="btn btn-primary">Reordenar</button>
+                        {% endif %}
+                        <button class="btn btn-secondary" onclick="window.print()">Imprimir</button>
+                    </div>
+                </div>
+
+                <div class="order-details-grid">
+                    <div class="shipping-details">
+                        <h3>Información de Envío</h3>
+                        <div class="info-card">
+                            <p><strong>Nombre:</strong> {{ orden.nombre_completo }}</p>
+                            <p><strong>Email:</strong> {{ orden.email }}</p>
+                            <p><strong>Dirección:</strong> {{ orden.direccion }}</p>
+                            <p><strong>Ciudad:</strong> {{ orden.ciudad }}</p>
+                            <p><strong>Código Postal:</strong> {{ orden.codigo_postal }}</p>
+                            {% if orden.telefono %}
+                            <p><strong>Teléfono:</strong> {{ orden.telefono }}</p>
+                            {% endif %}
+                            {% if orden.notas %}
+                            <p><strong>Notas:</strong> {{ orden.notas }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="order-summary-sidebar">
+                        <h3>Resumen del Pedido</h3>
+                        <div class="summary-card">
+                            <div class="summary-line">
+                                <span>Subtotal:</span>
+                                <span>${{ orden.subtotal }}</span>
+                            </div>
+                            {% if orden.impuestos > 0 %}
+                            <div class="summary-line">
+                                <span>Impuestos:</span>
+                                <span>${{ orden.impuestos }}</span>
+                            </div>
+                            {% endif %}
+                            {% if orden.envio > 0 %}
+                            <div class="summary-line">
+                                <span>Envío:</span>
+                                <span>${{ orden.envio }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="summary-line total-line">
+                                <span><strong>Total:</strong></span>
+                                <span><strong>${{ orden.total }}</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-items-section">
+                    <h3>Productos Ordenados</h3>
+                    <div class="items-table-container">
+                        <table class="items-table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Total</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in orden.items.all %}
+                                <tr>
+                                    <td>
+                                        <div class="product-info">
+                                            <strong>{{ item.producto.nombre }}</strong>
+                                            <small>SKU: {{ item.producto.id }}</small>
+                                        </div>
+                                    </td>
+                                    <td>{{ item.cantidad }}</td>
+                                    <td>${{ item.precio_unitario }}</td>
+                                    <td><strong>${{ item.precio_total }}</strong></td>
+                                    <td>
+                                        <a href="{% url 'ferretetia:product_detail' item.producto.id %}" class="btn-link">Ver Producto</a>
+                                        {% if orden.estado == 'entregado' %}
+                                        <button class="btn-link">Reseñar</button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {% if orden.estado != 'cancelado' %}
+                <div class="tracking-section">
+                    <h3>Estado del Pedido</h3>
+                    <div class="tracking-progress">
+                        <div class="tracking-step {% if orden.estado == 'pendiente' or orden.estado == 'procesando' or orden.estado == 'enviado' or orden.estado == 'entregado' %}completed{% endif %}">
+                            <div class="step-icon">1</div>
+                            <div class="step-label">Pedido Confirmado</div>
+                            <div class="step-date">{{ orden.creado|date:"d/m/Y" }}</div>
+                        </div>
+                        <div class="tracking-step {% if orden.estado == 'procesando' or orden.estado == 'enviado' or orden.estado == 'entregado' %}completed{% endif %}">
+                            <div class="step-icon">2</div>
+                            <div class="step-label">En Procesamiento</div>
+                            <div class="step-date">{% if orden.estado != 'pendiente' %}{{ orden.actualizado|date:"d/m/Y" }}{% endif %}</div>
+                        </div>
+                        <div class="tracking-step {% if orden.estado == 'enviado' or orden.estado == 'entregado' %}completed{% endif %}">
+                            <div class="step-icon">3</div>
+                            <div class="step-label">Enviado</div>
+                            <div class="step-date">{% if orden.estado == 'enviado' or orden.estado == 'entregado' %}{{ orden.actualizado|date:"d/m/Y" }}{% endif %}</div>
+                        </div>
+                        <div class="tracking-step {% if orden.estado == 'entregado' %}completed{% endif %}">
+                            <div class="step-icon">4</div>
+                            <div class="step-label">Entregado</div>
+                            <div class="step-date">{% if orden.estado == 'entregado' %}{{ orden.actualizado|date:"d/m/Y" }}{% endif %}</div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="back-actions">
+                    <a href="{% url 'account:historial_pedidos' %}" class="btn btn-secondary">← Volver al Historial</a>
+                    <a href="{% url 'ferretetia:shop' %}" class="btn btn-primary">Seguir Comprando</a>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        {% include "ferretetia/footer.html" %}
+    </footer>
+</body>
+</html>

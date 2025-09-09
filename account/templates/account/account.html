@@ -61,7 +61,24 @@
                 </div>
                 <div class="account-section">
                     <h3>Historial de Pedidos</h3>
-                    <p>Ve tus compras anteriores</p>
+                    {% if ordenes_recientes %}
+                        <div class="recent-orders">
+                            <h4>Últimos Pedidos:</h4>
+                            {% for orden in ordenes_recientes %}
+                                <div class="order-item">
+                                    <span class="order-number">#{{ orden.numero_orden }}</span>
+                                    <span class="order-date">{{ orden.creado|date:"d/m/Y" }}</span>
+                                    <span class="order-total">${{ orden.total }}</span>
+                                    <span class="order-status status-{{ orden.estado }}">{{ orden.get_estado_display }}</span>
+                                    <a href="{% url 'account:detalle_pedido' orden.numero_orden %}" class="view-details">Ver Detalles</a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <a href="{% url 'account:historial_pedidos' %}" class="view-all">Ver Todos los Pedidos</a>
+                    {% else %}
+                        <p>Aún no tienes pedidos realizados.</p>
+                        <a href="{% url 'ferretetia:shop' %}" class="btn-shop">Empezar a Comprar</a>
+                    {% endif %}
                 </div>
                 <div class="account-section">
                     <h3>Direcciones</h3>

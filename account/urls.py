@@ -17,4 +17,8 @@ urlpatterns = [
     path('direcciones/editar/<int:direccion_id>/', views.editar_direccion_view, name='editar_direccion'),
     path('direcciones/eliminar/<int:direccion_id>/', views.eliminar_direccion_view, name='eliminar_direccion'),
     path('direcciones/principal/<int:direccion_id>/', views.establecer_principal_view, name='establecer_principal'),
+    
+    # URLs para historial de pedidos
+    path('pedidos/', views.historial_pedidos_view, name='historial_pedidos'),
+    path('pedidos/<str:numero_orden>/', views.detalle_pedido_view, name='detalle_pedido'),
 ]

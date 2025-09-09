@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
 import json
 from .filters import ProductoFilter, CategoriaFilter
 from django.db import models
@@ -152,6 +153,21 @@ def shop(request):
         'categoria_actual': categoria_nombre
     }
     return render(request, 'ferretetia/shop.html', context)
+
+
+def product_detail(request, product_id):
+    """Vista para el detalle de un producto"""
+    try:
+        producto = Producto.objects.get(id=product_id, disponible=True)
+    except Producto.DoesNotExist:
+        messages.error(request, "Producto no encontrado")
+        return redirect('ferretetia:shop')
+    
+    context = {
+        'producto': producto,
+        'page_title': f'{producto.nombre} - WILLARD'
+    }
+    return render(request, 'ferretetia/product_detail.html', context)
 
 
 def advanced_search(request):
