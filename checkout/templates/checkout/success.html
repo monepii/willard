@@ -65,97 +65,11 @@
                     <div class="success-icon">✓</div>
                 </div>
                 
-                {% if orden %}
-                <div class="order-details">
-                    <h2>Detalles de tu Pedido</h2>
-                    <div class="order-info">
-                        <div class="order-number">
-                            <strong>Número de Orden:</strong> {{ orden.numero_orden }}
-                        </div>
-                        <div class="order-date">
-                            <strong>Fecha:</strong> {{ orden.creado|date:"d/m/Y H:i" }}
-                        </div>
-                        <div class="order-status">
-                            <strong>Estado:</strong> {{ orden.get_estado_display }}
-                        </div>
-                    </div>
-                    
-                    <div class="shipping-info">
-                        <h3>Información de Envío</h3>
-                        <p><strong>Nombre:</strong> {{ orden.nombre_completo }}</p>
-                        <p><strong>Email:</strong> {{ orden.email }}</p>
-                        <p><strong>Dirección:</strong> {{ orden.direccion }}</p>
-                        <p><strong>Ciudad:</strong> {{ orden.ciudad }}</p>
-                        <p><strong>Código Postal:</strong> {{ orden.codigo_postal }}</p>
-                        {% if orden.telefono %}
-                        <p><strong>Teléfono:</strong> {{ orden.telefono }}</p>
-                        {% endif %}
-                        {% if orden.notas %}
-                        <p><strong>Notas:</strong> {{ orden.notas }}</p>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="order-items">
-                        <h3>Productos Ordenados</h3>
-                        <table class="items-table">
-                            <thead>
-                                <tr>
-                                    <th>Producto</th>
-                                    <th>Cantidad</th>
-                                    <th>Precio Unitario</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for item in orden.items.all %}
-                                <tr>
-                                    <td>{{ item.producto.nombre }}</td>
-                                    <td>{{ item.cantidad }}</td>
-                                    <td>${{ item.precio_unitario }}</td>
-                                    <td>${{ item.precio_total }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="3"><strong>Subtotal:</strong></td>
-                                    <td><strong>${{ orden.subtotal }}</strong></td>
-                                </tr>
-                                {% if orden.impuestos > 0 %}
-                                <tr>
-                                    <td colspan="3"><strong>Impuestos:</strong></td>
-                                    <td><strong>${{ orden.impuestos }}</strong></td>
-                                </tr>
-                                {% endif %}
-                                {% if orden.envio > 0 %}
-                                <tr>
-                                    <td colspan="3"><strong>Envío:</strong></td>
-                                    <td><strong>${{ orden.envio }}</strong></td>
-                                </tr>
-                                {% endif %}
-                                <tr class="total-row">
-                                    <td colspan="3"><strong>Total:</strong></td>
-                                    <td><strong>${{ orden.total }}</strong></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
+               
                 
-                <div class="success-actions">
-                    <p>Te hemos enviado un email de confirmación a <strong>{{ orden.email }}</strong></p>
-                    <div class="action-buttons">
-                        <a href="{% url 'ferretetia:index' %}" class="btn btn-primary">Seguir Comprando</a>
-                        <a href="{% url 'account:account' %}" class="btn btn-secondary">Ver Mis Pedidos</a>
-                    </div>
-                </div>
                 
-                {% else %}
-                <div class="error-message">
-                    <p>No se pudo encontrar la información del pedido.</p>
-                    <a href="{% url 'ferretetia:index' %}" class="btn btn-primary">Volver al Inicio</a>
-                </div>
-                {% endif %}
+    
+
             </div>
         </div>
     </main>

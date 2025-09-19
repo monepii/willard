@@ -125,28 +125,14 @@
                             <input type="hidden" name="direccion_tipo" value="existente">
                         </div>
                         
-                        <textarea name="notas" placeholder="Notas adicionales (opcional)" rows="3"></textarea>
+
                         <button type="submit" class="btn-primary">Confirmar Pedido</button>
                     </form>
                 </div>
-                <aside class="checkout-summary">
+                <aside class="checkout-summary">    
                     <h3>Resumen del Pedido</h3>
                     {% if items %}
-                        <div class="order-count">
-                            <small>{{ items|length }} producto{{ items|length|pluralize }}</small>
-                        </div>
-                        
-                        <ul class="summary-items">
-                        {% for item in items %}
-                            <li class="summary-item">
-                                <span class="item-name">
-                                    {{ item.producto.nombre|truncatechars:25 }} 
-                                    <small class="item-qty">x{{ item.cantidad }}</small>
-                                </span>
-                                <span class="item-price">${{ item.precio_total }}</span>
-                            </li>
-                        {% endfor %}
-                        </ul>
+                            
                         
                         <div class="summary-totals">
                             <div>
@@ -172,12 +158,7 @@
                                 <span>${{ total }}</span>
                             </div>
                         </div>
-                        
-                        <div class="summary-security">
-                            <small class="security-note">
-                                🔒 Pago seguro
-                            </small>
-                        </div>
+
                     {% else %}
                         <div class="empty-cart">
                             <div class="empty-cart-icon">🛒</div>

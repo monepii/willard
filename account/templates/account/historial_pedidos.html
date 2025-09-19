@@ -89,14 +89,7 @@
                                 </div>
                             </div>
                             
-                            <div class="order-actions">
-                                <a href="{% url 'account:detalle_pedido' orden.numero_orden %}" class="btn btn-primary">Ver Detalles</a>
-                                {% if orden.estado == 'pendiente' %}
-                                    <button class="btn btn-secondary">Cancelar Pedido</button>
-                                {% elif orden.estado == 'entregado' %}
-                                    <button class="btn btn-secondary">Reordenar</button>
-                                {% endif %}
-                            </div>
+                          
                         </div>
                     {% endfor %}
                 </div>

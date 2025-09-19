@@ -147,11 +147,11 @@
                         </div>
                         <div class="summary-item">
                             <span>Envío:</span>
-                            <span>$50.00</span>
+                            <span>Gratis</span>
                         </div>
                         <div class="summary-total">
                             <strong>Total Final:</strong>
-                            <strong>${{ total_precio|add:50|floatformat:2 }}</strong>
+                            <strong>${{ total_precio|floatformat:2 }}</strong>
                         </div>
                         <a href="{% url 'checkout:checkout' %}" class="btn-checkout">Proceder al Pago</a>
                     </div>

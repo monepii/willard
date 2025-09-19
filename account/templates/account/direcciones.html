@@ -57,13 +57,6 @@
                 <a href="{% url 'account:account' %}" class="btn btn-secondary">← Volver a Mi Cuenta</a>
             </div>
 
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
 
             <div class="direcciones-header">
                 <a href="{% url 'account:agregar_direccion' %}" class="btn btn-primary">+ Agregar Nueva Dirección</a>

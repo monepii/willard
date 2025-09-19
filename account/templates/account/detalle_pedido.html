@@ -165,38 +165,6 @@
                     </div>
                 </div>
 
-                {% if orden.estado != 'cancelado' %}
-                <div class="tracking-section">
-                    <h3>Estado del Pedido</h3>
-                    <div class="tracking-progress">
-                        <div class="tracking-step {% if orden.estado == 'pendiente' or orden.estado == 'procesando' or orden.estado == 'enviado' or orden.estado == 'entregado' %}completed{% endif %}">
-                            <div class="step-icon">1</div>
-                            <div class="step-label">Pedido Confirmado</div>
-                            <div class="step-date">{{ orden.creado|date:"d/m/Y" }}</div>
-                        </div>
-                        <div class="tracking-step {% if orden.estado == 'procesando' or orden.estado == 'enviado' or orden.estado == 'entregado' %}completed{% endif %}">
-                            <div class="step-icon">2</div>
-                            <div class="step-label">En Procesamiento</div>
-                            <div class="step-date">{% if orden.estado != 'pendiente' %}{{ orden.actualizado|date:"d/m/Y" }}{% endif %}</div>
-                        </div>
-                        <div class="tracking-step {% if orden.estado == 'enviado' or orden.estado == 'entregado' %}completed{% endif %}">
-                            <div class="step-icon">3</div>
-                            <div class="step-label">Enviado</div>
-                            <div class="step-date">{% if orden.estado == 'enviado' or orden.estado == 'entregado' %}{{ orden.actualizado|date:"d/m/Y" }}{% endif %}</div>
-                        </div>
-                        <div class="tracking-step {% if orden.estado == 'entregado' %}completed{% endif %}">
-                            <div class="step-icon">4</div>
-                            <div class="step-label">Entregado</div>
-                            <div class="step-date">{% if orden.estado == 'entregado' %}{{ orden.actualizado|date:"d/m/Y" }}{% endif %}</div>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-
-                <div class="back-actions">
-                    <a href="{% url 'account:historial_pedidos' %}" class="btn btn-secondary">← Volver al Historial</a>
-                    <a href="{% url 'ferretetia:shop' %}" class="btn btn-primary">Seguir Comprando</a>
-                </div>
             </div>
         </div>
     </main>
