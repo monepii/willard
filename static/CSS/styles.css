@@ -126,12 +126,13 @@ header {
 }
 
 .search-container {
+    position: relative;
     display: flex;
     width: 100%;
     max-width: 400px;
     border: 1px solid var(--color-border);
     border-radius: 4px;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .search-input {
@@ -160,6 +161,39 @@ header {
 
 .search-btn:hover {
     background-color: #333;
+}
+
+/* Estilos para el dropdown de búsqueda */
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #007bff;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 2000;
+    max-height: 400px;
+    overflow-y: auto;
+    display: none;
+}
+
+.search-result-item {
+    display: flex;
+    padding: 12px;
+    border-bottom: 1px solid #e9ecef;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-result-item:hover {
+    background-color: #f8f9fa;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
 }
 
 .nav-item {

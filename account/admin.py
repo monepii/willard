@@ -16,4 +16,3 @@ class DireccionAdmin(admin.ModelAdmin):
     list_display_links = ("user", "calle")
     ordering = ("-es_principal", "-creada")
     list_editable = ("es_principal", "activa")
-   
