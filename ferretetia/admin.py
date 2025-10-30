@@ -1,13 +1,13 @@
 from django.contrib import admin
 from django_filters import AllValuesFilter, ChoiceFilter
-from .models import Producto, Categoria
+from .models import Producto, Categoria, Subcategoria
 from .filters import ProductoFilter
 
 
 class ProductoAdmin(admin.ModelAdmin):
-    list_display = ("nombre", "categoria", "precio", "stock", "disponible", "creado")
-    search_fields = ("nombre", "categoria__nombre", "sku")
-    list_filter = ("disponible", "creado", "categoria", "descuento")
+    list_display = ("nombre", "categoria", "subcategoria", "precio", "stock", "disponible", "creado")
+    search_fields = ("nombre", "categoria__nombre", "subcategoria__nombre", "sku")
+    list_filter = ("disponible", "creado", "categoria", "subcategoria", "descuento")
     list_editable = ("precio", "stock", "disponible")
     readonly_fields = ("creado", "actualizado")
     
@@ -17,7 +17,7 @@ class ProductoAdmin(admin.ModelAdmin):
     # Campos para el formulario de edición
     fieldsets = (
         ('Información Básica', {
-            'fields': ('sku', 'nombre', 'descripcion', 'categoria')
+            'fields': ('sku', 'nombre', 'descripcion', 'categoria', 'subcategoria')
         }),
         ('Precios y Stock', {
             'fields': ('precio', 'descuento', 'precioDescuento', 'stock')
@@ -48,5 +48,19 @@ class CategoriaAdmin(admin.ModelAdmin):
     productos_count.admin_order_field = 'productos__count'
 
 
+class SubcategoriaAdmin(admin.ModelAdmin):
+    list_display = ("nombre", "categoria", "activa", "productos_count", "creado")
+    list_filter = ("activa", "categoria", "creado")
+    search_fields = ("nombre", "descripcion", "categoria__nombre")
+    list_editable = ("activa",)
+    readonly_fields = ("creado", "actualizado")
+    
+    def productos_count(self, obj):
+        return obj.productos.count()
+    productos_count.short_description = "Productos"
+    productos_count.admin_order_field = 'productos__count'
+
+
 admin.site.register(Producto, ProductoAdmin)
 admin.site.register(Categoria, CategoriaAdmin)
+admin.site.register(Subcategoria, SubcategoriaAdmin)

@@ -106,7 +106,13 @@
                                 <span class="price-current">${{ producto.precio }}</span>
                                 {% endif %}
                             </div>
-
+                            <div class="product-actions">
+                                <button class="wishlist-btn" title="Agregar a favoritos" data-product-id="{{ producto.id }}">
+                                    <span class="wishlist-icon">♡</span>
+                                </button>
+                                <a href="{% url 'compare:add_to_compare' producto.id %}" class="compare-btn" title="Comparar">⚖</a>
+                                <a href="{% url 'ferretetia:product_detail' producto.id %}" class="view-btn" title="Ver detalle">👁</a>
+                            </div>
                             <button class="add-to-cart-btn" data-product-id="{{ producto.id }}">Agregar al Carrito</button>
                         </div>
                     </div>

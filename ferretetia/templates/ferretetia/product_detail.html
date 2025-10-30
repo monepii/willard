@@ -122,12 +122,9 @@
                                         </button>
                                     </form>
                                     
-                                    <form method="post" action="{% url 'compare:add_to_compare' producto.id %}" style="display: inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn-compare">
-                                            ⚖ Comparar
-                                        </button>
-                                    </form>
+                                    <a href="{% url 'compare:add_to_compare' producto.id %}" class="btn-compare">
+                                        ⚖ Comparar
+                                    </a>
                                 </div>
                             {% else %}
                                 <div class="out-of-stock">

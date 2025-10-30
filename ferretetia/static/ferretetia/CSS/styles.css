@@ -579,6 +579,11 @@
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 1rem;
+    text-decoration: none;
+    color: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .wishlist-btn:hover,
@@ -586,6 +591,7 @@
 .view-btn:hover {
     background: var(--color-primary);
     border-color: var(--color-primary);
+    color: var(--color-text);
 }
 
 .add-to-cart-btn {
@@ -1031,6 +1037,30 @@
     flex: 1;
     text-align: center;
     cursor: not-allowed;
+}
+
+/* Botones de producto detail */
+.btn-wishlist,
+.btn-compare {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 2px solid var(--color-primary);
+    background: white;
+    color: var(--color-text);
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.btn-wishlist:hover,
+.btn-compare:hover {
+    background: var(--color-primary);
+    color: var(--color-text);
 }
 
 .add-to-cart-form {

@@ -20,11 +20,30 @@ class Categoria(models.Model):
         return self.nombre
 
 
+class Subcategoria(models.Model):
+    nombre = models.CharField(max_length=100)
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='subcategorias')
+    descripcion = models.TextField(blank=True)
+    activa = models.BooleanField(default=True)
+    creado = models.DateTimeField(auto_now_add=True)
+    actualizado = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Subcategoría'
+        verbose_name_plural = 'Subcategorías'
+        ordering = ['categoria', 'nombre']
+        unique_together = [['categoria', 'nombre']]
+
+    def __str__(self):
+        return f"{self.categoria.nombre} - {self.nombre}"
+
+
 class Producto(models.Model):
     sku = models.CharField(max_length=50, unique=True)
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='productos', null=True, blank=True)
+    subcategoria = models.ForeignKey(Subcategoria, on_delete=models.SET_NULL, related_name='productos', null=True, blank=True)
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
     disponible = models.BooleanField(default=True)

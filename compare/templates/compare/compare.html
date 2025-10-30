@@ -52,9 +52,131 @@
 
     <main class="main-content">
         <div class="container">
-            <h1>Comparar Productos</h1>
-            <p>Compara diferentes productos para tomar la mejor decisión de compra.</p>
-            <a href="{% url 'ferretetia:index' %}" class="btn">Explorar Productos</a>
+            <div class="compare-header">
+                <h1>Comparar Productos</h1>
+                {% if total_productos > 0 %}
+                    <a href="{% url 'compare:clear_compare' %}" class="btn-clear">Limpiar Todo</a>
+                {% endif %}
+            </div>
+
+            {% if total_productos == 0 %}
+                <!-- Sin productos -->
+                <div class="empty-compare">
+                    <p class="empty-message">No hay productos en tu lista de comparación.</p>
+                    <p>Agrega productos de la misma subcategoría para compararlos.</p>
+                    <a href="{% url 'ferretetia:index' %}" class="btn btn-primary">Explorar Productos</a>
+                </div>
+            {% else %}
+       
+
+                <!-- Productos agrupados por subcategoría -->
+                {% for subcat_id, grupo in productos_por_subcategoria.items %}
+                    <div class="subcategory-group">
+                        <h2 class="subcategory-title">
+                            {{ grupo.subcategoria.categoria.nombre }} - {{ grupo.subcategoria.nombre }}
+                        </h2>
+                        
+                        <div class="compare-table-wrapper">
+                            <table class="compare-table">
+                                <thead>
+                                    <tr>
+                                        <th class="attribute-column">Atributo</th>
+                                        {% for producto in grupo.productos %}
+                                            <th class="product-column">
+                                                <div class="product-header">
+                                                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                                                    <h3>{{ producto.nombre }}</h3>
+                                                    <a href="{% url 'compare:remove_from_compare' producto.id %}" class="btn-remove">×</a>
+                                                </div>
+                                            </th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="attribute-name">SKU</td>
+                                        {% for producto in grupo.productos %}
+                                            <td>{{ producto.sku }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <td class="attribute-name">Precio</td>
+                                        {% for producto in grupo.productos %}
+                                            <td class="price">
+                                                {% if producto.descuento and producto.precioDescuento %}
+                                                    <span class="original-price">${{ producto.precio }}</span>
+                                                    <span class="discount-price">${{ producto.precioDescuento }}</span>
+                                                {% else %}
+                                                    ${{ producto.precio }}
+                                                {% endif %}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <td class="attribute-name">Disponibilidad</td>
+                                        {% for producto in grupo.productos %}
+                                            <td>
+                                                {% if producto.disponible %}
+                                                    <span class="badge badge-success">✔ En Stock</span>
+                                                {% else %}
+                                                    <span class="badge badge-danger">✖ Agotado</span>
+                                                {% endif %}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <td class="attribute-name">Stock</td>
+                                        {% for producto in grupo.productos %}
+                                            <td>{{ producto.stock }} unidades</td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <td class="attribute-name">Descripción</td>
+                                        {% for producto in grupo.productos %}
+                                            <td class="description">{{ producto.descripcion|default:"Sin descripción" }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <td class="attribute-name">Acciones</td>
+                                        {% for producto in grupo.productos %}
+                                            <td>
+                                                <a href="{% url 'ferretetia:product_detail' producto.id %}" class="btn btn-view">Ver Detalle</a>
+                                                {% if producto.disponible %}
+                                                    <a href="{% url 'cart:add_to_cart' producto.id %}" class="btn btn-cart">Agregar al Carrito</a>
+                                                {% endif %}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <!-- Productos sin subcategoría -->
+                {% if productos_sin_subcategoria %}
+                    <div class="subcategory-group warning-group">
+                        <h2 class="subcategory-title">
+                            ⚠️ Productos sin Subcategoría
+                        </h2>
+                        <p class="warning-text">Estos productos no pueden ser comparados porque no tienen subcategoría asignada:</p>
+                        <div class="products-grid">
+                            {% for producto in productos_sin_subcategoria %}
+                                <div class="product-card">
+                                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                                    <h4>{{ producto.nombre }}</h4>
+                                    <p>{{ producto.categoria.nombre|default:"Sin categoría" }}</p>
+                                    <a href="{% url 'compare:remove_from_compare' producto.id %}" class="btn btn-remove-card">Eliminar</a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="compare-actions">
+                    <a href="{% url 'ferretetia:index' %}" class="btn btn-secondary">Agregar Más Productos</a>
+                </div>
+            {% endif %}
         </div>
     </main>
 
