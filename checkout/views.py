@@ -4,7 +4,17 @@ from django.contrib.auth.decorators import login_required
 from cart.models import Carrito
 from .models import Orden, ItemOrden
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 from decimal import Decimal
+from django.http import HttpResponse, JsonResponse
+from django.conf import settings
+from django.urls import reverse
+import os
+
+try:
+    import mercadopago
+except Exception:
+    mercadopago = None
 
 
 @login_required
@@ -123,11 +133,84 @@ def process_order(request):
             precio_total=item.precio_total,
         )
 
-    # Vaciar carrito tras crear la orden
-    carrito.limpiar()
+    # Crear preferencia de Mercado Pago
+    access_token = os.environ.get('MP_ACCESS_TOKEN') or getattr(settings, 'MP_ACCESS_TOKEN', None)
+    public_key = os.environ.get('MP_PUBLIC_KEY') or getattr(settings, 'MP_PUBLIC_KEY', None)
+    if not access_token:
+        messages.error(request, 'Falta configurar MP_ACCESS_TOKEN en variables de entorno.')
+        return redirect('checkout:checkout')
 
-    messages.success(request, "¡Tu orden ha sido creada exitosamente!")
-    return redirect('checkout:success', order_number=orden.numero_orden)
+    sdk = mercadopago.SDK(access_token) if mercadopago else None
+    if sdk is None:
+        messages.error(request, 'SDK de Mercado Pago no disponible en el servidor.')
+        return redirect('checkout:checkout')
+
+    items_mp = []
+    for item in orden.items.all():
+        items_mp.append({
+            "id": str(item.producto.id),
+            "title": item.producto.nombre,
+            "quantity": int(item.cantidad),
+            "currency_id": "MXN",
+            "unit_price": float(item.precio_unitario),
+        })
+
+    return_path = reverse('checkout:mp_return')
+    success_url = request.build_absolute_uri(f"{return_path}?status=success&order_number={orden.numero_orden}")
+    failure_url = request.build_absolute_uri(f"{return_path}?status=failure&order_number={orden.numero_orden}")
+    pending_url = request.build_absolute_uri(f"{return_path}?status=pending&order_number={orden.numero_orden}")
+    
+    # Construir notification_url solo si no es localhost (Mercado Pago no puede acceder a localhost)
+    notification_url = request.build_absolute_uri(reverse('checkout:mp_webhook'))
+    # Solo incluir notification_url si es HTTPS y no es localhost
+    include_notification = notification_url.startswith('https://') and 'localhost' not in notification_url and '127.0.0.1' not in notification_url
+
+    preference_data = {
+        "items": items_mp,
+        "payer": {
+            "name": nombre_completo,
+            "email": email,
+        },
+        "back_urls": {
+            "success": success_url,
+            "failure": failure_url,
+            "pending": pending_url,
+        },
+        "external_reference": str(orden.numero_orden),
+        "statement_descriptor": "WILLARD",
+    }
+    
+    # Solo agregar notification_url si es válida (HTTPS y no localhost)
+    if include_notification:
+        preference_data["notification_url"] = notification_url
+
+    try:
+        pref_response = sdk.preference().create(preference_data)
+    except Exception as e:
+        messages.error(request, f"Error al crear preferencia MP: {e}")
+        return redirect('checkout:checkout')
+
+    if not isinstance(pref_response, dict):
+        messages.error(request, 'Respuesta inválida de Mercado Pago (sin diccionario).')
+        return redirect('checkout:checkout')
+
+    if 'response' not in pref_response:
+        err_msg = pref_response.get('message') or pref_response.get('error') or 'Respuesta sin contenido.'
+        messages.error(request, f"No se pudo crear la preferencia de pago: {err_msg}")
+        return redirect('checkout:checkout')
+
+    pref = pref_response.get("response", {})
+    init_point = pref.get("init_point") or pref.get("sandbox_init_point")
+    orden.mp_preference_id = pref.get("id")
+    orden.mp_external_reference = str(orden.numero_orden)
+    orden.save(update_fields=["mp_preference_id", "mp_external_reference"])
+
+    # No limpiamos el carrito todavía; esperamos confirmación de pago
+    if not init_point:
+        messages.error(request, f"Preferencia creada sin URL de pago. Respuesta: {pref}")
+        return redirect('checkout:checkout')
+    messages.info(request, f"Redirigiendo a Mercado Pago...")
+    return redirect(init_point)
 
 
 @login_required
@@ -147,3 +230,83 @@ def checkout_success(request, order_number=None):
         'orden': orden,
     }
     return render(request, 'checkout/success.html', context)
+
+
+@login_required
+def mp_return(request):
+    """Retorno de Mercado Pago (success/failure/pending)"""
+    status = request.GET.get('status') or request.GET.get('collection_status')
+    payment_id = request.GET.get('payment_id') or request.GET.get('collection_id')
+    order_number = request.GET.get('order_number') or request.GET.get('external_reference')
+
+    if not order_number:
+        messages.error(request, 'Referencia de orden no encontrada.')
+        return redirect('checkout:checkout')
+
+    try:
+        orden = Orden.objects.get(numero_orden=order_number, usuario=request.user)
+    except Orden.DoesNotExist:
+        messages.error(request, 'Orden no encontrada.')
+        return redirect('checkout:checkout')
+
+    if payment_id:
+        orden.mp_payment_id = str(payment_id)
+    if status:
+        orden.mp_status = status
+
+    # Si aprobado, marcamos como procesando y limpiamos carrito
+    if status in ('approved', 'success'):
+        orden.estado = 'procesando'
+        try:
+            carrito = Carrito.obtener_o_crear_carrito(request)
+            carrito.limpiar()
+        except Exception:
+            pass
+
+    orden.save()
+    messages.info(request, f"Mercado Pago retorno: status={status}, payment_id={payment_id}")
+    return redirect('checkout:success', order_number=orden.numero_orden)
+
+
+@csrf_exempt
+@require_POST
+def mp_webhook(request):
+    """Webhook de Mercado Pago para notificaciones de pago"""
+    try:
+        data = request.body.decode('utf-8')
+    except Exception:
+        data = ''
+
+    try:
+        import json
+        payload = json.loads(data) if data else {}
+    except Exception:
+        payload = {}
+
+    topic = request.GET.get('type') or request.GET.get('topic') or payload.get('type')
+    payment_id = request.GET.get('data.id') or (payload.get('data', {}) or {}).get('id')
+
+    access_token = os.environ.get('MP_ACCESS_TOKEN')
+    if mercadopago and access_token and topic in ('payment', 'payments') and payment_id:
+        sdk = mercadopago.SDK(access_token)
+        try:
+            payment_info = sdk.payment().get(payment_id)
+            info = payment_info.get('response', {})
+            status = info.get('status')
+            external_reference = info.get('external_reference')
+            if external_reference:
+                try:
+                    orden = Orden.objects.get(numero_orden=external_reference)
+                    orden.mp_payment_id = str(payment_id)
+                    orden.mp_status = status
+                    if status == 'approved':
+                        orden.estado = 'procesando'
+                    elif status in ('rejected', 'cancelled', 'canceled'):
+                        orden.estado = 'cancelado'
+                    orden.save()
+                except Orden.DoesNotExist:
+                    pass
+        except Exception:
+            pass
+
+    return HttpResponse(status=200)

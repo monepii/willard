@@ -15,7 +15,7 @@ class Orden(models.Model):
         ('cancelado', 'Cancelado'),
     ]
     
-    numero_orden = models.CharField(max_length=50, unique=True, default=uuid.uuid4)
+    numero_orden = models.CharField(max_length=50, unique=True, blank=True, null=True)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ordenes')
     
     # Información de envío
@@ -39,6 +39,13 @@ class Orden(models.Model):
     
     # Notas adicionales
     notas = models.TextField(blank=True, help_text="Comentarios especiales del cliente")
+
+    # Pago
+    pasarela = models.CharField(max_length=50, default='mercadopago')
+    mp_preference_id = models.CharField(max_length=100, blank=True, null=True)
+    mp_payment_id = models.CharField(max_length=100, blank=True, null=True)
+    mp_status = models.CharField(max_length=50, blank=True, null=True)
+    mp_external_reference = models.CharField(max_length=100, blank=True, null=True)
     
     class Meta:
         verbose_name = 'Orden'

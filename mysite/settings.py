@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -154,3 +155,7 @@ USE_THOUSAND_SEPARATOR = True
 THOUSAND_SEPARATOR = '.'
 DECIMAL_SEPARATOR = ','
 
+
+# Mercado Pago (leer desde variables de entorno con valores por defecto de prueba)
+MP_PUBLIC_KEY = os.environ.get('MP_PUBLIC_KEY', 'TEST-f31b2908-db95-4064-89ea-7e4fa30db548')
+MP_ACCESS_TOKEN = os.environ.get('MP_ACCESS_TOKEN', 'TEST-2057115956730309-110315-64453e81886b78b3401389f0953ea1f0-768366021')
