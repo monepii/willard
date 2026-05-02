@@ -117,9 +117,9 @@
                                         {% for producto in grupo.productos %}
                                             <td>
                                                 {% if producto.disponible %}
-                                                    <span class="badge badge-success">✔ En Stock</span>
+                                                    <span class="badge badge-success">En Stock</span>
                                                 {% else %}
-                                                    <span class="badge badge-danger">✖ Agotado</span>
+                                                    <span class="badge badge-danger">Agotado</span>
                                                 {% endif %}
                                             </td>
                                         {% endfor %}
@@ -140,9 +140,11 @@
                                         <td class="attribute-name">Acciones</td>
                                         {% for producto in grupo.productos %}
                                             <td>
-                                                <a href="{% url 'ferretetia:product_detail' producto.id %}" class="btn btn-view">Ver Detalle</a>
                                                 {% if producto.disponible %}
-                                                    <a href="{% url 'cart:add_to_cart' producto.id %}" class="btn btn-cart">Agregar al Carrito</a>
+                                                    <form method="post" action="{% url 'cart:add_to_cart' producto.id %}" style="display: inline;">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-cart">Agregar al Carrito</button>
+                                                    </form>
                                                 {% endif %}
                                             </td>
                                         {% endfor %}

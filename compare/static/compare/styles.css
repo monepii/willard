@@ -69,24 +69,6 @@
     margin-bottom: 1rem;
 }
 
-.alert-success {
-    background: #d4edda;
-    color: #155724;
-    border-left: 4px solid #28a745;
-}
-
-.alert-error {
-    background: #f8d7da;
-    color: #721c24;
-    border-left: 4px solid #dc3545;
-}
-
-.alert-warning {
-    background: #fff3cd;
-    color: #856404;
-    border-left: 4px solid #ffc107;
-    font-size: 1rem;
-}
 
 .alert-info {
     background: #d1ecf1;
@@ -128,10 +110,8 @@
 }
 
 .subcategory-title {
-    color: #2c5f8d;
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #2c5f8d;
     font-size: 1.5rem;
 }
 
@@ -250,7 +230,7 @@
 
 .badge-success {
     background: #d4edda;
-    color: #155724;
+   
 }
 
 .badge-danger {
@@ -276,25 +256,18 @@
 }
 
 .btn-view {
-    background: #17a2b8;
+    background: #545b62;
     color: white;
     font-size: 0.9rem;
     padding: 0.5rem 1rem;
 }
 
-.btn-view:hover {
-    background: #138496;
-}
 
 .btn-cart {
-    background: #28a745;
+    background: #545b62;
     color: white;
     font-size: 0.9rem;
     padding: 0.5rem 1rem;
-}
-
-.btn-cart:hover {
-    background: #218838;
 }
 
 /* Productos sin subcategoría */

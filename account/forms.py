@@ -19,7 +19,7 @@ class RegistroUsuarioForm(forms.ModelForm):
 class PerfilForm(forms.ModelForm):
     class Meta:
         model = PerfilUsuario
-        fields = ['nombre', 'apellido', 'telefono', 'email']
+        fields = ['nombre', 'apellido', 'email']
 
 class DireccionForm(forms.ModelForm):
     class Meta:

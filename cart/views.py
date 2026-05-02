@@ -70,6 +70,11 @@ def add_to_cart(request, product_id):
                         'message': success_message,
                         'cart_count': carrito.total_items
                     })
+                # Verificar si viene de la página de comparación
+                referer = request.META.get('HTTP_REFERER', '')
+                if '/compare/' in referer:
+                    return redirect('compare:compare')
+                return redirect('cart:cart')
             else:
                 error_message = f"No hay suficiente stock disponible. Máximo: {producto.stock}"
                 messages.error(request, error_message)
@@ -80,6 +85,11 @@ def add_to_cart(request, product_id):
                         'success': False,
                         'message': error_message
                     })
+                # Verificar si viene de la página de comparación
+                referer = request.META.get('HTTP_REFERER', '')
+                if '/compare/' in referer:
+                    return redirect('compare:compare')
+                return redirect('cart:cart')
         except ItemCarrito.DoesNotExist:
             # Si no existe, crear nuevo item
             if producto.stock > 0:
@@ -106,6 +116,11 @@ def add_to_cart(request, product_id):
                         'message': success_message,
                         'cart_count': carrito.total_items
                     })
+                # Verificar si viene de la página de comparación
+                referer = request.META.get('HTTP_REFERER', '')
+                if '/compare/' in referer:
+                    return redirect('compare:compare')
+                return redirect('cart:cart')
             else:
                 error_message = "Producto sin stock disponible."
                 messages.error(request, error_message)
@@ -116,6 +131,11 @@ def add_to_cart(request, product_id):
                         'success': False,
                         'message': error_message
                     })
+                # Verificar si viene de la página de comparación
+                referer = request.META.get('HTTP_REFERER', '')
+                if '/compare/' in referer:
+                    return redirect('compare:compare')
+                return redirect('cart:cart')
  
         
     except Producto.DoesNotExist:
@@ -126,6 +146,10 @@ def add_to_cart(request, product_id):
                 'success': False,
                 'message': error_message
             })
+        # Verificar si viene de la página de comparación
+        referer = request.META.get('HTTP_REFERER', '')
+        if '/compare/' in referer:
+            return redirect('compare:compare')
         return redirect('cart:cart')
     except Exception as e:
         error_message = f"Error al agregar el producto: {str(e)}"
@@ -137,6 +161,10 @@ def add_to_cart(request, product_id):
             })
     
     # Si no es AJAX o no se ha devuelto JSON, redirigir
+    # Verificar si viene de la página de comparación
+    referer = request.META.get('HTTP_REFERER', '')
+    if '/compare/' in referer:
+        return redirect('compare:compare')
     return redirect('cart:cart')
 
 

@@ -10,11 +10,14 @@ from django.http import HttpResponse, JsonResponse
 from django.conf import settings
 from django.urls import reverse
 import os
+import logging
 
 try:
     import mercadopago
 except Exception:
     mercadopago = None
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -235,10 +238,21 @@ def checkout_success(request, order_number=None):
 @login_required
 def mp_return(request):
     """Retorno de Mercado Pago (success/failure/pending)"""
-    status = request.GET.get('status') or request.GET.get('collection_status')
-    payment_id = request.GET.get('payment_id') or request.GET.get('collection_id')
-    order_number = request.GET.get('order_number') or request.GET.get('external_reference')
-
+    # Obtener parámetros de la URL - MercadoPago puede enviar diferentes nombres
+    status = (request.GET.get('status') or 
+              request.GET.get('collection_status') or 
+              request.GET.get('payment_status') or '').lower()
+    order_number = request.GET.get('order_number', '')
+    payment_id = request.GET.get('payment_id') or request.GET.get('collection_id') or request.GET.get('preference_id')
+    
+    # Log para debugging
+    full_path = request.get_full_path()
+    logger.info(f"MP Return - Full Path: {full_path}, Status: {status}, Payment ID: {payment_id}, Order: {order_number}, All GET params: {dict(request.GET)}")
+    
+    # Si no hay order_number, intentar obtenerlo de external_reference
+    if not order_number:
+        order_number = request.GET.get('external_reference', '')
+    
     if not order_number:
         messages.error(request, 'Referencia de orden no encontrada.')
         return redirect('checkout:checkout')
@@ -249,23 +263,112 @@ def mp_return(request):
         messages.error(request, 'Orden no encontrada.')
         return redirect('checkout:checkout')
 
-    if payment_id:
+    # Actualizar información del pago
+    if payment_id and payment_id != orden.mp_preference_id:
         orden.mp_payment_id = str(payment_id)
     if status:
         orden.mp_status = status
 
-    # Si aprobado, marcamos como procesando y limpiamos carrito
-    if status in ('approved', 'success'):
-        orden.estado = 'procesando'
+    # Si el status es 'failure', 'rejected', 'cancelled' o 'canceled', redirigir al checkout
+    if status in ['failure', 'rejected', 'cancelled', 'canceled']:
+        orden.save()
+        messages.error(request, 'El pago no pudo ser procesado. Por favor, intenta nuevamente.')
+        return redirect('checkout:checkout')
+    
+    # Consultar el estado real en Mercado Pago si tenemos payment_id o preference_id
+    pago_aprobado = False
+    pago_pendiente = False
+    
+    # Intentar obtener el estado del pago desde la API de MercadoPago
+    if mercadopago:
         try:
-            carrito = Carrito.obtener_o_crear_carrito(request)
-            carrito.limpiar()
-        except Exception:
-            pass
-
+            access_token = os.environ.get('MP_ACCESS_TOKEN') or getattr(settings, 'MP_ACCESS_TOKEN', None)
+            if access_token:
+                sdk = mercadopago.SDK(access_token)
+                
+                # Si tenemos payment_id, consultar directamente
+                if payment_id and payment_id != orden.mp_preference_id:
+                    try:
+                        payment_info = sdk.payment().get(payment_id)
+                        if payment_info and 'response' in payment_info:
+                            payment_data = payment_info['response']
+                            api_status = payment_data.get('status', '').lower()
+                            if api_status:
+                                status = api_status
+                                orden.mp_status = api_status
+                                if api_status == 'approved':
+                                    pago_aprobado = True
+                                elif api_status in ['pending', 'in_process', 'in_mediation']:
+                                    pago_pendiente = True
+                    except Exception as e:
+                        logger.error(f"Error al consultar pago por ID en MP: {str(e)}")
+                
+                # Si no tenemos payment_id pero tenemos preference_id, buscar pagos asociados
+                if not pago_aprobado and not pago_pendiente and orden.mp_preference_id:
+                    try:
+                        search_response = sdk.payment().search({"external_reference": orden.numero_orden})
+                        if search_response and 'results' in search_response and search_response['results']:
+                            # Tomar el pago más reciente encontrado
+                            latest_payment = search_response['results'][0]
+                            latest_status = latest_payment.get('status', '').lower()
+                            if latest_status:
+                                status = latest_status
+                                orden.mp_status = latest_status
+                                if latest_status == 'approved':
+                                    pago_aprobado = True
+                                elif latest_status in ['pending', 'in_process', 'in_mediation']:
+                                    pago_pendiente = True
+                                if not orden.mp_payment_id:
+                                    orden.mp_payment_id = str(latest_payment.get('id', ''))
+                    except Exception as e:
+                        logger.error(f"Error al buscar pagos de la preferencia: {str(e)}")
+        except Exception as e:
+            logger.error(f"Error general al consultar estado del pago en MP: {str(e)}")
+    
+    # Si el status es 'success', 'approved' o el pago está aprobado, procesar como exitoso
+    if status in ['success', 'approved'] or pago_aprobado:
+        orden.estado = 'procesando'
+        orden.save()
+        
+        # Limpiar todos los carritos activos del usuario
+        try:
+            carritos_activos = Carrito.objects.filter(usuario=request.user, activo=True)
+            for carrito in carritos_activos:
+                carrito.limpiar()
+        except Exception as e:
+            logger.error(f"Error al limpiar carrito: {str(e)}")
+        
+        messages.success(request, f'¡Pago exitoso! Tu orden #{orden.numero_orden} ha sido procesada.')
+        # Redirigir siempre a la página principal cuando el pago es exitoso
+        return redirect('ferretetia:index')
+    
+    # Si el pago está pendiente
+    if status in ['pending', 'in_process', 'in_mediation'] or pago_pendiente:
+        orden.save()
+        messages.info(request, f'Tu pago está pendiente. Te notificaremos cuando sea confirmado.')
+        # Redirigir a la página principal también cuando está pendiente
+        return redirect('ferretetia:index')
+    
+    # Si no se pudo determinar el estado pero viene de success_url (no viene de failure_url)
+    # y no hay indicación de fallo, asumir éxito y redirigir a página principal
+    if status not in ['failure', 'rejected', 'cancelled', 'canceled']:
+        orden.estado = 'procesando'
+        orden.save()
+        # Limpiar carrito
+        try:
+            carritos_activos = Carrito.objects.filter(usuario=request.user, activo=True)
+            for carrito in carritos_activos:
+                carrito.limpiar()
+        except Exception as e:
+            logger.error(f"Error al limpiar carrito: {str(e)}")
+        messages.success(request, f'¡Pago exitoso! Tu orden #{orden.numero_orden} ha sido procesada.')
+        # Redirigir siempre a la página principal
+        return redirect('ferretetia:index')
+    
+    # Fallback: si llegamos aquí, guardar y redirigir a la página principal
     orden.save()
-    messages.info(request, f"Mercado Pago retorno: status={status}, payment_id={payment_id}")
-    return redirect('checkout:success', order_number=orden.numero_orden)
+    messages.info(request, f'Tu pago está siendo procesado. Te notificaremos cuando sea confirmado.')
+    return redirect('ferretetia:index')
 
 
 @csrf_exempt
@@ -301,9 +404,17 @@ def mp_webhook(request):
                     orden.mp_status = status
                     if status == 'approved':
                         orden.estado = 'procesando'
+                        orden.save()
+                        # Limpiar todos los carritos activos del usuario
+                        try:
+                            carritos_activos = Carrito.objects.filter(usuario=orden.usuario, activo=True)
+                            for carrito in carritos_activos:
+                                carrito.limpiar()
+                        except Exception:
+                            pass
                     elif status in ('rejected', 'cancelled', 'canceled'):
                         orden.estado = 'cancelado'
-                    orden.save()
+                        orden.save()
                 except Orden.DoesNotExist:
                     pass
         except Exception:
